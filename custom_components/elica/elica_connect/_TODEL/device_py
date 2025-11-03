@@ -1,0 +1,69 @@
+"""Elica Device Module.
+
+This module defines the ElicaDevice class, which represents a single Elica
+device with a unique identifier and its current state. The state is stored
+as an ElicaDeviceState instance and is used to compose commands for the API
+without being automatically updated by the client.
+"""
+
+from dataclasses import dataclass, field
+
+from ..domain.device_state import ElicaDeviceState
+from .capabilities import Capability
+
+
+@dataclass
+class ElicaDevice:
+    """Represents an Elica device with ID and state.
+
+    The state is stored as an ElicaDeviceState instance and is used to
+    compose commands for the API. The client does not automatically update
+    this state; it must be updated manually after sending commands.
+
+    Attributes:
+        id (str): The unique identifier of the device.
+        name (str): Human-readable device name.
+        state (ElicaDeviceState): The current state of the device (fan, light, aimatic, etc.).
+    """
+
+    id: str
+    cuid: str
+    device_type: str
+    code12nc: str
+    serial_number: str
+    iot: bool
+    demo: bool
+    name: str
+    time_zone: str
+    purchase_date: int
+    manufacturer: str
+    model: str
+    model_id: str
+    sw_version: str
+    prf: str
+    capabilities: list
+    connected: bool
+    data_model_version: str
+    state: ElicaDeviceState = field(default_factory=ElicaDeviceState)
+
+    @staticmethod
+    def from_json(data: dict) -> "ElicaDevice":
+        """Create ElicaDevice from API JSON data."""
+        capabilities = []
+        data_model = data.get("dataModel", {})
+        if Capability.LIGHT_BRIGHTNESS in data_model:
+            capabilities.append(Capability.LIGHT_BRIGHTNESS)
+        if Capability.FAN_SPEED in data_model:
+            capabilities.append(Capability.FAN_SPEED)
+
+        return ElicaDevice(
+            id=data["id"],
+            name=data["name"],
+            manufacturer="Elica",
+            model=data["type"],
+            model_id=data["code12nc"],
+            serial_number=data["serialNumber"],
+            sw_version=data.get("configuration", {}).get("revisionInfo"),
+            capabilities=capabilities,
+            state=ElicaDeviceState.from_json(data),
+        )
