@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import logging
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 from .coordinator import ElicaDataUpdateCoordinator
-from .utils import create_client
+from .utils import create_controller
+
+_LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [
     Platform.FAN,
@@ -20,30 +24,26 @@ PLATFORMS: list[Platform] = [
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Elica Connect from a config entry."""
 
-    client = create_client(entry.data["username"], entry.data["password"])
+    controller = create_controller(hass, entry.data["username"], entry.data["password"])
 
     # Effettuiamo il login con username/password dell'entry
-    await hass.async_add_executor_job(
-        client.login,
-        # entry.data["username"],
-        # entry.data["password"],
-        # entry.data.get("app_uuid", "home-assistant"),
-    )
+    await controller.login()
 
-    if not client.is_logged_in():
+    if not await controller.is_logged_in():
+        _LOGGER.error(
+            "Elica Connect: login fallito per utente %s", entry.data["username"]
+        )
         return False
 
-    coordinator = ElicaDataUpdateCoordinator(hass, client)
+    coordinator = ElicaDataUpdateCoordinator(hass, controller)
     await coordinator.async_config_entry_first_refresh()
 
-    # devices = await hass.async_add_executor_job(client.get_devices)
-
     # Cache client and devices
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = {
-        "client": client,
-        # "devices": devices,
+    domain_data = hass.data.setdefault(DOMAIN, {})
+    domain_data[entry.entry_id] = {
+        "controller": controller,
         "coordinator": coordinator,
+        "unsub_mqtt": None,
     }
 
     # Setup all the platforms (es. light, fan, switch, etc.)
@@ -53,6 +53,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    # data = hass.data[DOMAIN].pop(entry.entry_id)
+    # if (unsub := data.get("unsub_mqtt")):
+    #     unsub()
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)

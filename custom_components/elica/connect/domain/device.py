@@ -18,6 +18,7 @@ class Device:
     """
 
     id: str
+    cuid: str
     name: str
     device_type: str | None = None
     model_id: str | None = None
@@ -48,11 +49,15 @@ class Device:
         """Create ElicaDevice from API JSON. Keep core fields and save metadata."""
         # core fields
         device_id = data["id"]
+        cuid = data["cuid"]
         name = data.get("name", device_id)
         device_type = data.get("type")
         model_id = data.get("code12nc")
         serial = data.get("serialNumber")
         sw_ver = data.get("configuration", {}).get("revisionInfo")
+
+        # state
+        state = DeviceState.from_json(data)
 
         # parse capabilities from dataModel (keep raw mask too)
         data_model = data.get("dataModel", {}) or {}
@@ -81,7 +86,6 @@ class Device:
 
         # build metadata with selected useful fields + raw dataModel
         metadata = {
-            "cuid": data.get("cuid"),
             "iot": data.get("iot"),
             "demo": data.get("demo"),
             "timeZone": data.get("timeZone"),
@@ -98,6 +102,7 @@ class Device:
 
         return Device(
             id=device_id,
+            cuid=cuid,
             name=name,
             device_type=device_type,
             model_id=model_id,

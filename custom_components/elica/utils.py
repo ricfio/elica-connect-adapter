@@ -1,26 +1,33 @@
 """Utility functions for Elica integration."""
 
-from .const import API_BASE_URL, APP_UUID, CLIENT_ID, CLIENT_SECRET, USER_AGENT
-from .elica_connect.api.api import ElicaAPI
-from .elica_connect.api.client import ElicaClient
+from homeassistant.core import HomeAssistant
+
+from .connect import API_BASE_URL, API_CLIENT_ID, API_CLIENT_SECRET, APPLICATION_UUID
+from .connect.adapters.ha import AioHttpRestClient, HaAuthProvider, HaMqttClient
+from .connect.core import AuthService, Controller
 
 
-def create_client(username, password):
-    """Creates an Elica client instance with the given username and password."""
-    api = ElicaAPI(
-        base_url=API_BASE_URL,
-        user_agent=USER_AGENT,
+def create_controller(hass: HomeAssistant, username: str, password: str):
+    """Create the Controller instance with the given username and password."""
+    mqtt_client = HaMqttClient(hass)
+    rest_client = AioHttpRestClient(
+        hass,
+        API_BASE_URL,
+        10,
     )
-
-    client = ElicaClient(
-        api=api,
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
+    auth_service = AuthService(
+        API_BASE_URL, APPLICATION_UUID, API_CLIENT_ID, API_CLIENT_SECRET
+    )
+    auth_provider = HaAuthProvider(
+        hass,
+        auth_service=auth_service,
         username=username,
         password=password,
-        # app_uuid=entry.data.get("app_uuid", "home-assistant"),
-        app_uuid=APP_UUID,
-        token=None,
     )
 
-    return client
+    return Controller(
+        auth_provider=auth_provider,
+        rest_client=rest_client,
+        # mqtt_client=mqtt_client,
+        command_timeout=30000,
+    )

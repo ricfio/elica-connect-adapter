@@ -3,50 +3,49 @@
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .connect.core import Controller
+from .connect.domain import Capability, Device
 from .const import DOMAIN
 from .coordinator import ElicaDataUpdateCoordinator
-from .elica_connect.api.client import ElicaClient
-from .elica_connect.domain import Capability, Device
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     """Set up switch entities."""
     entry_data = hass.data[DOMAIN][entry.entry_id]
+    controller: Controller = entry_data["controller"]
     coordinator: ElicaDataUpdateCoordinator = entry_data["coordinator"]
-    client: ElicaClient = entry_data["client"]
-
-    # devices: list[Device] = entry_data["devices"]
-    devices: list[Device] = coordinator.data
-    entities = []
-    for device in devices:
-        if Capability.FAN_SPEED in device.capabilities:
-            entities.append(ElicaAIMaticSwitch(client, coordinator, device))
+    entities = [
+        ElicaAIMaticSwitch(controller, coordinator, device)
+        for device in coordinator.data["devices"].values()
+        if Capability.FAN_SPEED in device.capabilities
+    ]
     async_add_entities(entities)
 
 
-class ElicaAIMaticSwitch(SwitchEntity):
+class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of an Elica AIMatic switch."""
 
     def __init__(
         self,
-        client: ElicaClient,
+        controller: Controller,
         coordinator: ElicaDataUpdateCoordinator,
         device: Device,
     ) -> None:
+        """Initialize the switch."""
+        CoordinatorEntity.__init__(self, coordinator)
+        SwitchEntity.__init__(self)
         self.coordinator = coordinator
-        self._client = client
+        self._controller = controller
         self._device_id = device.id
+        self._attr_name = "AIMatic"
         self._attr_unique_id = f"elica_{device.id}_aimatic"
         self._attr_icon = "mdi:fan"
 
     @property
     def _device(self) -> Device:
         return self.coordinator.get_device(self._device_id)
-
-    @property
-    def name(self) -> str:
-        return f"{self._device.name} AIMatic"
 
     @property
     def device_info(self) -> DeviceInfo:  # noqa: D102
@@ -76,9 +75,8 @@ class ElicaAIMaticSwitch(SwitchEntity):
 
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle AIMatic mode."""
-        await self.hass.async_add_executor_job(
-            self._client.toggle_aimatic,
-            self._device,
+        await self._controller.toggle_aimatic(
+            self._device.id,
             enable,
         )
         await self.coordinator.async_request_refresh()
