@@ -10,9 +10,7 @@ from aiohttp import ClientConnectionError, ClientResponseError
 from ..domain import Capability, Device
 from .auth import AuthProviderBase
 from .constants import MQTT_HOST, MQTT_KEEPALIVE, MQTT_PORT, MQTT_TOPIC_FORMAT
-from .mqtt import MqttClientInterface
-from .mqtt.mqtt_subscriber_aiomqtt import MqttSubscriberAiomqtt
-from .mqtt.mqtt_subscriber_interface import OnMessageType
+from .mqtt import MqttSubscriberAiomqtt, OnMqttMessage
 from .rest import RestClientInterface
 
 P = ParamSpec("P")
@@ -51,7 +49,6 @@ class Controller:
         self,
         auth_provider: AuthProviderBase,
         rest_client: RestClientInterface,
-        mqtt_client: MqttClientInterface,
         command_timeout: int = 30000,
     ) -> None:
         """Initialize controller."""
@@ -59,7 +56,6 @@ class Controller:
         self.logger.setLevel(logging.INFO)
         self.auth_provider = auth_provider
         self.rest = rest_client
-        # self.mqtt = mqtt_client
         self._mqtt_subscriber = MqttSubscriberAiomqtt()
         self._command_timeout = command_timeout
 
@@ -80,19 +76,11 @@ class Controller:
             await self._mqtt_subscriber.initialize(
                 host=MQTT_HOST,
                 port=MQTT_PORT,
-                client_id=auth["mqtt_usr"],
+                identifier=auth["mqtt_usr"],
                 username=auth["mqtt_usr"],
                 password=auth["mqtt_psw"],
                 keepalive=MQTT_KEEPALIVE,
             )
-            # self.mqtt.initialize(
-            #     host=MQTT_HOST,
-            #     port=MQTT_PORT,
-            #     client_id=auth["mqtt_usr"],
-            #     username=auth["mqtt_usr"],
-            #     password=auth["mqtt_psw"],
-            #     keepalive=MQTT_KEEPALIVE,
-            # )
 
     # --------------------------
     #  Authentication
@@ -249,7 +237,7 @@ class Controller:
         return await self.set_light_brightness(device_id, brightness)
 
     # async def listen(self, callback: Callable[[str, Any], None]):
-    async def listen(self, callback: OnMessageType):
+    async def listen(self, callback: OnMqttMessage):
         """Start listening for device updates via MQTT."""
         await self._ensure_mqtt_initialized()
 

@@ -1,3 +1,3 @@
 """Elica Connect - MQTT module."""
 
-from .mqtt_client_interface import MqttClientInterface  # noqa: F401
+from .mqtt_subscriber_aiomqtt import MqttSubscriberAiomqtt, OnMqttMessage  # noqa: F401

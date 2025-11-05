@@ -1,24 +1,26 @@
 """MQTT Subscriber AioMqtt."""
 
 import asyncio
+from collections.abc import Awaitable, Callable
 import contextlib
 import logging
+from typing import Any
 
 from aiomqtt import Client, MqttError
 
-from .mqtt_subscriber_interface import MqttSubscriberInterface, OnMessageType
-
 logger = logging.getLogger(__name__)
 
+OnMqttMessage = Callable[[str, Any], None | Awaitable[None]]
 
-class MqttSubscriberAiomqtt(MqttSubscriberInterface):
+
+class MqttSubscriberAiomqtt:
     """MQTT Subscriber AioMqtt."""
 
     def __init__(self) -> None:
         """Initialize the MQTT subscriber."""
         self._client: Client | None = None
         self._topics: list[str] = []
-        self._on_message: OnMessageType | None = None
+        self._on_message: OnMqttMessage | None = None
         self._task: asyncio.Task | None = None
         self._running: bool = False
 
@@ -26,7 +28,7 @@ class MqttSubscriberAiomqtt(MqttSubscriberInterface):
         self,
         host: str,
         port: int,
-        client_id: str,
+        identifier: str,
         username: str,
         password: str,
         tls: bool = True,
@@ -36,13 +38,35 @@ class MqttSubscriberAiomqtt(MqttSubscriberInterface):
         self._client = Client(
             hostname=host,
             port=port,
-            identifier=username,
+            identifier=identifier,
             username=username,
             password=password,
             # tls=tls,
-            # client_id=client_id,
             keepalive=keepalive,
         )
+
+    async def start(
+        self,
+        topics: list[str],
+        on_message: OnMqttMessage,
+    ) -> None:
+        """Start the subscription and message handling loop."""
+        self._topics = topics
+        self._on_message = on_message
+        self._running = True
+        if self._client is None:
+            raise RuntimeError("Client not initialized. Call initialize() first.")
+        self._task = asyncio.create_task(self._message_loop())
+
+    async def stop(self) -> None:
+        """Stop the subscriber and disconnect."""
+        self._running = False
+        if self._task:
+            self._task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await self._task
+        self._task = None
+        logger.info("MQTT subscriber stopped")
 
     async def _message_loop(self) -> None:
         assert self._client is not None
@@ -63,26 +87,3 @@ class MqttSubscriberAiomqtt(MqttSubscriberInterface):
             logger.error(f"MQTT error {err}")
         finally:
             self._running = False
-
-    async def start(
-        self,
-        topics: list[str],
-        on_message: OnMessageType,
-    ) -> None:
-        """Start the subscription and message handling loop."""
-        self._topics = topics
-        self._on_message = on_message
-        self._running = True
-        if self._client is None:
-            raise RuntimeError("Client not initialized. Call initialize() first.")
-        self._task = asyncio.create_task(self._message_loop())
-
-    async def stop(self) -> None:
-        """Stop the subscriber and disconnect."""
-        self._running = False
-        if self._task:
-            self._task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await self._task
-        self._task = None
-        logger.info("MQTT subscriber stopped")
