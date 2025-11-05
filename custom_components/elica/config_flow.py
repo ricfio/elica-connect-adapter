@@ -12,8 +12,8 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import API_BASE_URL, CLIENT_ID, CLIENT_SECRET, DOMAIN, USER_AGENT
-from .utils import create_client
+from .const import DOMAIN
+from .utils import create_controller
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,24 +31,23 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     This function creates a client instance, performs login,
     and retrieves devices to generate a title for the config entry.
     """
-    # Create an instance of the Elica client
-    client = create_client(
+
+    controller = create_controller(
+        hass,
         data[CONF_USERNAME],
         data[CONF_PASSWORD],
     )
 
     # Perform login using username/password from user input
-    await hass.async_add_executor_job(
-        client.login,
-    )
+    await controller.login()
 
     # Raise an error if authentication fails
-    if not client.is_logged_in():
+    if not await controller.is_logged_in():
         raise InvalidAuth
 
     # Retrieve devices to use the first device's name as the entry title
-    devices = await hass.async_add_executor_job(client.get_devices)
-    title = devices[0]["name"] if devices else "Elica Device"
+    devices = await controller.get_devices()
+    title = devices[0].name if devices else "Elica Device"
 
     return {"title": title}
 
@@ -83,7 +82,9 @@ class Hub(ConfigFlow, domain=DOMAIN):
             else:
                 # Create the config entry with the retrieved title
                 # The client itself will be created in async_setup_entry
-                return self.async_create_entry(title=info["title"], data=user_input)
+                return self.async_create_entry(
+                    title=user_input[CONF_USERNAME], data=user_input
+                )
 
         # Show the form to the user for username/password input
         return self.async_show_form(

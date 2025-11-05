@@ -1,6 +1,8 @@
 """Device."""
 
 from dataclasses import dataclass, field
+import json
+import logging
 from typing import Any
 
 from .capabilities import Capability
@@ -18,6 +20,7 @@ class Device:
     """
 
     id: str
+    cuid: str
     name: str
     device_type: str | None = None
     model_id: str | None = None
@@ -48,11 +51,15 @@ class Device:
         """Create ElicaDevice from API JSON. Keep core fields and save metadata."""
         # core fields
         device_id = data["id"]
+        cuid = data["cuid"]
         name = data.get("name", device_id)
         device_type = data.get("type")
         model_id = data.get("code12nc")
         serial = data.get("serialNumber")
         sw_ver = data.get("configuration", {}).get("revisionInfo")
+
+        # state
+        state = DeviceState.from_json(data)
 
         # parse capabilities from dataModel (keep raw mask too)
         data_model = data.get("dataModel", {}) or {}
@@ -81,7 +88,6 @@ class Device:
 
         # build metadata with selected useful fields + raw dataModel
         metadata = {
-            "cuid": data.get("cuid"),
             "iot": data.get("iot"),
             "demo": data.get("demo"),
             "timeZone": data.get("timeZone"),
@@ -98,6 +104,7 @@ class Device:
 
         return Device(
             id=device_id,
+            cuid=cuid,
             name=name,
             device_type=device_type,
             model_id=model_id,
@@ -113,3 +120,40 @@ class Device:
             filters=filters,
             metadata=metadata,
         )
+
+    def update_from_mqtt(self, payload: str) -> None:
+        """Update the device state based on MQTT payload."""
+        logger = logging.getLogger(__name__)
+        try:
+            raw = json.loads(payload)
+        except json.JSONDecodeError:
+            logger.warning("Invalid MQTT payload for device %s: %s", self.id, payload)
+            return
+
+        data = raw[0]["dataModel"]
+
+        # Esempio: i messaggi MQTT contengono capability updates
+        state_changed = False
+
+        if "fan_speed" in data:
+            if self.state.fan_speed != data["fan_speed"]:
+                self.state.fan_speed = data["fan_speed"]
+                state_changed = True
+
+        if "fan_boost" in data:
+            if self.state.fan_boost != data["fan_boost"]:
+                self.state.fan_boost = data["fan_boost"]
+                state_changed = True
+
+        if "light_on" in data:
+            if self.state.light_on != data["light_on"]:
+                self.state.light_on = data["light_on"]
+                state_changed = True
+
+        if "96" in data:
+            if self.state.light_brightness != data["96"]:
+                self.state.light_brightness = data["96"]
+                state_changed = True
+
+        if state_changed:
+            logger.debug("Device %s updated from MQTT: %s", self.id, data)

@@ -4,9 +4,10 @@
   "version": "0.1.0",
   "codeowners": ["@ricfio"],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["mqtt"],
+  "after_dependencies": ["mqtt"],
   "documentation": "https://www.home-assistant.io/integrations/elica",
-  "iot_class": "cloud_polling",
+  "iot_class": "cloud_push",
   "quality_scale": "bronze",
   "requirements": []
 }
