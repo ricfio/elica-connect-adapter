@@ -82,7 +82,9 @@ class Hub(ConfigFlow, domain=DOMAIN):
             else:
                 # Create the config entry with the retrieved title
                 # The client itself will be created in async_setup_entry
-                return self.async_create_entry(title=info["title"], data=user_input)
+                return self.async_create_entry(
+                    title=user_input[CONF_USERNAME], data=user_input
+                )
 
         # Show the form to the user for username/password input
         return self.async_show_form(
