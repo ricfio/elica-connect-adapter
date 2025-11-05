@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+from homeassistant.components import mqtt
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -53,6 +54,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    mqtt_unsubscribes = hass.data.get(DOMAIN, {}).pop("mqtt_unsubscribes", [])
+    for unsubscribe in mqtt_unsubscribes:
+        if unsubscribe:
+            unsubscribe()
+
     # data = hass.data[DOMAIN].pop(entry.entry_id)
     # if (unsub := data.get("unsub_mqtt")):
     #     unsub()

@@ -125,10 +125,12 @@ class Device:
         """Update the device state based on MQTT payload."""
         logger = logging.getLogger(__name__)
         try:
-            data = json.loads(payload)
+            raw = json.loads(payload)
         except json.JSONDecodeError:
             logger.warning("Invalid MQTT payload for device %s: %s", self.id, payload)
             return
+
+        data = raw[0]["dataModel"]
 
         # Esempio: i messaggi MQTT contengono capability updates
         state_changed = False
@@ -148,9 +150,9 @@ class Device:
                 self.state.light_on = data["light_on"]
                 state_changed = True
 
-        if "light_brightness" in data:
-            if self.state.light_brightness != data["light_brightness"]:
-                self.state.light_brightness = data["light_brightness"]
+        if "96" in data:
+            if self.state.light_brightness != data["96"]:
+                self.state.light_brightness = data["96"]
                 state_changed = True
 
         if state_changed:

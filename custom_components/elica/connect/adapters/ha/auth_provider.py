@@ -48,7 +48,13 @@ class HaAuthProvider(AuthProviderBase):
         self._refresh_token = auth.get("refresh_token")
         self.hass.data["elica_auth"] = {
             "access_token": self._access_token,
+            "token_type": auth.get("token_type"),
             "refresh_token": self._refresh_token,
+            "expires_in": expires_in,
+            "scope": auth.get("scope"),
+            "mqtt_psw": auth.get("mqtt_psw"),
+            "mqtt_usr": auth.get("mqtt_usr"),
+            "jti": auth.get("jti"),
             "expires_at": self._expires_at,
         }
 
