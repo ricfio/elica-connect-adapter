@@ -42,7 +42,7 @@ class ElicaLight(CoordinatorEntity, LightEntity):
         self._attr_name = "Light"
         self._attr_unique_id = f"elica_{device.id}_light"
         self._attr_supported_color_modes = {ColorMode.BRIGHTNESS}
-        # self._attr_color_mode = ColorMode.BRIGHTNESS
+        self._attr_color_mode = ColorMode.BRIGHTNESS
 
     @property
     def _device(self) -> Device:

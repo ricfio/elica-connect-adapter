@@ -55,11 +55,19 @@ class AuthService:
             return await response.json()
 
     async def refresh_token(self, refresh_token: str) -> dict:
+        """Refresh token."""
         async with (
             aiohttp.ClientSession() as session,
             session.post(
-                f"{self.base_url}/refresh",
-                json={"refresh_token": refresh_token},
+                f"{self.base_url}/oauth/token",
+                data={
+                    "scope": "default",
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "app_uuid": self.app_uuid,
+                },
+                timeout=aiohttp.ClientTimeout(total=10),
+                headers=self._generate_headers(),
             ) as response,
         ):
             response.raise_for_status()

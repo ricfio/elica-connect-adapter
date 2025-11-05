@@ -62,25 +62,25 @@ class LocalAuthProvider(AuthProviderBase):
     # Public API
     # --------------------------------------------------
 
-    def get_auth(self) -> dict[str, Any] | None:
+    async def get_auth(self) -> dict[str, Any] | None:
         """Return authentication data."""
         return self._load_auth()
 
-    def authenticate_with_password(self, username: str, password: str) -> None:
+    async def authenticate_with_password(self, username: str, password: str) -> None:
         """Authenticate using username and password."""
-        auth = self.auth_service.login(username, password)
+        auth = await self.auth_service.login(username, password)
         self._access_token = auth["access_token"]
         self._refresh_token = auth["refresh_token"]
         self._save_auth(auth)
 
-    def get_access_token(self) -> str | None:
+    async def get_access_token(self) -> str | None:
         """Return a valid access token, refreshing if possible."""
         if not self._access_token:
             return None
 
         if self._is_expiring():
             if self._refresh_token:
-                new_token = self.refresh_access_token()
+                new_token = await self.refresh_access_token()
                 if new_token:
                     return new_token
             return None
@@ -95,11 +95,11 @@ class LocalAuthProvider(AuthProviderBase):
         """Authenticate using an existing access token."""
         self._access_token = access_token
 
-    def refresh_access_token(self) -> str | None:
+    async def refresh_access_token(self) -> str | None:
         """Refresh the access token using the refresh token if available."""
         if not self._refresh_token:
             return None
 
-        auth = self.auth_service.refresh_token(self._refresh_token)
+        auth = await self.auth_service.refresh_token(self._refresh_token)
         self._save_auth(auth)
         return self._access_token

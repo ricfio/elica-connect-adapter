@@ -1,6 +1,8 @@
 """Device."""
 
 from dataclasses import dataclass, field
+import json
+import logging
 from typing import Any
 
 from .capabilities import Capability
@@ -118,3 +120,38 @@ class Device:
             filters=filters,
             metadata=metadata,
         )
+
+    def update_from_mqtt(self, payload: str) -> None:
+        """Update the device state based on MQTT payload."""
+        logger = logging.getLogger(__name__)
+        try:
+            data = json.loads(payload)
+        except json.JSONDecodeError:
+            logger.warning("Invalid MQTT payload for device %s: %s", self.id, payload)
+            return
+
+        # Esempio: i messaggi MQTT contengono capability updates
+        state_changed = False
+
+        if "fan_speed" in data:
+            if self.state.fan_speed != data["fan_speed"]:
+                self.state.fan_speed = data["fan_speed"]
+                state_changed = True
+
+        if "fan_boost" in data:
+            if self.state.fan_boost != data["fan_boost"]:
+                self.state.fan_boost = data["fan_boost"]
+                state_changed = True
+
+        if "light_on" in data:
+            if self.state.light_on != data["light_on"]:
+                self.state.light_on = data["light_on"]
+                state_changed = True
+
+        if "light_brightness" in data:
+            if self.state.light_brightness != data["light_brightness"]:
+                self.state.light_brightness = data["light_brightness"]
+                state_changed = True
+
+        if state_changed:
+            logger.debug("Device %s updated from MQTT: %s", self.id, data)

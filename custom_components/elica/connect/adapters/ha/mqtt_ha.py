@@ -45,6 +45,10 @@ class HaMqttClient:
         on_message: Callable[[str, Any], None],
     ) -> None:
         """Subscribe to devices and dispatch messages using HA MQTT bus."""
+        if "mqtt" not in self.hass.data:
+            self.logger.warning("MQTT integration not loaded")
+            return
+
         if not mqtt.is_connected(self.hass):
             self.logger.warning("MQTT is not connected in Home Assistant")
             return

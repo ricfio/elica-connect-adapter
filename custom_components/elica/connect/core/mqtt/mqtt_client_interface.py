@@ -1,6 +1,7 @@
 """Interface for MQTT clients."""
 
-from typing import Any, Callable, Protocol
+from collections.abc import Callable
+from typing import Any, Protocol
 
 
 class MqttClientInterface(Protocol):
@@ -17,12 +18,12 @@ class MqttClientInterface(Protocol):
     ) -> None:
         """Configure the MQTT client with connection parameters."""
 
-    def listen(
+    async def listen(
         self,
         devices: list[str],
         on_message: Callable[[str, Any], None],
     ) -> None:
         """Connect and subscribe to devices. Messages trigger on_message callback."""
 
-    def stop(self) -> None:
+    async def stop(self) -> None:
         """Stop listening and disconnect."""

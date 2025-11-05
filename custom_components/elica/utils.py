@@ -28,6 +28,6 @@ def create_controller(hass: HomeAssistant, username: str, password: str):
     return Controller(
         auth_provider=auth_provider,
         rest_client=rest_client,
-        # mqtt_client=mqtt_client,
+        mqtt_client=mqtt_client,
         command_timeout=30000,
     )

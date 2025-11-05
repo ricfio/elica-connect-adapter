@@ -63,7 +63,7 @@ class HaAuthProvider(AuthProviderBase):
     # Public API
     # --------------------------------------------------
 
-    def get_auth(self) -> dict[str, Any] | None:
+    async def get_auth(self) -> dict[str, Any] | None:
         return self._load_auth()
 
     async def authenticate_with_password(self, username: str, password: str) -> None:
