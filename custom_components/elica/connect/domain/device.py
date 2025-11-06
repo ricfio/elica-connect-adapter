@@ -47,7 +47,7 @@ class Device:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
-    def from_json(data: dict[str, Any]) -> "Device":
+    def create_from_json(data: dict[str, Any]) -> "Device":
         """Create ElicaDevice from API JSON. Keep core fields and save metadata."""
         # core fields
         device_id = data["id"]
@@ -135,24 +135,19 @@ class Device:
         # Esempio: i messaggi MQTT contengono capability updates
         state_changed = False
 
-        if "fan_speed" in data:
-            if self.state.fan_speed != data["fan_speed"]:
-                self.state.fan_speed = data["fan_speed"]
+        if Capability.FAN_SPEED in data:
+            if self.state.fan_speed != data[Capability.FAN_SPEED]:
+                self.state.fan_speed = data[Capability.FAN_SPEED]
                 state_changed = True
 
-        if "fan_boost" in data:
-            if self.state.fan_boost != data["fan_boost"]:
-                self.state.fan_boost = data["fan_boost"]
-                state_changed = True
+        # if Capability.FAN_BOOST in data:
+        #     if self.state.fan_boost != data[Capability.FAN_BOOST]:
+        #         self.state.fan_boost = data[Capability.FAN_BOOST]
+        #         state_changed = True
 
-        if "light_on" in data:
-            if self.state.light_on != data["light_on"]:
-                self.state.light_on = data["light_on"]
-                state_changed = True
-
-        if "96" in data:
-            if self.state.light_brightness != data["96"]:
-                self.state.light_brightness = data["96"]
+        if Capability.LIGHT_BRIGHTNESS in data:
+            if self.state.light_brightness != data[Capability.LIGHT_BRIGHTNESS]:
+                self.state.light_brightness = data[Capability.LIGHT_BRIGHTNESS]
                 state_changed = True
 
         if state_changed:

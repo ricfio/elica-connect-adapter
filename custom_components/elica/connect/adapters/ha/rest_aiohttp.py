@@ -9,11 +9,17 @@ from aiohttp import ClientTimeout
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from ...interfaces import RestClientInterface  # noqa: TID252
 
-class AioHttpRestClient:
+
+class AioHttpRestClient(RestClientInterface):
     """Asynchronous REST API client using Home Assistant's aiohttp session."""
 
-    def __init__(self, hass: HomeAssistant, base_url: str, timeout: float = 10.0):
+    def __init__(
+        self, hass: HomeAssistant, base_url: str, timeout: float = 10.0
+    ) -> None:
+        """Initialize REST client."""
+        super().__init__()
         self.hass = hass
         self.base_url = base_url.rstrip("/")
         self.session = async_get_clientsession(hass)

@@ -1,26 +1,25 @@
 """MQTT Subscriber AioMqtt."""
 
 import asyncio
-from collections.abc import Awaitable, Callable
 import contextlib
 import logging
-from typing import Any
 
 from aiomqtt import Client, MqttError
 
+from ...interfaces import MqttClientInterface, OnMqttMessageCallback  # noqa: TID252
+
 logger = logging.getLogger(__name__)
 
-OnMqttMessage = Callable[[str, Any], None | Awaitable[None]]
 
-
-class MqttSubscriberAiomqtt:
+class MqttClientAiomqtt(MqttClientInterface):
     """MQTT Subscriber AioMqtt."""
 
     def __init__(self) -> None:
         """Initialize the MQTT subscriber."""
+        super().__init__()
         self._client: Client | None = None
         self._topics: list[str] = []
-        self._on_message: OnMqttMessage | None = None
+        self._on_message: OnMqttMessageCallback | None = None
         self._task: asyncio.Task | None = None
         self._running: bool = False
 
@@ -48,7 +47,7 @@ class MqttSubscriberAiomqtt:
     async def start(
         self,
         topics: list[str],
-        on_message: OnMqttMessage,
+        on_message: OnMqttMessageCallback,
     ) -> None:
         """Start the subscription and message handling loop."""
         self._topics = topics

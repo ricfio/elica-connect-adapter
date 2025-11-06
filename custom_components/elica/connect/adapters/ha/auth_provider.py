@@ -23,7 +23,8 @@ class HaAuthProvider(AuthProviderBase):
         auth_service: AuthService,
         username: str,
         password: str,
-    ):
+    ) -> None:
+        """Initialize the authentication provider."""
         super().__init__(auth_service, username, password)
         self.hass = hass
         self._access_token: str | None = None
@@ -109,6 +110,7 @@ class HaAuthProvider(AuthProviderBase):
         return self._access_token
 
     async def get_refresh_token(self) -> str | None:
+        """Return a valid refresh token."""
         return self._refresh_token
 
     async def authenticate_with_token(self, access_token: str) -> None:
