@@ -15,8 +15,11 @@ from ..core.constants import (  # noqa: TID252
     MQTT_TOPIC_FORMAT,
 )
 from ..domain import Capability, Device  # noqa: TID252
-from ..interfaces import RestClientInterface  # noqa: TID252
-from ..interfaces.mqtt_client_interface import OnMqttMessageCallback  # noqa: TID252
+from ..interfaces import (  # noqa: TID252
+    RestClientInterface,
+    MqttClientInterface,
+    OnMqttMessageCallback,
+)
 from .auth import AuthProviderBase
 
 P = ParamSpec("P")
@@ -55,6 +58,7 @@ class Controller:
         self,
         auth_provider: AuthProviderBase,
         rest_client: RestClientInterface,
+        mqtt_client: MqttClientInterface,
         command_timeout: int = 30000,
     ) -> None:
         """Initialize controller."""
@@ -166,6 +170,26 @@ class Controller:
         if not boost:
             capabilities[Capability.FAN_SPEED] = speed
         return capabilities
+
+    async def get_aimatic_state(self, device_id: str) -> bool:
+        """Return the AIMatic state for the device."""
+        device = await self.get_device(device_id)
+        return device.state.aimatic
+
+    async def get_fan_speed(self, device_id: str) -> int:
+        """Return the fan speed for the device."""
+        device = await self.get_device(device_id)
+        return device.state.fan_speed
+
+    async def get_fan_boot(self, device_id: str) -> bool:
+        """Return the fan boost state for the device."""
+        device = await self.get_device(device_id)
+        return device.state.fan_boost
+
+    async def get_light_brightness(self, device_id: str) -> int:
+        """Return the light brightness for the device."""
+        device = await self.get_device(device_id)
+        return device.state.light_brightness
 
     async def set_fan_mode(
         self,

@@ -5,7 +5,6 @@
   "codeowners": ["@ricfio"],
   "config_flow": true,
   "dependencies": ["mqtt"],
-  "after_dependencies": ["mqtt"],
   "documentation": "https://www.home-assistant.io/integrations/elica",
   "iot_class": "cloud_push",
   "quality_scale": "bronze",

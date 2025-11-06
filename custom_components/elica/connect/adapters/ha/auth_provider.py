@@ -31,7 +31,7 @@ class HaAuthProvider(AuthProviderBase):
         self._refresh_token: str | None = None
         self._expires_at: float = 0
 
-        # Cache dei token in memoria (evita accesso a disco)
+        # Initialize hass.data
         hass.data.setdefault("elica_auth", {})
 
     # --------------------------------------------------

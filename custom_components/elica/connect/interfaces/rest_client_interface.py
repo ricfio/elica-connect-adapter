@@ -11,17 +11,7 @@ class RestClientInterface(Protocol):
         path: str,
         headers: dict | None = None,
     ) -> Any:
-        """Perform a GET request and return parsed JSON response.
-
-        Args:
-            path: API endpoint relative to base_url.
-
-        Returns:
-            Parsed JSON response.
-
-        Raises:
-            requests.HTTPError: On non-successful HTTP status.
-        """
+        """Perform a GET request and return parsed JSON response."""
 
     def post(
         self,
@@ -30,15 +20,4 @@ class RestClientInterface(Protocol):
         json: Any = None,
         headers: dict | None = None,
     ) -> Any:
-        """Perform a POST request and return parsed JSON response.
-
-        Args:
-            path: API endpoint relative to base_url.
-            data: Optional form-encoded body.
-
-        Returns:
-            Parsed JSON response.
-
-        Raises:
-            requests.HTTPError: On non-successful HTTP status.
-        """
+        """Perform a POST request and return parsed JSON response."""

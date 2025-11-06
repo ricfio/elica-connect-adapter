@@ -27,12 +27,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     controller = create_controller(hass, entry.data["username"], entry.data["password"])
 
-    # Effettuiamo il login con username/password dell'entry
     await controller.login()
 
     if not await controller.is_logged_in():
         _LOGGER.error(
-            "Elica Connect: login fallito per utente %s", entry.data["username"]
+            "Authentication failed for user %s", entry.data["username"]
         )
         return False
 
@@ -44,7 +43,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     domain_data[entry.entry_id] = {
         "controller": controller,
         "coordinator": coordinator,
-        "unsub_mqtt": None,
     }
 
     # Setup all the platforms (es. light, fan, switch, etc.)
@@ -59,9 +57,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if unsubscribe:
             unsubscribe()
 
-    # data = hass.data[DOMAIN].pop(entry.entry_id)
-    # if (unsub := data.get("unsub_mqtt")):
-    #     unsub()
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
