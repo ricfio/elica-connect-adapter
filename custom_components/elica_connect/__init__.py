@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.components import mqtt
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
-from .coordinator import ElicaDataUpdateCoordinator
+from .coordinator import ElicaConnectCoordinator
 from .utils import create_controller
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,20 +21,27 @@ PLATFORMS: list[Platform] = [
 ]
 
 
+async def async_setup(hass: HomeAssistant, config: dict):
+    """Set up the Elica Connect integration (YAML)."""
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Elica Connect from a config entry."""
 
     controller = create_controller(hass, entry.data["username"], entry.data["password"])
 
-    await controller.login()
-
-    if not await controller.is_logged_in():
-        _LOGGER.error(
-            "Authentication failed for user %s", entry.data["username"]
-        )
+    try:
+        await controller.login()
+    except Exception as err:
+        _LOGGER.exception("Failed to initialize Elica controller: %s", err)
         return False
 
-    coordinator = ElicaDataUpdateCoordinator(hass, controller)
+    if not await controller.is_logged_in():
+        _LOGGER.error("Authentication failed")
+        return False
+
+    coordinator = ElicaConnectCoordinator(hass, controller)
     await coordinator.async_config_entry_first_refresh()
 
     # Cache client and devices

@@ -1,21 +1,20 @@
 """Support for Elica lights."""
 
+from elica_connect_api.core import Controller
+from elica_connect_api.domain import Capability, Device
 from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .connect.core import Controller
-from .connect.domain import Capability, Device
 from .const import DOMAIN
-from .coordinator import ElicaDataUpdateCoordinator
+from .coordinator import ElicaConnectCoordinator
+from .entity import BaseEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     """Setup light entities."""
     entry_data = hass.data[DOMAIN][entry.entry_id]
     controller: Controller = entry_data["controller"]
-    coordinator: ElicaDataUpdateCoordinator = entry_data["coordinator"]
+    coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
     entities = [
         ElicaLight(controller, coordinator, device)
         for device in coordinator.data["devices"].values()
@@ -24,17 +23,17 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class ElicaLight(CoordinatorEntity, LightEntity):
+class ElicaLight(BaseEntity, LightEntity):
     """Representation of an Elica light."""
 
     def __init__(
         self,
         controller: Controller,
-        coordinator: ElicaDataUpdateCoordinator,
+        coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
         """Initialize the light."""
-        CoordinatorEntity.__init__(self, coordinator)
+        BaseEntity.__init__(self, coordinator, device)
         LightEntity.__init__(self)
         self.coordinator = coordinator
         self._controller = controller
@@ -43,23 +42,6 @@ class ElicaLight(CoordinatorEntity, LightEntity):
         self._attr_unique_id = f"elica_{device.id}_light"
         self._attr_supported_color_modes = {ColorMode.BRIGHTNESS}
         self._attr_color_mode = ColorMode.BRIGHTNESS
-
-    @property
-    def _device(self) -> Device:
-        return self.coordinator.get_device(self._device_id)
-
-    @property
-    def device_info(self) -> DeviceInfo:  # noqa: D102
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._device.id)},
-            manufacturer=self._device.manufacturer,
-            model=self._device.model,
-            model_id=self._device.model_id,
-            name=self._device.name,
-            serial_number=self._device.serial_number,
-            sw_version=self._device.sw_version,
-            # via_device=(DOMAIN, self._device.id),
-        )
 
     @property
     def is_on(self) -> bool:

@@ -2,22 +2,21 @@
 
 from __future__ import annotations
 
+from elica_connect_api.core import Controller
+from elica_connect_api.domain import Capability, Device
 from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .connect.core import Controller
-from .connect.domain import Capability, Device
 from .const import DOMAIN
-from .coordinator import ElicaDataUpdateCoordinator
+from .coordinator import ElicaConnectCoordinator
+from .entity import BaseEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     """Setup fan entities."""
     entry_data = hass.data[DOMAIN][entry.entry_id]
     controller: Controller = entry_data["controller"]
-    coordinator: ElicaDataUpdateCoordinator = entry_data["coordinator"]
+    coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
     entities = [
         ElicaFan(controller, coordinator, device)
         for device in coordinator.data["devices"].values()
@@ -26,8 +25,8 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class ElicaFan(CoordinatorEntity, FanEntity):
-    """Representation of an Elica fan."""
+class ElicaFan(BaseEntity, FanEntity):
+    """Representation of Elica hood fan."""
 
     _attr_supported_features = (
         FanEntityFeature.SET_SPEED
@@ -39,43 +38,31 @@ class ElicaFan(CoordinatorEntity, FanEntity):
     def __init__(
         self,
         controller: Controller,
-        coordinator: ElicaDataUpdateCoordinator,
+        coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
         """Initialize the fan entity."""
-        CoordinatorEntity.__init__(self, coordinator)
+        super().__init__(coordinator, device)
+
+        BaseEntity.__init__(self, coordinator, device)
         FanEntity.__init__(self)
-        self._controller = controller
+
         self.coordinator = coordinator
+        self._controller = controller
         self._device_id = device.id
-        self._attr_name = "Fan"
         self._attr_unique_id = f"elica_{device.id}_fan"
+        self._attr_name = "Fan"
         self._attr_icon = "mdi:fan"
 
     @property
-    def _device(self) -> Device:
-        return self.coordinator.get_device(self._device_id)
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._device.id)},
-            manufacturer=self._device.manufacturer,
-            model=self._device.model,
-            model_id=self._device.model_id,
-            name=self._device.name,
-            serial_number=self._device.serial_number,
-            sw_version=self._device.sw_version,
-        )
-
-    @property
     def is_on(self) -> bool:
+        """Return true if fan is on."""
         return self._device.state.fan_on
 
     @property
     def percentage(self) -> int:
         """Return fan speed as percentage (0-100)."""
-        speed = self._device.state.fan_speed or 1
+        speed = self._device.state.fan_speed
         return round((speed / self._attr_speed_count) * 100)
 
     async def async_turn_on(

@@ -4,11 +4,11 @@ from datetime import timedelta
 import logging
 from typing import Any
 
+from elica_connect_api.core import Controller
+from elica_connect_api.domain import Device
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .connect.core import Controller
-from .connect.domain import Device
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=60)
 
 
-class ElicaDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Data Update Coordinator for Elica.
 
     self.data: dict with key "devices", value dict[str, Device]

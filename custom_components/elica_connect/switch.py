@@ -1,21 +1,21 @@
 """Support for Elica switches."""
 
+from elica_connect_api.core import Controller
+from elica_connect_api.domain import Capability, Device
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .connect.core import Controller
-from .connect.domain import Capability, Device
 from .const import DOMAIN
-from .coordinator import ElicaDataUpdateCoordinator
+from .coordinator import ElicaConnectCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     """Set up switch entities."""
     entry_data = hass.data[DOMAIN][entry.entry_id]
     controller: Controller = entry_data["controller"]
-    coordinator: ElicaDataUpdateCoordinator = entry_data["coordinator"]
+    coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
     entities = [
         ElicaAIMaticSwitch(controller, coordinator, device)
         for device in coordinator.data["devices"].values()
@@ -30,7 +30,7 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
     def __init__(
         self,
         controller: Controller,
-        coordinator: ElicaDataUpdateCoordinator,
+        coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
         """Initialize the switch."""
