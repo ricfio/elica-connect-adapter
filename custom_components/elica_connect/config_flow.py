@@ -80,7 +80,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
 
 class ElicaConnectConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle the configuration flow for Elica Connect."""
+    """Handle the Configuration flow."""
 
     VERSION = 1
 

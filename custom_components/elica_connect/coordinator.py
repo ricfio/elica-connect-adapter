@@ -32,6 +32,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self.controller = controller
         self._mqtt_started = False
+        self.data = {"devices": {}}
 
     def get_device(self, device_id: str) -> Device:
         """Return a device by id, or raise if not found."""
@@ -44,11 +45,32 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Fetch latest devices and their states."""
         try:
             devices = await self.controller.get_devices()
+            # Start MQTT listener if not started
             if not self._mqtt_started:
-                # await self.async_start_mqtt_listener(devices)
                 self._mqtt_started = True
 
-                await self.controller.listen(self._async_update_from_mqtt)
+                # Log which device CUIDs we will listen for (if available)
+                cuids = [getattr(d, "cuid", None) for d in devices]
+                _LOGGER.debug("Starting MQTT listener for cuids: %s", cuids)
+
+                async def _mqtt_logging_wrapper(topic: str, payload: str) -> None:
+                    try:
+                        # Log incoming message (truncate large payloads)
+                        display_payload = payload
+                        try:
+                            if isinstance(payload, (str, bytes)) and len(str(payload)) > 1024:
+                                display_payload = str(payload)[:1024] + "...(truncated)"
+                        except Exception:
+                            display_payload = "<unserializable>"
+
+                        _LOGGER.info("MQTT message received: %s - %s", topic, display_payload)
+                        # Delegate to coordinator handler
+                        await self._async_update_from_mqtt(topic, payload)
+                    except Exception:
+                        _LOGGER.exception("Error while processing MQTT message for topic %s", topic)
+
+                await self.controller.listen(_mqtt_logging_wrapper)
+
             return {
                 "devices": {device.id: device for device in devices},
             }
