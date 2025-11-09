@@ -27,10 +27,12 @@ async def async_setup(hass: HomeAssistant, config: dict):
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up Elica Connect from a config entry."""
 
-    controller = create_controller(hass, entry.data["username"], entry.data["password"])
+    controller = create_controller(
+        hass, config_entry.data["username"], config_entry.data["password"]
+    )
 
     try:
         await controller.login()
@@ -42,18 +44,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Authentication failed")
         return False
 
-    coordinator = ElicaConnectCoordinator(hass, controller)
+    coordinator = ElicaConnectCoordinator(hass, controller, config_entry)
     await coordinator.async_config_entry_first_refresh()
 
     # Cache client and devices
     domain_data = hass.data.setdefault(DOMAIN, {})
-    domain_data[entry.entry_id] = {
+    domain_data[config_entry.entry_id] = {
         "controller": controller,
         "coordinator": coordinator,
     }
 
     # Setup all the platforms (es. light, fan, switch, etc.)
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     return True
 
 

@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
-from .entity import BaseEntity
+from .entity import ElicaDeviceEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
@@ -23,7 +23,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class ElicaLight(BaseEntity, LightEntity):
+class ElicaLight(ElicaDeviceEntity, LightEntity):
     """Representation of an Elica light."""
 
     def __init__(
@@ -33,7 +33,7 @@ class ElicaLight(BaseEntity, LightEntity):
         device: Device,
     ) -> None:
         """Initialize the light."""
-        BaseEntity.__init__(self, coordinator, device)
+        ElicaDeviceEntity.__init__(self, coordinator, device.id)
         LightEntity.__init__(self)
         self.coordinator = coordinator
         self._controller = controller
@@ -46,18 +46,18 @@ class ElicaLight(BaseEntity, LightEntity):
     @property
     def is_on(self) -> bool:
         """Return true if light is on."""
-        return self._device.state.light_on
+        return self.device.state.light_on
 
     @property
     def brightness(self) -> int | None:
         """Return the brightness of this light between 0..255."""
-        return round((self._device.state.light_brightness / 100) * 255)
+        return round((self.device.state.light_brightness / 100) * 255)
 
     async def async_turn_on(self, **kwargs) -> None:  # noqa: D102
         brightness = kwargs.get("brightness", self._attr_brightness) or 255
         brightness_pct = round((brightness / 255) * 100)
         accepted = await self._controller.set_light_brightness(
-            self._device.id,
+            self.device.id,
             brightness_pct,
         )
         if accepted:
@@ -66,7 +66,7 @@ class ElicaLight(BaseEntity, LightEntity):
 
     async def async_turn_off(self, **kwargs) -> None:  # noqa: D102
         accepted = await self._controller.toggle_light(
-            self._device.id,
+            self.device.id,
             False,
         )
         if accepted:

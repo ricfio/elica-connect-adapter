@@ -151,11 +151,15 @@ class ElicaConnectOptionsFlow(OptionsFlow):
 
         options = {
             vol.Optional(
-                "scan_interval",
+                "Scan Interval",
                 default=self.config_entry.options.get("scan_interval", 60),
             ): vol.All(vol.Coerce(int), vol.Range(min=30, max=300)),
             vol.Optional(
-                "enable_debug",
+                "Enable MQTT subscription",
+                default=self.config_entry.options.get("enable_mqtt", False),
+            ): bool,
+            vol.Optional(
+                "Enable Debug mode",
                 default=self.config_entry.options.get("enable_debug", False),
             ): bool,
         }

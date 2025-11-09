@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
-from .entity import BaseEntity
+from .entity import ElicaDeviceEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class ElicaFan(BaseEntity, FanEntity):
+class ElicaFan(ElicaDeviceEntity, FanEntity):
     """Representation of Elica hood fan."""
 
     _attr_supported_features = (
@@ -42,10 +42,7 @@ class ElicaFan(BaseEntity, FanEntity):
         device: Device,
     ) -> None:
         """Initialize the fan entity."""
-        super().__init__(coordinator, device)
-
-        BaseEntity.__init__(self, coordinator, device)
-        FanEntity.__init__(self)
+        super().__init__(coordinator, device.id)
 
         self.coordinator = coordinator
         self._controller = controller
@@ -57,12 +54,12 @@ class ElicaFan(BaseEntity, FanEntity):
     @property
     def is_on(self) -> bool:
         """Return true if fan is on."""
-        return self._device.state.fan_on
+        return self.device.state.fan_on
 
     @property
     def percentage(self) -> int:
         """Return fan speed as percentage (0-100)."""
-        speed = self._device.state.fan_speed
+        speed = self.device.state.fan_speed
         return round((speed / self._attr_speed_count) * 100)
 
     async def async_turn_on(
@@ -92,7 +89,7 @@ class ElicaFan(BaseEntity, FanEntity):
 
     async def _set_fan_mode(self, percentage: int):
         speed = self._calculate_speed(percentage)
-        device = self._device
+        device = self.device
         intensive = device.state.fan_boost
         aimatic = device.state.aimatic
         await self._controller.set_fan_mode(

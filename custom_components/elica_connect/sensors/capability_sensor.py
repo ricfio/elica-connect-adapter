@@ -1,4 +1,5 @@
 """Capability sensors for Elica Connect devices."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -17,14 +18,15 @@ except ImportError:
         DEVICE_CLASS_TIMESTAMP,
         SensorStateClass,
     )
-    
+
     class SensorDeviceClass:
         """Mock for older HA versions."""
+
         TIMESTAMP = DEVICE_CLASS_TIMESTAMP
 
 
 try:
-    # Newer HA versions 
+    # Newer HA versions
     from homeassistant.const import PERCENTAGE
 except ImportError:
     # Use local constant
@@ -34,12 +36,15 @@ try:
     from homeassistant.helpers.entity import EntityCategory
 except ImportError:
     from enum import Enum
+
     class EntityCategory(str, Enum):
         """Mock for older HA versions."""
+
         DIAGNOSTIC = "diagnostic"
 
-from .base_sensor import BaseSensor
-from .coordinator import ElicaConnectCoordinator
+
+from .base_sensors import BaseSensor
+from ..coordinator import ElicaConnectCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +52,7 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass
 class CapabilitySensorDefinition:
     """Definition for a device capability sensor."""
+
     name: str
     icon: str
     device_class: SensorDeviceClass | None = None
