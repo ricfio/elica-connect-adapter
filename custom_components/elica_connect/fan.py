@@ -42,12 +42,12 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         device: Device,
     ) -> None:
         """Initialize the fan entity."""
-        super().__init__(coordinator, device.id)
+        super().__init__(coordinator, device.uid)
 
         self.coordinator = coordinator
         self._controller = controller
-        self._device_id = device.id
-        self._attr_unique_id = f"elica_{device.id}_fan"
+        self._device_id = device.uid
+        self._attr_unique_id = f"elica_{device.uid}_fan"
         self._attr_name = "Fan"
         self._attr_icon = "mdi:fan"
 
@@ -93,7 +93,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         intensive = device.state.fan_boost
         aimatic = device.state.aimatic
         await self._controller.set_fan_mode(
-            device.id, aimatic, min(speed, 3), intensive
+            device.uid, aimatic, min(speed, 3), intensive
         )
 
     def _calculate_speed(self, percentage: int) -> int:

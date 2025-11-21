@@ -22,7 +22,7 @@ class ElicaDeviceEntity(CoordinatorEntity[ElicaConnectCoordinator]):
 
         device = self.device
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, device.id)},
+            identifiers={(DOMAIN, device.uid)},
             name=device.name,
             manufacturer=device.manufacturer,
             model=device.model,

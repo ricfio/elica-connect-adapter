@@ -6,45 +6,12 @@ from dataclasses import dataclass
 import logging
 from typing import Final
 
-try:
-    # HA 2023.8 and newer
-    from homeassistant.components.sensor import (
-        SensorDeviceClass,
-        SensorStateClass,
-    )
-except ImportError:
-    # Older HA versions fallback
-    from homeassistant.components.sensor import (
-        DEVICE_CLASS_TIMESTAMP,
-        SensorStateClass,
-    )
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
+from homeassistant.const import PERCENTAGE
+from homeassistant.helpers.entity import EntityCategory
 
-    class SensorDeviceClass:
-        """Mock for older HA versions."""
-
-        TIMESTAMP = DEVICE_CLASS_TIMESTAMP
-
-
-try:
-    # Newer HA versions
-    from homeassistant.const import PERCENTAGE
-except ImportError:
-    # Use local constant
-    PERCENTAGE = "%"
-
-try:
-    from homeassistant.helpers.entity import EntityCategory
-except ImportError:
-    from enum import Enum
-
-    class EntityCategory(str, Enum):
-        """Mock for older HA versions."""
-
-        DIAGNOSTIC = "diagnostic"
-
-
-from .base_sensors import BaseSensor
 from ..coordinator import ElicaConnectCoordinator
+from .base_sensors import BaseSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,7 +41,8 @@ CAPABILITY_SENSORS: Final = {
         name="Fan Mode",
         icon="mdi:fan",
         state_class=SensorStateClass.MEASUREMENT,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        # entity_category=EntityCategory.DIAGNOSTIC,
+        # entity_category=EntityCategory.CONFIG,
     ),
     "110": CapabilitySensorDefinition(
         name="Fan Speed",
@@ -91,7 +59,7 @@ class CapabilitySensor(BaseSensor):
         self,
         coordinator: ElicaConnectCoordinator,
         device_id: str,
-        key: str | int,
+        key: str,
         name: str,
         icon: str | None = None,
         device_class: SensorDeviceClass | None = None,
@@ -103,7 +71,6 @@ class CapabilitySensor(BaseSensor):
         super().__init__(
             coordinator=coordinator,
             device_id=device_id,
-            key=str(key),  # Convert to string for consistency
             name=name,
             icon=icon,
             device_class=device_class,
@@ -111,21 +78,20 @@ class CapabilitySensor(BaseSensor):
             native_unit=native_unit,
             entity_category=entity_category,
         )
+        self._key = key
 
     @property
     def native_value(self) -> int | float | None:
         """Return the sensor value."""
-        device = self.coordinator.get_device(self._device_id)
-        if not hasattr(device, "dataModel"):
-            return None
-        return device.dataModel.get(self._key)
+        device = self.coordinator.get_device(self.device_id)
+        return device.data_model.get(self._key)
 
     @property
     def extra_state_attributes(self) -> dict:
         """Return additional state attributes."""
         return {
-            "last_update": self.coordinator.last_update_success.isoformat()
-            if self.coordinator.last_update_success
-            else None,
+            # "last_update": self.coordinator.last_update_success.isoformat()
+            # if self.coordinator.last_update_success
+            # else None,
             "capability_id": self._key,
         }

@@ -33,13 +33,13 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
         device: Device,
     ) -> None:
         """Initialize the light."""
-        ElicaDeviceEntity.__init__(self, coordinator, device.id)
+        ElicaDeviceEntity.__init__(self, coordinator, device.uid)
         LightEntity.__init__(self)
         self.coordinator = coordinator
         self._controller = controller
-        self._device_id = device.id
+        self._device_id = device.uid
         self._attr_name = "Light"
-        self._attr_unique_id = f"elica_{device.id}_light"
+        self._attr_unique_id = f"elica_{device.uid}_light"
         self._attr_supported_color_modes = {ColorMode.BRIGHTNESS}
         self._attr_color_mode = ColorMode.BRIGHTNESS
 
@@ -57,7 +57,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
         brightness = kwargs.get("brightness", self._attr_brightness) or 255
         brightness_pct = round((brightness / 255) * 100)
         accepted = await self._controller.set_light_brightness(
-            self.device.id,
+            self.device.uid,
             brightness_pct,
         )
         if accepted:
@@ -66,7 +66,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
 
     async def async_turn_off(self, **kwargs) -> None:  # noqa: D102
         accepted = await self._controller.toggle_light(
-            self.device.id,
+            self.device.uid,
             False,
         )
         if accepted:

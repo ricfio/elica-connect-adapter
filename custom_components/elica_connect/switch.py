@@ -38,9 +38,9 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
         SwitchEntity.__init__(self)
         self.coordinator = coordinator
         self._controller = controller
-        self._device_id = device.id
+        self._device_id = device.uid
         self._attr_name = "AIMatic"
-        self._attr_unique_id = f"elica_{device.id}_aimatic"
+        self._attr_unique_id = f"elica_{device.uid}_aimatic"
         self._attr_icon = "mdi:fan"
 
     @property
@@ -50,14 +50,14 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def device_info(self) -> DeviceInfo:  # noqa: D102
         return DeviceInfo(
-            identifiers={(DOMAIN, self._device.id)},  # chiave unica del device
+            identifiers={(DOMAIN, self._device.uid)},  # chiave unica del device
             manufacturer=self._device.manufacturer,
             model=self._device.model,
             model_id=self._device.model_id,
             name=self._device.name,
             serial_number=self._device.serial_number,
             sw_version=self._device.sw_version,
-            # via_device=(DOMAIN, self._device.id),
+            # via_device=(DOMAIN, self._device.uid),
         )
 
     @property
@@ -76,7 +76,7 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle AIMatic mode."""
         await self._controller.toggle_aimatic(
-            self._device.id,
+            self._device.uid,
             enable,
         )
         await self.coordinator.async_request_refresh()

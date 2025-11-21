@@ -70,7 +70,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "Received devices from controller: %s",
                 [
                     {
-                        "id": d.id,
+                        "id": d.uid,
                         "name": d.name,
                         "dataModel": getattr(d, "dataModel", {})
                         if hasattr(d, "dataModel")
@@ -129,7 +129,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise UpdateFailed(f"Error while fetching devices: {err}") from err
         else:
             # Update devices while preserving mqtt_stats
-            self.data["devices"] = {device.id: device for device in devices}
+            self.data["devices"] = {device.uid: device for device in devices}
             return self.data
 
     async def _mqtt_connection_changed(self, connected: bool) -> None:
@@ -196,7 +196,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         # Store raw dataModel values on device
                         if not hasattr(device, "dataModel"):
                             _LOGGER.info(
-                                "Initializing dataModel for device %s", device.id
+                                "Initializing dataModel for device %s", device.uid
                             )
                             setattr(device, "dataModel", {})
 
@@ -206,13 +206,13 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         )
                         _LOGGER.debug(
                             "Updated device %s dataModel: %s",
-                            device.id,
+                            device.uid,
                             device.dataModel,
                         )
                     else:
                         _LOGGER.warning(
                             "No dataModel found in MQTT message for device %s. Message: %s",
-                            device.id,
+                            device.uid,
                             data[0],
                         )
 

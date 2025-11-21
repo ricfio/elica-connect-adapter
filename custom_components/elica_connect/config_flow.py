@@ -60,7 +60,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     devices_entries = await controller.get_devices()
     devices = [
         {
-            "id": device.id,
+            "uid": device.uid,
             "name": device.name,
             "manufacturer": "Elica",
             "model": getattr(device, "model", None),
