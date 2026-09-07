@@ -9,5 +9,7 @@
   "issue_tracker": "https://github.com/ricfio/elica-connect-ha/issues",
   "iot_class": "cloud_push",
   "quality_scale": "bronze",
-  "requirements": []
+  "requirements": [
+    "aiomqtt>=2.0.0"
+  ]
 }
