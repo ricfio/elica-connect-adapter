@@ -132,15 +132,11 @@ class ElicaConnectConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> ElicaConnectOptionsFlow:
         """Get the options flow for this handler."""
-        return ElicaConnectOptionsFlow(config_entry)
+        return ElicaConnectOptionsFlow()
 
 
 class ElicaConnectOptionsFlow(OptionsFlow):
     """Handle options."""
-
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None

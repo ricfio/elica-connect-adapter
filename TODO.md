@@ -22,6 +22,7 @@
 
 ## Manutenzione e Codice
 
+- [ ] Deduplicare le costanti condivise (es. CLIENT_SECRET, APP_UUID, API_BASE_URL) tra `const.py` e `api/core/constants.py`
 - [ ] Implementare il lookup del nome prodotto da `manufacturer/products.json`
 - [ ] Rimuovere file `.pyc` residui dalla working directory
 - [ ] Completare internazionalizzazione i18n (`strings.json` e file di traduzione)
