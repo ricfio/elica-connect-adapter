@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from elica_connect_api.core import Controller
-from elica_connect_api.domain import Capability, Device
+from .api.core import Controller
+from .api.domain import Capability, Device
 from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.core import HomeAssistant
 

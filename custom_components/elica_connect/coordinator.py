@@ -5,8 +5,8 @@ import json
 import logging
 from typing import Any
 
-from elica_connect_api.core import Controller
-from elica_connect_api.domain import Device
+from .api.core import Controller
+from .api.domain import Device
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed

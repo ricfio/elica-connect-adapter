@@ -1,6 +1,6 @@
 """Constants for the Elica Connect integration."""
 
-from elica_connect_api.domain.capabilities import Capability
+from .api.domain.capabilities import Capability
 
 DOMAIN = "elica_connect"
 
@@ -17,7 +17,7 @@ APP_UUID = "0ba86de295087670"
 CAPABILITIES = [
     Capability.LIGHT_BRIGHTNESS,
     Capability.FAN_MODE,
-    Capability.CAPABILITY_128,
+    Capability.FILTER_SATURATION,
     Capability.CAPABILITY_129,
     Capability.CAPABILITY_131,
     Capability.CAPABILITY_68,

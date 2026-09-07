@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 
 # from .capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
-from elica_connect_api.domain.capabilities import Capability
+from .api.domain.capabilities import Capability
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE

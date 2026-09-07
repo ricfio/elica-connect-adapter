@@ -1,14 +1,14 @@
 """Utility functions for Elica integration."""
 
-from elica_connect_api import (
+from .api import (
     API_BASE_URL,
     API_CLIENT_ID,
     API_CLIENT_SECRET,
     APPLICATION_UUID,
 )
-from elica_connect_api.adapters.ha import AioHttpRestClient, HaAuthProvider
-from elica_connect_api.adapters.shared import MqttClientAiomqtt
-from elica_connect_api.core import AuthService, Controller
+from .api.adapters.ha import AioHttpRestClient, HaAuthProvider
+from .api.adapters.shared import MqttClientAiomqtt
+from .api.core import AuthService, Controller
 from homeassistant.core import HomeAssistant
 
 

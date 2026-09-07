@@ -1,7 +1,7 @@
 """Support for Elica switches."""
 
-from elica_connect_api.core import Controller
-from elica_connect_api.domain import Capability, Device
+from .api.core import Controller
+from .api.domain import Capability, Device
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
