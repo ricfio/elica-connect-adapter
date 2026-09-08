@@ -16,5 +16,15 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "enable_debug": "Enable debug logging",
+                    "scan_interval": "Polling interval (seconds)"
+                }
+            }
+        }
     }
 }
