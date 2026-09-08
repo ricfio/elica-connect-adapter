@@ -84,6 +84,8 @@ class Device:
             capabilities.append(Capability.LIGHT_BRIGHTNESS)
         if Capability.FAN_SPEED in data_model:
             capabilities.append(Capability.FAN_SPEED)
+        if Capability.FILTER_SATURATION in data_model:
+            capabilities.append(Capability.FILTER_SATURATION)
         # you may also keep the raw data_model for reference in metadata
 
         # parse filters (if any)

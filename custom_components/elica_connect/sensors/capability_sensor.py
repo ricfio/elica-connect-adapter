@@ -49,6 +49,13 @@ CAPABILITY_SENSORS: Final = {
         icon="mdi:fan-speed-1",
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "128": CapabilitySensorDefinition(
+        name="Grease Filter Efficiency",
+        icon="mdi:air-filter",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit=PERCENTAGE,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
 }
 
 
@@ -89,9 +96,19 @@ class CapabilitySensor(BaseSensor):
     @property
     def extra_state_attributes(self) -> dict:
         """Return additional state attributes."""
-        return {
-            # "last_update": self.coordinator.last_update_success.isoformat()
-            # if self.coordinator.last_update_success
-            # else None,
+        attrs = {
             "capability_id": self._key,
         }
+        device = self.coordinator.get_device(self.device_id)
+        if device and self._key == "128" and device.filters:
+            filter_data = device.filters[0]
+            attrs.update({
+                "filter_id": filter_data.id,
+                "filter_type": filter_data.type,
+                "filter_status": filter_data.status,
+                "saturation_alert": filter_data.saturation_alert,
+                "installation_date": filter_data.installation_date,
+                "last_reset": filter_data.last_reset,
+                "filter_model": filter_data.model,
+            })
+        return attrs
