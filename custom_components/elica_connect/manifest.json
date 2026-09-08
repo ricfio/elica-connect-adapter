@@ -1,0 +1,15 @@
+{
+  "domain": "elica_connect",
+  "name": "Elica Connect",
+  "version": "0.1.0",
+  "codeowners": ["@ricfio"],
+  "config_flow": true,
+  "dependencies": ["mqtt"],
+  "documentation": "https://github.com/ricfio/elica-connect-ha",
+  "issue_tracker": "https://github.com/ricfio/elica-connect-ha/issues",
+  "iot_class": "cloud_push",
+  "quality_scale": "bronze",
+  "requirements": [
+    "aiomqtt>=2.0.0"
+  ]
+}
