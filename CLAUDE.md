@@ -26,7 +26,7 @@ Home Assistant custom component for Elica connected appliances (hoods and connec
 - **Coordinator State Updates**: Subclass `CoordinatorEntity`. After commands, call `await coordinator.async_request_refresh()` and `self.async_write_ha_state()`.
 - **Controller API**: Methods (e.g. `set_fan_mode`, `set_light_brightness`, `toggle_light`) return `True`/`False` for acceptance/rejection or `None` on network errors (network errors wrapped via decorators). Falsy values indicate failure.
 - **MQTT Integration**: Listens on topics matching `MQTT_TOPIC_FORMAT` (`"v1/device/{CUID}/statusjson"`). CUID is extracted via `topic.split('/')[-2]`.
-- **Localization (i18n)**: Whenever adding config flow steps or UI strings, update `strings.json`, `translations/en.json`, and `translations/it.json`.
+- **Localization (i18n)**: Whenever adding config flow steps or UI strings, update `strings.json`, `translations/en.json`, and `translations/it.json`. Before committing, verify that any new strings or texts are included in all translation files and ensure they are correct and consistent.
 - **Code Quality**: Follow Home Assistant standards, Black formatting, isort import sorting, pylint rules. Code comments must be in English. Do not modify `PLATFORMS` in `__init__.py` without handling platform forwarding and unloading.
 
 ## Developer Workflow & Commands

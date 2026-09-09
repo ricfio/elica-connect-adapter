@@ -48,7 +48,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         self._controller = controller
         self._device_id = device.uid
         self._attr_unique_id = f"elica_{device.uid}_fan"
-        self._attr_name = "Fan"
+        self._attr_translation_key = "fan"
         self._attr_icon = "mdi:fan"
 
     @property

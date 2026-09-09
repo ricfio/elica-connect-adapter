@@ -39,7 +39,7 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
         self.coordinator = coordinator
         self._controller = controller
         self._device_id = device.uid
-        self._attr_name = "AIMatic"
+        self._attr_translation_key = "aimatic"
         self._attr_unique_id = f"elica_{device.uid}_aimatic"
         self._attr_icon = "mdi:fan"
 

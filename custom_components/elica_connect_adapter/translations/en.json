@@ -1,4 +1,21 @@
 {
+    "entity": {
+        "light": {
+            "light": {
+                "name": "Light"
+            }
+        },
+        "fan": {
+            "fan": {
+                "name": "Fan"
+            }
+        },
+        "switch": {
+            "aimatic": {
+                "name": "AIMatic"
+            }
+        }
+    },
     "config": {
         "abort": {
             "already_configured": "Device is already configured"
