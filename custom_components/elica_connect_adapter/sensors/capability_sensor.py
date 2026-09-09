@@ -32,28 +32,28 @@ class CapabilitySensorDefinition:
 
 # Mapping of known dataModel values to sensor definitions
 CAPABILITY_SENSORS: Final = {
-    # Main features with known meanings
-    Capability.LIGHT_BRIGHTNESS: CapabilitySensorDefinition(
-        name="Light Brightness",
-        icon="mdi:brightness-percent",
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit=PERCENTAGE,
-        translation_key="light_brightness",
-    ),
-    Capability.FAN_MODE: CapabilitySensorDefinition(
-        name="Fan Mode",
-        icon="mdi:fan",
-        state_class=SensorStateClass.MEASUREMENT,
-        translation_key="fan_mode",
-        # entity_category=EntityCategory.DIAGNOSTIC,
-        # entity_category=EntityCategory.CONFIG,
-    ),
-    Capability.FAN_SPEED: CapabilitySensorDefinition(
-        name="Fan Speed",
-        icon="mdi:fan-speed-1",
-        state_class=SensorStateClass.MEASUREMENT,
-        translation_key="fan_speed",
-    ),
+    # Light brightness (skipped because integrated into light entity)
+    # Capability.LIGHT_BRIGHTNESS: CapabilitySensorDefinition(
+    #     name="Light Brightness",
+    #     icon="mdi:brightness-percent",
+    #     state_class=SensorStateClass.MEASUREMENT,
+    #     native_unit=PERCENTAGE,
+    #     translation_key="light_brightness",
+    # ),
+    # Fan mode (skipped because integrated into fan entity)
+    # Capability.FAN_MODE: CapabilitySensorDefinition(
+    #     name="Fan Mode",
+    #     icon="mdi:fan",
+    #     state_class=SensorStateClass.MEASUREMENT,
+    #     translation_key="fan_mode",
+    # ),
+    # Fan speed (skipped because integrated into fan entity)
+    # Capability.FAN_SPEED: CapabilitySensorDefinition(
+    #     name="Fan Speed",
+    #     icon="mdi:fan-speed-1",
+    #     state_class=SensorStateClass.MEASUREMENT,
+    #     translation_key="fan_speed",
+    # ),
     Capability.FILTER_SATURATION: CapabilitySensorDefinition(
         name="Grease Filter Efficiency",
         icon="mdi:air-filter",

@@ -23,6 +23,7 @@ classifiers = [
 testpaths = ["tests"]
 norecursedirs = [".git"]
 addopts = "--strict-markers --cov=custom_components/elica_connect_adapter"
+asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["custom_components/elica_connect_adapter"]
