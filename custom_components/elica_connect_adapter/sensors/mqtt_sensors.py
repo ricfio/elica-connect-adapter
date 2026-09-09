@@ -52,7 +52,13 @@ class MqttStateSensor(ElicaDiagnosticSensor):
     """Representation of MQTT State sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
-        super().__init__(coordinator, device_id, name="MQTT State", icon="mdi:connection")
+        super().__init__(
+            coordinator,
+            device_id,
+            name="MQTT State",
+            icon="mdi:connection",
+            translation_key="mqtt_state",
+        )
         self._attr_unique_id = f"elica_{device_id}_mqtt_state"
 
     @property
@@ -79,7 +85,8 @@ class MqttMessagesSensor(ElicaDiagnosticSensor):
             device_id,
             name="MQTT Messages",
             icon="mdi:message-badge",
-            state_class=SensorStateClass.TOTAL_INCREASING
+            state_class=SensorStateClass.TOTAL_INCREASING,
+            translation_key="mqtt_messages",
         )
         self._attr_unique_id = f"elica_{device_id}_mqtt_messages"
 

@@ -27,6 +27,7 @@ class CapabilitySensorDefinition:
     state_class: SensorStateClass | None = None
     native_unit: str | None = None
     entity_category: EntityCategory | None = None
+    translation_key: str | None = None
 
 
 # Mapping of known dataModel values to sensor definitions
@@ -37,11 +38,13 @@ CAPABILITY_SENSORS: Final = {
         icon="mdi:brightness-percent",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,
+        translation_key="light_brightness",
     ),
     Capability.FAN_MODE: CapabilitySensorDefinition(
         name="Fan Mode",
         icon="mdi:fan",
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="fan_mode",
         # entity_category=EntityCategory.DIAGNOSTIC,
         # entity_category=EntityCategory.CONFIG,
     ),
@@ -49,6 +52,7 @@ CAPABILITY_SENSORS: Final = {
         name="Fan Speed",
         icon="mdi:fan-speed-1",
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="fan_speed",
     ),
     Capability.FILTER_SATURATION: CapabilitySensorDefinition(
         name="Grease Filter Efficiency",
@@ -56,6 +60,7 @@ CAPABILITY_SENSORS: Final = {
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,
         entity_category=EntityCategory.DIAGNOSTIC,
+        translation_key="filter_saturation",
     ),
 }
 
@@ -74,6 +79,7 @@ class CapabilitySensor(BaseSensor):
         state_class: SensorStateClass | None = None,
         native_unit: str | None = None,
         entity_category: EntityCategory | None = None,
+        translation_key: str | None = None,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(
@@ -85,6 +91,7 @@ class CapabilitySensor(BaseSensor):
             state_class=state_class,
             native_unit=native_unit,
             entity_category=entity_category,
+            translation_key=translation_key,
         )
         self._key = key
 

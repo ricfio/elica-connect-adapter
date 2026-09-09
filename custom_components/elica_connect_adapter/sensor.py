@@ -60,6 +60,7 @@ async def async_setup_entry(
                         state_class=definition.state_class,
                         native_unit=definition.native_unit,
                         entity_category=definition.entity_category,
+                        translation_key=definition.translation_key,
                     )
                 )
             else:

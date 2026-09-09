@@ -9,6 +9,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
+from .entity import ElicaDeviceEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
@@ -24,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
+class ElicaAIMaticSwitch(ElicaDeviceEntity, SwitchEntity):
     """Representation of an Elica AIMatic switch."""
 
     def __init__(
@@ -34,36 +35,16 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
         device: Device,
     ) -> None:
         """Initialize the switch."""
-        CoordinatorEntity.__init__(self, coordinator)
-        SwitchEntity.__init__(self)
-        self.coordinator = coordinator
+        super().__init__(coordinator, device.uid)
         self._controller = controller
-        self._device_id = device.uid
         self._attr_translation_key = "aimatic"
         self._attr_unique_id = f"elica_{device.uid}_aimatic"
         self._attr_icon = "mdi:fan"
 
     @property
-    def _device(self) -> Device:
-        return self.coordinator.get_device(self._device_id)
-
-    @property
-    def device_info(self) -> DeviceInfo:  # noqa: D102
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._device.uid)},  # chiave unica del device
-            manufacturer=self._device.manufacturer,
-            model=self._device.model,
-            model_id=self._device.model_id,
-            name=self._device.name,
-            serial_number=self._device.serial_number,
-            sw_version=self._device.sw_version,
-            # via_device=(DOMAIN, self._device.uid),
-        )
-
-    @property
     def is_on(self) -> bool:
         """Return True if AIMatic mode is active."""
-        return self._device.state.aimatic
+        return self.device.state.aimatic
 
     async def async_turn_on(self, **kwargs):
         """Turn on AIMatic."""
@@ -76,7 +57,7 @@ class ElicaAIMaticSwitch(CoordinatorEntity, SwitchEntity):
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle AIMatic mode."""
         await self._controller.toggle_aimatic(
-            self._device.uid,
+            self.device.uid,
             enable,
         )
         await self.coordinator.async_request_refresh()

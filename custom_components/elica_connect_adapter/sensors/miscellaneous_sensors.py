@@ -41,6 +41,7 @@ class ConnectivityStateSensor(ElicaDiagnosticSensor):
             device_id,
             name="Connectivity state",
             icon="mdi:wifi",
+            translation_key="connectivity_state",
         )
 
     @property

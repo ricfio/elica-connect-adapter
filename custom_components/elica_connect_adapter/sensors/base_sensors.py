@@ -28,10 +28,14 @@ class BaseSensor(ElicaDeviceEntity, SensorEntity):
         state_class: SensorStateClass | None = None,
         native_unit: str | None = None,
         entity_category: EntityCategory | None = None,
+        translation_key: str | None = None,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator, device_id)
-        self._attr_name = name
+        if translation_key:
+            self._attr_translation_key = translation_key
+        else:
+            self._attr_name = name
         self._attr_unique_id = slugify(f"{self.device.cuid}_{name}")
         self._attr_icon = icon
         self._attr_device_class = device_class
@@ -57,6 +61,7 @@ class ElicaDiagnosticSensor(BaseSensor):
         device_class: SensorDeviceClass | None = None,
         state_class: SensorStateClass | None = None,
         native_unit: str | None = None,
+        translation_key: str | None = None,
     ) -> None:
         """Initialize the diagnostic sensor."""
         super().__init__(
@@ -68,4 +73,5 @@ class ElicaDiagnosticSensor(BaseSensor):
             state_class=state_class,
             native_unit=native_unit,
             entity_category=EntityCategory.DIAGNOSTIC,
+            translation_key=translation_key,
         )
