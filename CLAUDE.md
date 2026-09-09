@@ -40,9 +40,16 @@ make init
 ### Run Tests
 
 ```bash
-make test
-# or: pytest --cov=custom_components/elica_connect_adapter tests/ -v
+PYTHONPATH=. .venv/bin/pytest tests/ -v
+# or: make test
 ```
+
+**Important**: Always run and verify that all automated tests pass successfully before making any commit.
+
+### Test Environment Notes
+
+- Tests use `pytest-homeassistant-custom-component` and require `aiohttp`, `yarl`, `aiomqtt`, `janus`, and `aiohttp-cors` installed in the virtual environment.
+- Run `make init` or initialize venv and install test dependencies from `requirements_test.txt` along with test packages (`pytest-homeassistant-custom-component`, `janus`, `aiohttp-cors`).
 
 ### Linting & Code Quality
 
