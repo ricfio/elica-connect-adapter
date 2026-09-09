@@ -40,10 +40,12 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.data = {
             "devices": {},
             "mqtt_stats": {
-                "last_message": None,
-                "messages_received": 0,
                 "connected": False,
-                "last_disconnect": None,
+                "last_connection": None,
+                "last_disconnection": None,
+                "last_message_timestamp": None,
+                "last_message_payload": None,
+                "total_messages": 0,
             },
         }
         # Options
@@ -135,8 +137,10 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _mqtt_connection_changed(self, connected: bool) -> None:
         """Handle MQTT connection state changes."""
         self.data["mqtt_stats"]["connected"] = connected
-        if not connected:
-            self.data["mqtt_stats"]["last_disconnect"] = datetime.now().isoformat()
+        if connected:
+            self.data["mqtt_stats"]["last_connection"] = datetime.now().isoformat()
+        else:
+            self.data["mqtt_stats"]["last_disconnection"] = datetime.now().isoformat()
         self.async_set_updated_data(self.data)
 
     async def _async_update_from_mqtt(self, topic: str, payload: str) -> None:
@@ -150,17 +154,20 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if "mqtt_stats" not in self.data:
             _LOGGER.warning("Reinitializing missing mqtt_stats in MQTT handler")
             self.data["mqtt_stats"] = {
-                "last_message": None,
-                "messages_received": 0,
                 "connected": False,
-                "last_disconnect": None,
+                "last_connection": None,
+                "last_disconnection": None,
+                "last_message_timestamp": None,
+                "last_message_payload": None,
+                "total_messages": 0,
             }
 
         # Update MQTT statistics
         mqtt_stats = self.data["mqtt_stats"]
-        mqtt_stats["last_message"] = datetime.now().isoformat()
-        mqtt_stats["messages_received"] = mqtt_stats.get("messages_received", 0) + 1
         mqtt_stats["connected"] = True
+        mqtt_stats["last_message_timestamp"] = datetime.now().isoformat()
+        mqtt_stats["last_message_payload"] = payload
+        mqtt_stats["total_messages"] = mqtt_stats.get("total_messages", 0) + 1
 
         _LOGGER.debug("Updated MQTT stats: %s", mqtt_stats)
 

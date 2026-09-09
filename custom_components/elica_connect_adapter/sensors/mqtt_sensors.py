@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
-import logging
-from typing import Final
+from typing import Any, Final
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.helpers.entity import EntityCategory
+import logging
 
+from ..api.core.constants import MQTT_HOST
 from ..coordinator import ElicaConnectCoordinator
 from .base_sensors import ElicaDiagnosticSensor
 
@@ -29,105 +29,68 @@ class MqttSensorDefinition:
 
 
 # MQTT Diagnostic sensor keys
-MQTT_LAST_MESSAGE = "mqtt_last_message"
-MQTT_MESSAGES_RECEIVED = "mqtt_messages_received"
-MQTT_CONNECTION_STATUS = "mqtt_connection"
-MQTT_LAST_DISCONNECT = "mqtt_last_disconnect"
+MQTT_STATE = "mqtt_state"
+MQTT_MESSAGES = "mqtt_messages"
 
 # MQTT sensor definitions
 MQTT_SENSORS: Final = {
-    MQTT_LAST_MESSAGE: MqttSensorDefinition(
-        name="MQTT Last Message",
-        icon="mdi:message-clock",
-        device_class=SensorDeviceClass.TIMESTAMP,
+    MQTT_STATE: MqttSensorDefinition(
+        name="MQTT State",
+        icon="mdi:connection",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    MQTT_MESSAGES_RECEIVED: MqttSensorDefinition(
-        name="MQTT Messages Received",
+    MQTT_MESSAGES: MqttSensorDefinition(
+        name="MQTT Messages",
         icon="mdi:message-badge",
         state_class=SensorStateClass.TOTAL_INCREASING,
-    ),
-    MQTT_CONNECTION_STATUS: MqttSensorDefinition(
-        name="MQTT Connection",
-        icon="mdi:connection",
-    ),
-    MQTT_LAST_DISCONNECT: MqttSensorDefinition(
-        name="MQTT Last Disconnect",
-        icon="mdi:connection-off",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
 
 
-class MqttDiagnosticSensor(ElicaDiagnosticSensor):
-    """Representation of an MQTT diagnostic sensor."""
+class MqttStateSensor(ElicaDiagnosticSensor):
+    """Representation of MQTT State sensor."""
 
-    def __init__(
-        self,
-        coordinator: ElicaConnectCoordinator,
-        device_id: str,
-        key: str,
-        name: str,
-        icon: str | None = None,
-        device_class: SensorDeviceClass | None = None,
-        state_class: SensorStateClass | None = None,
-        native_unit: str | None = None,
-    ) -> None:
-        """Initialize the sensor."""
-        super().__init__(
-            coordinator=coordinator,
-            device_id=device_id,
-            # key=key,
-            name=name,
-            icon=icon,
-            # device_class=device_class,
-            state_class=state_class,
-            native_unit=native_unit,
-            # entity_category=EntityCategory.DIAGNOSTIC,
-        )
-        self._key = key
-        self._attr_unique_id = (
-            f"elica_{device_id}_mqtt_{key}"  # Override base unique_id
-        )
+    def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
+        super().__init__(coordinator, device_id, name="MQTT State", icon="mdi:connection")
+        self._attr_unique_id = f"elica_{device_id}_mqtt_state"
 
     @property
-    def native_value(self) -> datetime | int | float | str | None:
-        """Return the sensor value."""
-        from datetime import datetime
-        import zoneinfo
+    def native_value(self) -> str:
+        return "connected" if self.coordinator.data.get("mqtt_stats", {}).get("connected", False) else "disconnected"
 
-        mqtt_stats = self.coordinator.data.get("mqtt_stats", {})
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        stats = self.coordinator.data.get("mqtt_stats", {})
+        return {
+            "broker_url": MQTT_HOST,
+            "client_id": "eiot-app",
+            "last_connection": stats.get("last_connection"),
+            "last_disconnection": stats.get("last_disconnection"),
+        }
 
-        if self._key == MQTT_LAST_MESSAGE:
-            timestamp = mqtt_stats.get("last_message")
-            if timestamp:
-                # Parse ISO string and add timezone
-                try:
-                    dt = datetime.fromisoformat(timestamp)
-                    if dt.tzinfo is None:
-                        # Add local timezone if not present
-                        dt = dt.replace(tzinfo=zoneinfo.ZoneInfo("UTC"))
-                    return dt
-                except ValueError:
-                    _LOGGER.warning("Invalid timestamp format: %s", timestamp)
-                    return None
-            return None
 
-        if self._key == MQTT_MESSAGES_RECEIVED:
-            return mqtt_stats.get("messages_received", 0)
+class MqttMessagesSensor(ElicaDiagnosticSensor):
+    """Representation of MQTT Messages sensor."""
 
-        if self._key == MQTT_CONNECTION_STATUS:
-            return "connected" if mqtt_stats.get("connected", False) else "disconnected"
+    def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
+        super().__init__(
+            coordinator,
+            device_id,
+            name="MQTT Messages",
+            icon="mdi:message-badge",
+            state_class=SensorStateClass.TOTAL_INCREASING
+        )
+        self._attr_unique_id = f"elica_{device_id}_mqtt_messages"
 
-        if self._key == MQTT_LAST_DISCONNECT:
-            timestamp = mqtt_stats.get("last_disconnect")
-            if timestamp:
-                try:
-                    dt = datetime.fromisoformat(timestamp)
-                    if dt.tzinfo is None:
-                        dt = dt.replace(tzinfo=zoneinfo.ZoneInfo("UTC"))
-                    return dt
-                except ValueError:
-                    _LOGGER.warning("Invalid timestamp format: %s", timestamp)
-                    return None
-            return None
-        return None
+    @property
+    def native_value(self) -> int:
+        return self.coordinator.data.get("mqtt_stats", {}).get("total_messages", 0)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        stats = self.coordinator.data.get("mqtt_stats", {})
+        return {
+            "last_timestamp": stats.get("last_message_timestamp"),
+            "last_payload": stats.get("last_message_payload"),
+        }

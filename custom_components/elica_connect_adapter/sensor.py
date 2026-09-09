@@ -17,7 +17,7 @@ from .const import CAPABILITIES, DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .sensors.capability_sensor import CapabilitySensor, CAPABILITY_SENSORS
 from .sensors.miscellaneous_sensors import ConnectivityStateSensor, MqttConnectionSensor
-from .sensors.mqtt_sensors import MQTT_SENSORS, MqttDiagnosticSensor
+from .sensors.mqtt_sensors import MQTT_SENSORS, MqttStateSensor, MqttMessagesSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,18 +78,10 @@ async def async_setup_entry(
                     )
                 )
 
-        for key, definition in MQTT_SENSORS.items():
-            entities.append(
-                MqttDiagnosticSensor(
-                    coordinator=coordinator,
-                    device_id=device_id,
-                    key=key,
-                    name=definition.name,
-                    icon=definition.icon,
-                    device_class=definition.device_class,
-                    state_class=definition.state_class,
-                    native_unit=definition.native_unit,
-                )
-            )
+        # Add MQTT sensors
+        entities.extend([
+            MqttStateSensor(coordinator, device_id),
+            MqttMessagesSensor(coordinator, device_id),
+        ])
 
     async_add_entities(entities)
