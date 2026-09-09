@@ -101,3 +101,29 @@ async def test_mqtt_sensor_values(hass):
         last_msg = hass.states.get(f"sensor.elica_{DEVICE_ID}_mqtt_last_message")
         assert last_msg is not None
         assert last_msg.state == "2023-01-01T00:00:00"
+
+
+async def test_filter_efficiency_capability_sensor(hass):
+    """Test filter efficiency capability sensor (capability 128) inversion and extra attributes."""
+    device = create_mock_device(
+        id=DEVICE_ID,
+        name=DEVICE_NAME,
+        dataModel={"128": 30}  # Raw saturation 30% -> Efficiency 70%
+    )
+
+    with patch("custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator.data",
+             {"devices": {DEVICE_ID: device}}):
+        entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
+        await hass.async_block_till_done()
+
+        state = hass.states.get(f"sensor.elica_{DEVICE_ID}_capability_128")
+        assert state is not None
+        assert state.state == "70"  # 100 - 30 = 70 efficiency
+        assert state.name == "Grease Filter Efficiency"
+        assert state.attributes["unit_of_measurement"] == "%"
+        assert state.attributes["saturation"] == 30
+        assert state.attributes["efficiency"] == 70
+        assert state.attributes["min_value"] == 0
+        assert state.attributes["max_value"] == 100
+        assert state.attributes["scale"] == "100-0 (decreasing)"
+        assert state.attributes["capability_id"] == "128"

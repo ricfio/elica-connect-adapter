@@ -11,6 +11,7 @@ from homeassistant.const import PERCENTAGE
 from homeassistant.helpers.entity import EntityCategory
 
 from ..coordinator import ElicaConnectCoordinator
+from ..api.domain.capabilities import Capability
 from .base_sensors import BaseSensor
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,25 +32,25 @@ class CapabilitySensorDefinition:
 # Mapping of known dataModel values to sensor definitions
 CAPABILITY_SENSORS: Final = {
     # Main features with known meanings
-    "96": CapabilitySensorDefinition(
+    Capability.LIGHT_BRIGHTNESS: CapabilitySensorDefinition(
         name="Light Brightness",
         icon="mdi:brightness-percent",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,
     ),
-    "64": CapabilitySensorDefinition(
+    Capability.FAN_MODE: CapabilitySensorDefinition(
         name="Fan Mode",
         icon="mdi:fan",
         state_class=SensorStateClass.MEASUREMENT,
         # entity_category=EntityCategory.DIAGNOSTIC,
         # entity_category=EntityCategory.CONFIG,
     ),
-    "110": CapabilitySensorDefinition(
+    Capability.FAN_SPEED: CapabilitySensorDefinition(
         name="Fan Speed",
         icon="mdi:fan-speed-1",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "128": CapabilitySensorDefinition(
+    Capability.FILTER_SATURATION: CapabilitySensorDefinition(
         name="Grease Filter Efficiency",
         icon="mdi:air-filter",
         state_class=SensorStateClass.MEASUREMENT,
@@ -91,7 +92,13 @@ class CapabilitySensor(BaseSensor):
     def native_value(self) -> int | float | None:
         """Return the sensor value."""
         device = self.coordinator.get_device(self.device_id)
-        return device.data_model.get(self._key)
+        val = device.data_model.get(self._key)
+        if val is not None and self._key == Capability.FILTER_SATURATION:
+            try:
+                return max(0, min(100, 100 - int(val)))
+            except (TypeError, ValueError):
+                return val
+        return val
 
     @property
     def extra_state_attributes(self) -> dict:
@@ -100,15 +107,30 @@ class CapabilitySensor(BaseSensor):
             "capability_id": self._key,
         }
         device = self.coordinator.get_device(self.device_id)
-        if device and self._key == "128" and device.filters:
-            filter_data = device.filters[0]
-            attrs.update({
-                "filter_id": filter_data.id,
-                "filter_type": filter_data.type,
-                "filter_status": filter_data.status,
-                "saturation_alert": filter_data.saturation_alert,
-                "installation_date": filter_data.installation_date,
-                "last_reset": filter_data.last_reset,
-                "filter_model": filter_data.model,
-            })
+        if device and self._key == Capability.FILTER_SATURATION:
+            raw_val = device.data_model.get(self._key)
+            if raw_val is not None:
+                try:
+                    saturation = max(0, min(100, int(raw_val)))
+                    efficiency = max(0, min(100, 100 - saturation))
+                    attrs.update({
+                        "saturation": saturation,
+                        "efficiency": efficiency,
+                        "min_value": 0,
+                        "max_value": 100,
+                        "scale": "100-0 (decreasing)",
+                    })
+                except (TypeError, ValueError):
+                    pass
+            if device.filters:
+                filter_data = device.filters[0]
+                attrs.update({
+                    "filter_id": filter_data.id,
+                    "filter_type": filter_data.type,
+                    "filter_status": filter_data.status,
+                    "saturation_alert": filter_data.saturation_alert,
+                    "installation_date": filter_data.installation_date,
+                    "last_reset": filter_data.last_reset,
+                    "filter_model": filter_data.model,
+                })
         return attrs
