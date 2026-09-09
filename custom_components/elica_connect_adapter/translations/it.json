@@ -32,10 +32,10 @@
                 "name": "Stato connettività"
             },
             "mqtt_state": {
-                "name": "Stato MQTT"
+                "name": "MQTT Stato"
             },
             "mqtt_messages": {
-                "name": "Messaggi MQTT"
+                "name": "MQTT Messaggi"
             }
         }
     },

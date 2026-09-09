@@ -17,6 +17,7 @@ from ..core.constants import (  # noqa: TID252
 from ..domain import Capability, Device  # noqa: TID252
 from ..interfaces import (  # noqa: TID252
     MqttClientInterface,
+    OnMqttConnectionCallback,
     OnMqttMessageCallback,
     RestClientInterface,
 )
@@ -266,7 +267,11 @@ class Controller:
         return await self.set_light_brightness(device_id, brightness)
 
     # async def listen(self, callback: Callable[[str, Any], None]):
-    async def listen(self, callback: OnMqttMessageCallback):
+    async def listen(
+        self,
+        callback: OnMqttMessageCallback,
+        on_connection: OnMqttConnectionCallback | None = None,
+    ):
         """Start listening for device updates via MQTT."""
         await self._ensure_mqtt_initialized()
 
@@ -275,7 +280,11 @@ class Controller:
         topics = [MQTT_TOPIC_FORMAT.format(CUID=cuid) for cuid in cuids]
         _LOGGER.debug("Listen updates for devices: %s", devices)
         try:
-            await self._mqtt_subscriber.start(topics=topics, on_message=callback)
+            await self._mqtt_subscriber.start(
+                topics=topics,
+                on_message=callback,
+                on_connection=on_connection,
+            )
         except KeyboardInterrupt:
             _LOGGER.info("Keyboard interrupt received, stopping MQTT client...")
         # finally:

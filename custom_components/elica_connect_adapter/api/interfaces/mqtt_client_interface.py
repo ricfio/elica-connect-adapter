@@ -4,6 +4,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any, Protocol
 
 OnMqttMessageCallback = Callable[[str, Any], None | Awaitable[None]]
+OnMqttConnectionCallback = Callable[[bool], None | Awaitable[None]]
 
 
 class MqttClientInterface(Protocol):
@@ -25,6 +26,7 @@ class MqttClientInterface(Protocol):
         self,
         topics: list[str],
         on_message: OnMqttMessageCallback,
+        on_connection: OnMqttConnectionCallback | None = None,
     ) -> None:
         """Connect and Subscribe to the topics."""
 

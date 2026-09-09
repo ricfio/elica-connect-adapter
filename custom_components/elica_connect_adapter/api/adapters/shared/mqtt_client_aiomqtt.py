@@ -5,7 +5,11 @@ import logging
 
 from aiomqtt import Client, MqttError
 
-from ...interfaces import MqttClientInterface, OnMqttMessageCallback  # noqa: TID252
+from ...interfaces import (  # noqa: TID252
+    MqttClientInterface,
+    OnMqttConnectionCallback,
+    OnMqttMessageCallback,
+)
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
@@ -20,6 +24,7 @@ class MqttClientAiomqtt(MqttClientInterface):
         self._client: Client | None = None
         self._topics: list[str] = []
         self._on_message: OnMqttMessageCallback | None = None
+        self._on_connection: OnMqttConnectionCallback | None = None
         self._task: asyncio.Task | None = None
         self._running: bool = False
 
@@ -58,6 +63,7 @@ class MqttClientAiomqtt(MqttClientInterface):
         self,
         topics: list[str],
         on_message: OnMqttMessageCallback,
+        on_connection: OnMqttConnectionCallback | None = None,
     ) -> None:
         """Start subscription and message handling loop."""
         if self._running:
@@ -73,6 +79,7 @@ class MqttClientAiomqtt(MqttClientInterface):
 
         self._topics = topics
         self._on_message = on_message
+        self._on_connection = on_connection
         self._running = True
         self._task = asyncio.create_task(self._message_loop())
 
@@ -89,58 +96,84 @@ class MqttClientAiomqtt(MqttClientInterface):
         reconnect_delay = 5
         max_reconnect = 60
 
-        while self._running:
-            try:
-                # connect with timeout
-                # async with asyncio.timeout(30):
-                _LOGGER.debug("Attempting MQTT connection...")
-                async with self._client as client:
-                    _LOGGER.debug("MQTT connection established, subscribing...")
-                    for topic in self._topics:
-                        await client.subscribe(topic)
-                    _LOGGER.info(
-                        f"Connected to {self.hostname}:{self.port}, "  # noqa: G004
-                        f"subscribed to topics: {self._topics}"
+        try:
+            while self._running:
+                try:
+                    # connect with timeout
+                    # async with asyncio.timeout(30):
+                    _LOGGER.debug("Attempting MQTT connection...")
+                    async with self._client as client:
+                        _LOGGER.debug("MQTT connection established, subscribing...")
+                        for topic in self._topics:
+                            await client.subscribe(topic)
+                        _LOGGER.info(
+                            f"Connected to {self.hostname}:{self.port}, "  # noqa: G004
+                            f"subscribed to topics: {self._topics}"
+                        )
+                        if self._on_connection:
+                            res = self._on_connection(True)
+                            if asyncio.iscoroutine(res):
+                                await res
+
+                        # reset backoff after successful connection
+                        reconnect_delay = 5
+
+                        async for message in client.messages:
+                            if not self._running:
+                                break
+                            await self._handle_message(message)
+
+                except asyncio.CancelledError:
+                    _LOGGER.debug("MQTT message loop cancelled")
+                    raise
+
+                except TimeoutError as err:
+                    if not self._running:
+                        break
+                    _LOGGER.warning(f"Timeout {err}, reconnecting in {reconnect_delay}s")
+                    if self._on_connection:
+                        res = self._on_connection(False)
+                        if asyncio.iscoroutine(res):
+                            await res
+                    await asyncio.sleep(reconnect_delay)
+                    reconnect_delay = min(reconnect_delay * 2, max_reconnect)
+
+                except MqttError as err:
+                    if not self._running:
+                        break
+                    _LOGGER.warning(
+                        f"MQTT error: {err}, reconnecting in {reconnect_delay}s"
                     )
+                    if self._on_connection:
+                        res = self._on_connection(False)
+                        if asyncio.iscoroutine(res):
+                            await res
+                    await asyncio.sleep(reconnect_delay)
+                    reconnect_delay = min(reconnect_delay * 2, max_reconnect)
 
-                    # reset backoff after successful connection
+                except Exception as err:
+                    _LOGGER.error(f"Unexpected error in MQTT loop: {err}")
+                    if self._on_connection:
+                        res = self._on_connection(False)
+                        if asyncio.iscoroutine(res):
+                            await res
+                    await asyncio.sleep(reconnect_delay)
                     reconnect_delay = 5
+        finally:
+            if self._on_connection:
+                try:
+                    res = self._on_connection(False)
+                    if asyncio.iscoroutine(res):
+                        await res
+                except Exception:
+                    _LOGGER.exception("Error in on_connection callback during shutdown")
 
-                    async for message in client.messages:
-                        if not self._running:
-                            break
-                        await self._handle_message(message)
-
-            except asyncio.CancelledError:
-                _LOGGER.debug("MQTT message loop cancelled")
-                raise
-
-            except TimeoutError as err:
-                if not self._running:
-                    break
-                _LOGGER.warning(f"Timeout {err}, reconnecting in {reconnect_delay}s")
-                await asyncio.sleep(reconnect_delay)
-                reconnect_delay = min(reconnect_delay * 2, max_reconnect)
-
-            except MqttError as err:
-                if not self._running:
-                    break
-                _LOGGER.warning(
-                    f"MQTT error: {err}, reconnecting in {reconnect_delay}s"
-                )
-                await asyncio.sleep(reconnect_delay)
-                reconnect_delay = min(reconnect_delay * 2, max_reconnect)
-
-            except Exception as err:
-                _LOGGER.error(f"Unexpected error in MQTT loop: {err}")
-                await asyncio.sleep(reconnect_delay)
-                reconnect_delay = 5
-
-        # clean internal state after stopping
-        self._on_message = None
-        self._topics.clear()
-        self._task = None
-        _LOGGER.info("MQTT subscriber loop terminated")
+            # clean internal state after stopping
+            self._on_message = None
+            self._on_connection = None
+            self._topics.clear()
+            self._task = None
+            _LOGGER.info("MQTT subscriber loop terminated")
 
     async def _handle_message(self, message) -> None:
         """Decode payload and call the callback."""

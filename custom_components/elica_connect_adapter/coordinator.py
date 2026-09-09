@@ -126,7 +126,10 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             "Error while processing MQTT message for topic %s", topic
                         )
 
-                await self.controller.listen(_mqtt_logging_wrapper)
+                await self.controller.listen(
+                    _mqtt_logging_wrapper,
+                    on_connection=self._mqtt_connection_changed,
+                )
         except Exception as err:
             raise UpdateFailed(f"Error while fetching devices: {err}") from err
         else:
@@ -165,7 +168,10 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Update MQTT statistics
         mqtt_stats = self.data["mqtt_stats"]
         mqtt_stats["connected"] = True
-        mqtt_stats["last_message_timestamp"] = datetime.now().isoformat()
+        now_str = datetime.now().isoformat()
+        if not mqtt_stats.get("last_connection"):
+            mqtt_stats["last_connection"] = now_str
+        mqtt_stats["last_message_timestamp"] = now_str
         mqtt_stats["last_message_payload"] = payload
         mqtt_stats["total_messages"] = mqtt_stats.get("total_messages", 0) + 1
 
