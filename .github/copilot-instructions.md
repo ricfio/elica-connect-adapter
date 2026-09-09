@@ -3,11 +3,11 @@
 
 Scopo: fornire a un agente AI (o a un nuovo contributore) le informazioni minime e operative per essere produttivo su questo custom component di Home Assistant.
 
-- Dominio dell'integrazione: `elica_connect` (vedi `custom_components/elica_connect/const.py`).
-- Piattaforme implementate: fan, light, switch (elencate in `custom_components/elica_connect/__init__.py` tramite `PLATFORMS`).
+- Dominio dell'integrazione: `elica_connect_adapter` (vedi `custom_components/elica_connect_adapter/const.py`).
+- Piattaforme implementate: fan, light, switch (elencate in `custom_components/elica_connect_adapter/__init__.py` tramite `PLATFORMS`).
 
 Panoramica (come si collega il tutto):
-- `custom_components/elica_connect/__init__.py` — punti d'ingresso: `async_setup_entry` crea il `Controller` e l'`ElicaDataUpdateCoordinator`, li memorizza in `hass.data[DOMAIN][entry_id]` e inoltra il setup delle piattaforme.
+- `custom_components/elica_connect_adapter/__init__.py` — punti d'ingresso: `async_setup_entry` crea il `Controller` e l'`ElicaDataUpdateCoordinator`, li memorizza in `hass.data[DOMAIN][entry_id]` e inoltra il setup delle piattaforme.
 - `connect/core/controller.py` — controller agnostico al framework che incapsula autenticazione, chiamate REST e l'avvio dell'ascolto MQTT. Gli errori di rete sono normalizzati dal decorator `handle_network_errors`.
 - `coordinator.py` — `ElicaDataUpdateCoordinator` esegue il polling dei dispositivi ogni 60s e avvia l'ascolto MQTT via `Controller.listen(...)`. La forma di `coordinator.data` è `{"devices": {device_id: Device}}`; usa `get_device(device_id)` per recuperare un device.
 - Le entità di piattaforma (es. `fan.py`, `light.py`) sono sottoclassi di `CoordinatorEntity` che leggono lo stato con `coordinator.get_device(...)` e inviano comandi tramite il `Controller`.
@@ -39,11 +39,11 @@ Regole piccole ma importanti per le modifiche:
 - Quando si aggiungono stringhe per l'interfaccia utente o per il config flow, aggiornare `translations/en.json` e `strings.json` per mantenere coerenza.
 
 Dove guardare per esempi nel repository:
-- Setup e flow: `custom_components/elica_connect/__init__.py`
-- Polling e integrazione MQTT: `custom_components/elica_connect/coordinator.py`
-- Controller e logica di basso livello: `custom_components/elica_connect/connect/core/controller.py`
-- Modelli di dominio e capability: `custom_components/elica_connect/connect/domain/*.py`
-- Entità di piattaforma: `custom_components/elica_connect/fan.py`, `custom_components/elica_connect/light.py`, `custom_components/elica_connect/switch.py`
+- Setup e flow: `custom_components/elica_connect_adapter/__init__.py`
+- Polling e integrazione MQTT: `custom_components/elica_connect_adapter/coordinator.py`
+- Controller e logica di basso livello: `custom_components/elica_connect_adapter/connect/core/controller.py`
+- Modelli di dominio e capability: `custom_components/elica_connect_adapter/connect/domain/*.py`
+- Entità di piattaforma: `custom_components/elica_connect_adapter/fan.py`, `custom_components/elica_connect_adapter/light.py`, `custom_components/elica_connect_adapter/switch.py`
 - Esempio di test: `tests/test_config_flow.py`
 
 Se qualche sezione non è chiara o vuoi che espanda parti specifiche (per esempio: flusso di autenticazione, dettagli MQTT o template di test), dimmi quale parte e la approfondisco.

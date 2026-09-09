@@ -37,7 +37,7 @@ lint:
 
 # 🧪 Run tests with coverage
 test:
-	$(VENV_PATH)/bin/pytest --cov=custom_components/elica_connect tests/ -v
+	$(VENV_PATH)/bin/pytest --cov=custom_components/elica_connect_adapter tests/ -v
 	@echo "✅ Tests complete."
 
 # 📦 Install package in development mode

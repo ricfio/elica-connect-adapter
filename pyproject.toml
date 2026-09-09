@@ -22,10 +22,10 @@ classifiers = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 norecursedirs = [".git"]
-addopts = "--strict-markers --cov=custom_components/elica_connect"
+addopts = "--strict-markers --cov=custom_components/elica_connect_adapter"
 
 [tool.coverage.run]
-source = ["custom_components/elica_connect"]
+source = ["custom_components/elica_connect_adapter"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "def __repr__", "if False:", "raise NotImplementedError"]
@@ -40,7 +40,7 @@ extend-exclude = "external"
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["custom_components.elica_connect"]
+known_first_party = ["custom_components.elica_connect_adapter"]
 
 [project.urls]
 "Homepage" = "https://github.com/ricfio/elica-connect-ha"

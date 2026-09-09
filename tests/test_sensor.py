@@ -8,7 +8,7 @@ import pytest
 from homeassistant.const import Platform
 from homeassistant.helpers import entity_registry
 
-from custom_components.elica_connect.const import DOMAIN
+from custom_components.elica_connect_adapter.const import DOMAIN
 
 from . import (
     DEVICE_ID,
@@ -28,7 +28,7 @@ async def test_sensor_registration(hass):
     )
     
     # Patch coordinator data
-    with patch("custom_components.elica_connect.coordinator.ElicaConnectCoordinator.data", 
+    with patch("custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator.data", 
              {"devices": {DEVICE_ID: device}}):
         entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()
@@ -66,7 +66,7 @@ async def test_capability_sensor_value(hass):
         dataModel={"96": 75}  # Light brightness at 75%
     )
     
-    with patch("custom_components.elica_connect.coordinator.ElicaConnectCoordinator.data", 
+    with patch("custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator.data", 
              {"devices": {DEVICE_ID: device}}):
         entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()
@@ -89,7 +89,7 @@ async def test_mqtt_sensor_values(hass):
         }
     )
     
-    with patch("custom_components.elica_connect.coordinator.ElicaConnectCoordinator.data", 
+    with patch("custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator.data", 
              {"devices": {DEVICE_ID: device}}):
         entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()

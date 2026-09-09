@@ -6,7 +6,7 @@ Home Assistant custom component for Elica connected appliances (hoods and connec
 
 ## Architecture & Codebase Structure
 
-- **`custom_components/elica_connect/`**: Core Home Assistant integration code:
+- **`custom_components/elica_connect_adapter/`**: Core Home Assistant integration code:
   - `config_flow.py`: UI configuration flow.
   - `coordinator.py`: `DataUpdateCoordinator` for polling and state coordination.
   - `api/`: REST API communication and authentication.
@@ -21,7 +21,7 @@ Home Assistant custom component for Elica connected appliances (hoods and connec
 
   ```bash
   make test
-  # or: pytest --cov=custom_components/elica_connect tests/ -v
+  # or: pytest --cov=custom_components/elica_connect_adapter tests/ -v
   ```
 
 - **Linting & Code Quality**:

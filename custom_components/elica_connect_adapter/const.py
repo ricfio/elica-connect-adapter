@@ -2,7 +2,7 @@
 
 from .api.domain.capabilities import Capability
 
-DOMAIN = "elica_connect"
+DOMAIN = "elica_connect_adapter"
 
 API_BASE_URL = "https://cloudprod.elica.com/eiot-api/v1"
 USER_AGENT = "okhttp/4.11.0"

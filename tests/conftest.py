@@ -11,7 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
-from custom_components.elica_connect.const import DOMAIN
+from custom_components.elica_connect_adapter.const import DOMAIN
 
 
 DEVICE_ID = "test_device"
@@ -74,7 +74,7 @@ async def setup_platform(hass: HomeAssistant, domain: str, platform: str) -> Con
     mock_controller.login = AsyncMock(return_value=True)
     mock_controller.is_logged_in = AsyncMock(return_value=True)
     
-    with patch("custom_components.elica_connect.utils.create_controller",
+    with patch("custom_components.elica_connect_adapter.utils.create_controller",
               return_value=mock_controller):
         assert await hass.config_entries.async_setup(config_entry.entry_id)
         await hass.async_block_till_done()
