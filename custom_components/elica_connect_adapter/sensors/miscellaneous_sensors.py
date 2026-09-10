@@ -47,7 +47,7 @@ class ConnectivityStateSensor(ElicaDiagnosticSensor):
     @property
     def native_value(self) -> str:
         """Return the sensor value."""
-        return "Connected" if self.device.state.connected else "Disconnected"
+        return "connected" if self.device.state.connected else "disconnected"
 
 
 class MqttConnectionSensor(ElicaDiagnosticSensor):
@@ -65,4 +65,4 @@ class MqttConnectionSensor(ElicaDiagnosticSensor):
     @property
     def native_value(self) -> str:
         """Return the sensor value."""
-        return "Connected" if self.device.state.connected else "Disconnected"
+        return "connected" if self.device.state.connected else "disconnected"

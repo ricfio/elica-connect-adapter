@@ -16,11 +16,11 @@
       }
     },
     "sensor": {
+      "connectivity_state": {
+        "name": "Connectivity"
+      },
       "filter_saturation": {
         "name": "Grease Filter Efficiency"
-      },
-      "connectivity_state": {
-        "name": "Connectivity state"
       },
       "mqtt_state": {
         "name": "MQTT State"
