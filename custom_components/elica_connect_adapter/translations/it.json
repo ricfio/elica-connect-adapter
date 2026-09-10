@@ -16,20 +16,11 @@
             }
         },
         "sensor": {
-            "light_brightness": {
-                "name": "Luminosità luce"
-            },
-            "fan_mode": {
-                "name": "Modalità ventola"
-            },
-            "fan_speed": {
-                "name": "Velocità ventola"
-            },
             "filter_saturation": {
                 "name": "Efficienza filtro grassi"
             },
             "connectivity_state": {
-                "name": "Stato connettività"
+                "name": "Connettività"
             },
             "mqtt_state": {
                 "name": "MQTT Stato"

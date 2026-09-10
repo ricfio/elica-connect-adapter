@@ -16,15 +16,6 @@
       }
     },
     "sensor": {
-      "light_brightness": {
-        "name": "Light Brightness"
-      },
-      "fan_mode": {
-        "name": "Fan Mode"
-      },
-      "fan_speed": {
-        "name": "Fan Speed"
-      },
       "filter_saturation": {
         "name": "Grease Filter Efficiency"
       },
