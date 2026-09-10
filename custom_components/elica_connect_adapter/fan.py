@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from .api.core import Controller
-from .api.domain import Capability, Device
 from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.core import HomeAssistant
 
+from .api.core import Controller
+from .api.domain import Capability, Device
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .entity import ElicaDeviceEntity

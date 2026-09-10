@@ -226,7 +226,9 @@ class Controller:
         device = await self.get_device(device_id)
         return await self.set_fan_mode(device_id, device.state.airmatic, speed, boost)
 
-    async def toggle_airmatic(self, device_id: str, enabled: bool | None = None) -> bool:
+    async def toggle_airmatic(
+        self, device_id: str, enabled: bool | None = None
+    ) -> bool:
         """Toggle the Airmatic mode for the device."""
         device = await self.get_device(device_id)
         return await self.set_fan_mode(

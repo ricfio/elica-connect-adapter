@@ -1,16 +1,16 @@
 """Data Update Coordinator for Elica."""
 
-from datetime import datetime, timedelta
 import json
 import logging
+from datetime import datetime, timedelta
 from typing import Any
 
-from .api.core import Controller
-from .api.domain import Device
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from .api.core import Controller
+from .api.domain import Device
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)

@@ -1,12 +1,12 @@
 """Support for Elica switches."""
 
-from .api.core import Controller
-from .api.domain import Capability, Device
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .api.core import Controller
+from .api.domain import Capability, Device
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .entity import ElicaDeviceEntity

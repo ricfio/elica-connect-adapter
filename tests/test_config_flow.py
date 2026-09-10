@@ -2,13 +2,16 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-import pytest
 
-from custom_components.elica_connect_adapter.config_flow import CannotConnect, InvalidAuth
+from custom_components.elica_connect_adapter.config_flow import (
+    CannotConnect,
+    InvalidAuth,
+)
 from custom_components.elica_connect_adapter.const import DOMAIN
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")

@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import logging
 
-# from .capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
-from .api.domain.capabilities import Capability
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
@@ -13,11 +11,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+# from .capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
+from .api.domain.capabilities import Capability
 from .const import CAPABILITIES, DOMAIN
 from .coordinator import ElicaConnectCoordinator
-from .sensors.capability_sensor import CapabilitySensor, CAPABILITY_SENSORS
+from .sensors.capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
 from .sensors.miscellaneous_sensors import ConnectivityStateSensor, MqttConnectionSensor
-from .sensors.mqtt_sensors import MQTT_SENSORS, MqttStateSensor, MqttMessagesSensor
+from .sensors.mqtt_sensors import MQTT_SENSORS, MqttMessagesSensor, MqttStateSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,7 +46,11 @@ async def async_setup_entry(
 
         # Add capability sensors for each device's dataModel values
         for key in device.data_model:
-            if key in (Capability.LIGHT_BRIGHTNESS, Capability.FAN_SPEED, Capability.FAN_MODE):
+            if key in (
+                Capability.LIGHT_BRIGHTNESS,
+                Capability.FAN_SPEED,
+                Capability.FAN_MODE,
+            ):
                 continue
             if key in CAPABILITY_SENSORS:
                 # Add known capability sensors
@@ -82,9 +86,11 @@ async def async_setup_entry(
                 )
 
         # Add MQTT sensors
-        entities.extend([
-            MqttStateSensor(coordinator, device_id),
-            MqttMessagesSensor(coordinator, device_id),
-        ])
+        entities.extend(
+            [
+                MqttStateSensor(coordinator, device_id),
+                MqttMessagesSensor(coordinator, device_id),
+            ]
+        )
 
     async_add_entities(entities)

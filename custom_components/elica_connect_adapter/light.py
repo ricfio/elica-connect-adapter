@@ -1,10 +1,10 @@
 """Support for Elica lights."""
 
-from .api.core import Controller
-from .api.domain import Capability, Device
 from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.core import HomeAssistant
 
+from .api.core import Controller
+from .api.domain import Capability, Device
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .entity import ElicaDeviceEntity

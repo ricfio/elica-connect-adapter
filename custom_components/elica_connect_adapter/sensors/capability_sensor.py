@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Final
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import PERCENTAGE
 from homeassistant.helpers.entity import EntityCategory
 
-from ..coordinator import ElicaConnectCoordinator
 from ..api.domain.capabilities import Capability
+from ..coordinator import ElicaConnectCoordinator
 from .base_sensors import BaseSensor
 
 _LOGGER = logging.getLogger(__name__)
@@ -120,24 +120,28 @@ class CapabilitySensor(BaseSensor):
                 try:
                     saturation = max(0, min(100, int(raw_val)))
                     efficiency = max(0, min(100, 100 - saturation))
-                    attrs.update({
-                        "saturation": saturation,
-                        "efficiency": efficiency,
-                        "min_value": 0,
-                        "max_value": 100,
-                        "scale": "100-0 (decreasing)",
-                    })
+                    attrs.update(
+                        {
+                            "saturation": saturation,
+                            "efficiency": efficiency,
+                            "min_value": 0,
+                            "max_value": 100,
+                            "scale": "100-0 (decreasing)",
+                        }
+                    )
                 except (TypeError, ValueError):
                     pass
             if device.filters:
                 filter_data = device.filters[0]
-                attrs.update({
-                    "filter_id": filter_data.id,
-                    "filter_type": filter_data.type,
-                    "filter_status": filter_data.status,
-                    "saturation_alert": filter_data.saturation_alert,
-                    "installation_date": filter_data.installation_date,
-                    "last_reset": filter_data.last_reset,
-                    "filter_model": filter_data.model,
-                })
+                attrs.update(
+                    {
+                        "filter_id": filter_data.id,
+                        "filter_type": filter_data.type,
+                        "filter_status": filter_data.status,
+                        "saturation_alert": filter_data.saturation_alert,
+                        "installation_date": filter_data.installation_date,
+                        "last_reset": filter_data.last_reset,
+                        "filter_model": filter_data.model,
+                    }
+                )
         return attrs

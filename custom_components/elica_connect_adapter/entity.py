@@ -1,9 +1,9 @@
 """Base entity class."""
 
-from .api.domain import Device
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .api.domain import Device
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 

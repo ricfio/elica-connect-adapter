@@ -130,7 +130,9 @@ class MqttClientAiomqtt(MqttClientInterface):
                 except TimeoutError as err:
                     if not self._running:
                         break
-                    _LOGGER.warning(f"Timeout {err}, reconnecting in {reconnect_delay}s")
+                    _LOGGER.warning(
+                        f"Timeout {err}, reconnecting in {reconnect_delay}s"
+                    )
                     if self._on_connection:
                         res = self._on_connection(False)
                         if asyncio.iscoroutine(res):

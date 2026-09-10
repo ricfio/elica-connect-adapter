@@ -6,12 +6,11 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 from homeassistant.core import HomeAssistant
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.elica_connect_adapter.api.domain.device import Device
 from custom_components.elica_connect_adapter.const import DOMAIN
-
 
 DEVICE_ID = "test_device"
 DEVICE_NAME = "Test Elica Hood"
@@ -59,11 +58,9 @@ def auto_mock_mqtt(mqtt_mock):
     return mqtt_mock
 
 
-
-
-
-
-async def setup_platform(hass: HomeAssistant, domain: str, platform: str) -> MockConfigEntry:
+async def setup_platform(
+    hass: HomeAssistant, domain: str, platform: str
+) -> MockConfigEntry:
     """Set up the Elica platform for testing."""
     config_entry = MockConfigEntry(
         domain=domain,
@@ -71,15 +68,17 @@ async def setup_platform(hass: HomeAssistant, domain: str, platform: str) -> Moc
         title="Test",
     )
     config_entry.add_to_hass(hass)
-    
+
     mock_controller = MagicMock()
     mock_controller.login = AsyncMock(return_value=True)
     mock_controller.is_logged_in = AsyncMock(return_value=True)
     mock_controller.get_devices = AsyncMock(return_value=[])
-    
-    with patch("custom_components.elica_connect_adapter.create_controller",
-              return_value=mock_controller):
+
+    with patch(
+        "custom_components.elica_connect_adapter.create_controller",
+        return_value=mock_controller,
+    ):
         assert await hass.config_entries.async_setup(config_entry.entry_id)
         await hass.async_block_till_done()
-        
+
     return config_entry

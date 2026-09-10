@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any, Final
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.helpers.entity import EntityCategory
-import logging
 
 from ..api.core.constants import MQTT_HOST
 from ..coordinator import ElicaConnectCoordinator
@@ -63,7 +63,11 @@ class MqttStateSensor(ElicaDiagnosticSensor):
 
     @property
     def native_value(self) -> str:
-        return "connected" if self.coordinator.data.get("mqtt_stats", {}).get("connected", False) else "disconnected"
+        return (
+            "connected"
+            if self.coordinator.data.get("mqtt_stats", {}).get("connected", False)
+            else "disconnected"
+        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
