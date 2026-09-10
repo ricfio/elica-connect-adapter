@@ -27,24 +27,3 @@ class ConnectivityStateSensor(ElicaDiagnosticSensor):
     def native_value(self) -> str:
         """Return the sensor value."""
         return "connected" if self.device.state.connected else "disconnected"
-
-
-class MqttConnectionSensor(ElicaDiagnosticSensor):
-    """MQTT Connection Sensor."""
-
-    def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
-        """Initialize the sensor."""
-        super().__init__(
-            coordinator,
-            device_id,
-            name="MQTT Connection",
-            icon="mdi:connection",
-            translation_key="mqtt_connection",
-            device_class=SensorDeviceClass.ENUM,
-        )
-        self._attr_options = ["connected", "disconnected"]
-
-    @property
-    def native_value(self) -> str:
-        """Return the sensor value."""
-        return "connected" if self.device.state.connected else "disconnected"
