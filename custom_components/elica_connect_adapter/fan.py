@@ -30,10 +30,12 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
 
     _attr_supported_features = (
         FanEntityFeature.SET_SPEED
+        | FanEntityFeature.PRESET_MODE
         | FanEntityFeature.TURN_OFF
         | FanEntityFeature.TURN_ON
     )
     _attr_speed_count = 3  # 1–2–3
+    _attr_preset_modes = ["boost"]
 
     def __init__(
         self,
@@ -59,48 +61,86 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
     @property
     def percentage(self) -> int:
         """Return fan speed as percentage (0-100)."""
-        speed = self.device.state.fan_speed
+        speed = min(self.device.state.fan_speed, self._attr_speed_count)
         return round((speed / self._attr_speed_count) * 100)
+
+    @property
+    def preset_mode(self) -> str | None:
+        """Return the current preset mode."""
+        return "boost" if self.device.state.fan_boost else None
 
     async def async_turn_on(
         self, percentage: int | None = None, preset_mode: str | None = None, **kwargs
     ):
         """Turn the fan on."""
-        if percentage is None:
-            percentage = self.percentage
-        accepted = await self._set_fan_mode(percentage)
+        if preset_mode == "boost":
+            accepted = await self._set_fan_mode(
+                self._attr_speed_count,
+                intensive=True,
+            )
+        else:
+            if percentage is None:
+                percentage = self.percentage
+
+            accepted = await self._set_fan_mode(
+                percentage,
+                intensive=False,
+            )
+
         if accepted:
             await self.coordinator.async_request_refresh()
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         """Turn the fan off."""
-        accepted = await self._set_fan_mode(0)
+        accepted = await self._set_fan_mode(
+            0,
+            intensive=False,
+        )
         if accepted:
             await self.coordinator.async_request_refresh()
         self.async_write_ha_state()
 
     async def async_set_percentage(self, percentage: int):
         """Set fan speed as percentage (0-100)."""
-        accepted = await self._set_fan_mode(percentage)
+        accepted = await self._set_fan_mode(
+            percentage,
+            intensive=False,
+        )
         if accepted:
             await self.coordinator.async_request_refresh()
         self.async_write_ha_state()
 
-    async def _set_fan_mode(self, percentage: int):
-        speed = self._calculate_speed(percentage)
+    async def async_set_preset_mode(self, preset_mode: str):
+        """Set fan preset mode."""
+        if preset_mode != "boost":
+            raise ValueError(f"Unsupported preset mode: {preset_mode}")
+
+        accepted = await self._set_fan_mode(
+            100,
+            intensive=True,
+        )
+        if accepted:
+            await self.coordinator.async_request_refresh()
+        self.async_write_ha_state()
+
+    async def _set_fan_mode(self, percentage: int, intensive: bool):
         device = self.device
-        intensive = device.state.fan_boost
         aimatic = device.state.aimatic
-        await self._controller.set_fan_mode(
-            device.uid, aimatic, min(speed, 3), intensive
+
+        if intensive:
+            speed = self._attr_speed_count
+        else:
+            speed = self._calculate_speed(percentage)
+
+        return await self._controller.set_fan_mode(
+            device.uid,
+            aimatic,
+            speed,
+            intensive,
         )
 
     def _calculate_speed(self, percentage: int) -> int:
         """Convert percentage (0-100) to fan speed level (0-3)."""
         speed = round((percentage / 100) * self._attr_speed_count)
         return max(0, min(self._attr_speed_count, speed))
-
-    # def _calculate_percentage(self, speed: int) -> int:
-    #     """Convert fan speed level (0-3) to percentage (0-100)."""
-    #     return round((speed / self._attr_speed_count) * 100)
