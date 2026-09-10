@@ -1,3 +1,4 @@
-# Elica Connect — Copilot Instructions
+# Elica Connect
 
-All development instructions, architecture details, coding guidelines, and developer workflows for the Elica Connect Home Assistant custom component are maintained in the root [CLAUDE.md](../CLAUDE.md) file. Please refer to [CLAUDE.md](../CLAUDE.md) for all guidelines.
+Read and follow [AGENTS.md](../AGENTS.md).  
+It is the single source of truth for AI-agent instructions in this repository.
