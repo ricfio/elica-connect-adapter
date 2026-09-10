@@ -15,8 +15,8 @@ from ..coordinator import ElicaConnectCoordinator
 from ..entity import ElicaDeviceEntity
 
 
-class BaseSensor(ElicaDeviceEntity, SensorEntity):
-    """Representation of Elica Base sensors."""
+class ElicaSensor(ElicaDeviceEntity, SensorEntity):
+    """Base representation of an Elica sensor."""
 
     def __init__(
         self,
@@ -43,13 +43,7 @@ class BaseSensor(ElicaDeviceEntity, SensorEntity):
         self._attr_native_unit_of_measurement = native_unit
         self._attr_entity_category = entity_category
 
-    # @property
-    # def available(self) -> bool:
-    #     """Indica se il device è disponibile."""
-    #     return self.device is not None
-
-
-class ElicaDiagnosticSensor(BaseSensor):
+class ElicaDiagnosticSensor(ElicaSensor):
     """Representation of Elica Diagnostic sensors."""
 
     def __init__(

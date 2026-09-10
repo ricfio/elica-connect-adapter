@@ -8,17 +8,17 @@ from ..coordinator import ElicaConnectCoordinator
 from .base_sensors import ElicaDiagnosticSensor
 
 
-class ConnectivityStateSensor(ElicaDiagnosticSensor):
-    """Cloud Connectivity Sensor."""
+class ConnectivitySensor(ElicaDiagnosticSensor):
+    """Connectivity sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
         """Initialize the sensor."""
         super().__init__(
             coordinator,
             device_id,
-            name="Connectivity state",
+            name="Connectivity",
             icon="mdi:wifi",
-            translation_key="connectivity_state",
+            translation_key="connectivity",
             device_class=SensorDeviceClass.ENUM,
         )
         self._attr_options = ["connected", "disconnected"]

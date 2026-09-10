@@ -12,7 +12,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 from ..api.domain.capabilities import Capability
 from ..coordinator import ElicaConnectCoordinator
-from .base_sensors import BaseSensor
+from .base_sensors import ElicaSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,12 +60,12 @@ CAPABILITY_SENSORS: Final = {
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,
         entity_category=EntityCategory.DIAGNOSTIC,
-        translation_key="filter_saturation",
+        translation_key="grease_filter_efficiency",
     ),
 }
 
 
-class CapabilitySensor(BaseSensor):
+class CapabilitySensor(ElicaSensor):
     """Representation of an Elica capability sensor."""
 
     def __init__(

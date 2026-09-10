@@ -37,7 +37,7 @@ async def test_sensor_registration(hass):
         # Get the entity registry
         entity_reg = entity_registry.async_get(hass)
 
-        # Verify filter efficiency capability sensor
+        # Verify grease filter efficiency capability sensor
         filter_entity = entity_reg.async_get(
             "sensor.test_elica_hood_grease_filter_efficiency"
         )
@@ -53,8 +53,8 @@ async def test_sensor_registration(hass):
             assert entry is not None
 
 
-async def test_capability_sensor_value(hass):
-    """Test sensor values from device capabilities."""
+async def test_grease_filter_efficiency_sensor_value(hass):
+    """Test grease filter efficiency values from device capabilities."""
     device = create_mock_device(
         id=DEVICE_ID,
         name=DEVICE_NAME,
@@ -103,8 +103,8 @@ async def test_mqtt_sensor_values(hass):
         assert mqtt_state is not None
 
 
-async def test_filter_efficiency_capability_sensor(hass):
-    """Test filter efficiency capability sensor (capability 128) inversion and extra attributes."""
+async def test_grease_filter_efficiency_capability_sensor(hass):
+    """Test grease filter efficiency sensor (capability 128) attributes."""
     device = create_mock_device(
         id=DEVICE_ID,
         name=DEVICE_NAME,

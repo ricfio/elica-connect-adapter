@@ -16,14 +16,14 @@
             }
         },
         "sensor": {
-            "connectivity_state": {
-                "name": "Connectivity Cloud",
+            "connectivity": {
+                "name": "Connectivity",
                 "state": {
                     "connected": "Connected",
                     "disconnected": "Disconnected"
                 }
             },
-            "filter_saturation": {
+            "grease_filter_efficiency": {
                 "name": "Grease Filter Efficiency"
             },
             "mqtt_state": {
