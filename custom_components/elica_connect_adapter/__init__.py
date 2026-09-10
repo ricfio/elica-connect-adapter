@@ -54,9 +54,17 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         "coordinator": coordinator,
     }
 
+    # Setup update listener for options changes
+    config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
+
     # Setup all the platforms (es. light, fan, switch, etc.)
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     return True
+
+
+async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(config_entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

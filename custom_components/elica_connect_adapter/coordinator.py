@@ -15,8 +15,6 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(seconds=60)
-
 
 class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Data Update Coordinator for Elica.
@@ -28,11 +26,17 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self, hass: HomeAssistant, controller: Controller, config_entry: ConfigEntry
     ) -> None:
         """Initialize the coordinator."""
+        # Options
+        self._scan_interval = config_entry.options.get("scan_interval", 60)
+        self._mqtt_updates = config_entry.options.get("mqtt_updates", True)
+        self._mqtt_debug = config_entry.options.get("mqtt_debug", False)
+        self._debug = config_entry.options.get("debug", False)
+
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_coordinator",
-            update_interval=SCAN_INTERVAL,
+            update_interval=timedelta(seconds=self._scan_interval),
         )
         self.controller = controller
         self.config_entry = config_entry
@@ -48,9 +52,8 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "total_messages": 0,
             },
         }
-        # Options
-        # self._mqtt_enabled = bool(config_entry.options.get("enable_mqtt", False))
-        self._mqtt_enabled = True
+        if self._debug:
+            _LOGGER.setLevel(logging.DEBUG)
 
     def get_device(self, device_id: str) -> Device:
         """Return a device by id, or raise if not found."""
@@ -93,7 +96,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 }
 
             # Start MQTT listener if not started
-            if self._mqtt_enabled and not self._mqtt_started:
+            if self._mqtt_updates and not self._mqtt_started:
                 self._mqtt_started = True
 
                 # Log which device CUIDs we will listen for (if available)
@@ -101,6 +104,8 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 _LOGGER.debug("Starting MQTT listener for cuids: %s", cuids)
 
                 async def _mqtt_logging_wrapper(topic: str, payload: str) -> None:
+                    if not self._mqtt_updates:
+                        return
                     try:
                         # Log incoming message (truncate large payloads)
                         display_payload = payload
@@ -113,12 +118,20 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         except Exception:
                             display_payload = "<unserializable>"
 
-                        _LOGGER.debug(
-                            "MQTT message received [stats: %s]: %s - %s",
-                            "present" if "mqtt_stats" in self.data else "missing",
-                            topic,
-                            display_payload,
-                        )
+                        if self._mqtt_debug:
+                            _LOGGER.info(
+                                "MQTT message received [stats: %s]: %s - %s",
+                                "present" if "mqtt_stats" in self.data else "missing",
+                                topic,
+                                display_payload,
+                            )
+                        else:
+                            _LOGGER.debug(
+                                "MQTT message received [stats: %s]: %s - %s",
+                                "present" if "mqtt_stats" in self.data else "missing",
+                                topic,
+                                display_payload,
+                            )
                         # Delegate to coordinator handler
                         await self._async_update_from_mqtt(topic, payload)
                     except Exception:
@@ -148,6 +161,8 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_from_mqtt(self, topic: str, payload: str) -> None:
         """Process MQTT update message."""
+        if not self._mqtt_updates:
+            return
         _LOGGER.debug(
             "Processing MQTT message with data structure: %s",
             {k: "..." if k == "devices" else v for k, v in self.data.items()},

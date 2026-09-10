@@ -66,9 +66,12 @@
     "options": {
         "step": {
             "init": {
+                "title": "Opzioni",
                 "data": {
-                    "enable_debug": "Abilita log di debug",
-                    "scan_interval": "Intervallo di polling (secondi)"
+                    "scan_interval": "Intervallo di aggiornamento (secondi)",
+                    "mqtt_updates": "Aggiornamenti MQTT",
+                    "mqtt_debug": "Debug MQTT",
+                    "debug": "Debug"
                 }
             }
         }

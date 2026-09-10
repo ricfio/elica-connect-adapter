@@ -132,11 +132,15 @@ class ElicaConnectConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> ElicaConnectOptionsFlow:
         """Get the options flow for this handler."""
-        return ElicaConnectOptionsFlow()
+        return ElicaConnectOptionsFlow(config_entry)
 
 
 class ElicaConnectOptionsFlow(OptionsFlow):
     """Handle options."""
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize."""
+        self._config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -147,16 +151,20 @@ class ElicaConnectOptionsFlow(OptionsFlow):
 
         options = {
             vol.Optional(
-                "Scan Interval",
-                default=self.config_entry.options.get("scan_interval", 60),
+                "scan_interval",
+                default=self._config_entry.options.get("scan_interval", 60),
             ): vol.All(vol.Coerce(int), vol.Range(min=30, max=300)),
             vol.Optional(
-                "Enable MQTT subscription",
-                default=self.config_entry.options.get("enable_mqtt", False),
+                "mqtt_updates",
+                default=self._config_entry.options.get("mqtt_updates", True),
             ): bool,
             vol.Optional(
-                "Enable Debug mode",
-                default=self.config_entry.options.get("enable_debug", False),
+                "mqtt_debug",
+                default=self._config_entry.options.get("mqtt_debug", False),
+            ): bool,
+            vol.Optional(
+                "debug",
+                default=self._config_entry.options.get("debug", False),
             ): bool,
         }
 
