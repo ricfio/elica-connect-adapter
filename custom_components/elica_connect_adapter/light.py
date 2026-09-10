@@ -38,7 +38,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
         self.coordinator = coordinator
         self._controller = controller
         self._device_id = device.uid
-        self._attr_translation_key = "light"
+        self._attr_translation_key = "hood_light"
         self._attr_unique_id = f"elica_{device.uid}_light"
         self._attr_supported_color_modes = {ColorMode.BRIGHTNESS}
         self._attr_color_mode = ColorMode.BRIGHTNESS
