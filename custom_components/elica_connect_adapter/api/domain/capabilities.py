@@ -14,14 +14,17 @@ class Capability:
     Unknown capabilities are left for future analysis.
     """
 
-    # Light brightness (value = 0-100)
-    LIGHT_BRIGHTNESS = "96"
-
     # Fan mode (bitmask: fan on/off, intensive on/off, airmatic on/off)
     FAN_MODE = "64"
 
+    # Fan speed (value = 0=off, 1=low, 2=medium, 3=high)
+    FAN_SPEED = "110"
+
     # Grease filter saturation (value = 0-100)
     FILTER_SATURATION = "128"
+
+    # Light brightness (value = 0-100)
+    LIGHT_BRIGHTNESS = "96"
 
     CAPABILITY_129 = "129"
 
@@ -38,8 +41,5 @@ class Capability:
     CAPABILITY_71 = "71"
 
     CAPABILITY_72 = "72"
-
-    # Fan speed (value = 0=off, 1=low, 2=medium, 3=high)
-    FAN_SPEED = "110"
 
     CAPABILITY_112 = "112"

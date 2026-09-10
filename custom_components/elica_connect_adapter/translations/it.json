@@ -17,16 +17,31 @@
         },
         "sensor": {
             "connectivity_state": {
-                "name": "Connettività"
+                "name": "Connettività Cloud",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
             },
             "filter_saturation": {
                 "name": "Efficienza Filtro grassi"
             },
             "mqtt_state": {
-                "name": "Connettività MQTT"
+                "name": "Connettività MQTT",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
             },
             "mqtt_messages": {
                 "name": "Messaggi MQTT"
+            },
+            "mqtt_connection": {
+                "name": "Connessione MQTT",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
             }
         }
     },

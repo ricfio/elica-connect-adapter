@@ -2,33 +2,10 @@
 
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
+from homeassistant.components.sensor import SensorDeviceClass
 
 from ..coordinator import ElicaConnectCoordinator
 from .base_sensors import ElicaDiagnosticSensor
-
-
-class CapabilitySensor(ElicaDiagnosticSensor):
-    """Device Capability Sensor."""
-
-    def __init__(
-        self,
-        coordinator: ElicaConnectCoordinator,
-        device_id: str,
-        key: str,
-        name: str,
-        icon: str | None = None,
-        device_class: SensorDeviceClass | None = None,
-        state_class: SensorStateClass | None = None,
-        native_unit: str | None = None,
-    ) -> None:
-        """Initialize the sensor."""
-        super().__init__(
-            coordinator=coordinator,
-            device_id=device_id,
-            name=name,
-            icon="mdi:bank",
-        )
 
 
 class ConnectivityStateSensor(ElicaDiagnosticSensor):
@@ -42,7 +19,9 @@ class ConnectivityStateSensor(ElicaDiagnosticSensor):
             name="Connectivity state",
             icon="mdi:wifi",
             translation_key="connectivity_state",
+            device_class=SensorDeviceClass.ENUM,
         )
+        self._attr_options = ["connected", "disconnected"]
 
     @property
     def native_value(self) -> str:
@@ -60,7 +39,10 @@ class MqttConnectionSensor(ElicaDiagnosticSensor):
             device_id,
             name="MQTT Connection",
             icon="mdi:connection",
+            translation_key="mqtt_connection",
+            device_class=SensorDeviceClass.ENUM,
         )
+        self._attr_options = ["connected", "disconnected"]
 
     @property
     def native_value(self) -> str:
