@@ -17,7 +17,7 @@ class Capability:
     # Light brightness (value = 0-100)
     LIGHT_BRIGHTNESS = "96"
 
-    # Fan mode (bitmask: fan on/off, intensive on/off, aimatic on/off)
+    # Fan mode (bitmask: fan on/off, intensive on/off, airmatic on/off)
     FAN_MODE = "64"
 
     # Grease filter saturation (value = 0-100)

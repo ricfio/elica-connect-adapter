@@ -17,7 +17,7 @@ class DeviceState:
 
     Attributes:
         connected (bool): Device is connected.
-        aimatic (bool): Automatic fan mode that adjusts speed based on air quality.
+        airmatic (bool): Automatic fan mode that adjusts speed based on air quality.
         fan_speed (int): Current fan speed (0 = off, 1-3 = normal speeds).
         fan_boost (bool): Intensive fan mode (temporary max speed, e.g., 5 minutes).
         light_on (bool): Light is on.
@@ -28,7 +28,7 @@ class DeviceState:
     connected: bool | None = None
 
     # Fan
-    aimatic: bool = False
+    airmatic: bool = False
     fan_speed: int = 0
     fan_boost: bool = False  # Intensive mode / temporary max speed
 
@@ -46,11 +46,11 @@ class DeviceState:
         # fan_on = bool(fan_mode & FanMode.ON)
         fan_speed = capabilities.get(Capability.FAN_SPEED, 0)
         fan_boost = bool(fan_mode & FanMode.BOOST)
-        aimatic = bool(fan_mode & FanMode.AIMATIC)
+        airmatic = bool(fan_mode & FanMode.AIRMATIC)
 
         return DeviceState(
             connected=data.get("connected"),
-            aimatic=aimatic,
+            airmatic=airmatic,
             fan_speed=fan_speed,
             fan_boost=fan_boost,
             filter_saturation=capabilities.get(Capability.FILTER_SATURATION, 0),
@@ -76,8 +76,8 @@ class DeviceState:
             mode |= FanMode.ON
         if self.fan_boost:
             mode |= FanMode.BOOST
-        if self.aimatic:
-            mode |= FanMode.AIMATIC
+        if self.airmatic:
+            mode |= FanMode.AIRMATIC
 
         return mode
 
@@ -113,7 +113,7 @@ class DeviceState:
             if self.fan_boost:
                 fan_parts.append("boost=on")
 
-        fan_parts.append(f"aimatic={'on' if self.aimatic else 'off'}")
+        fan_parts.append(f"airmatic={'on' if self.airmatic else 'off'}")
         fan_str = ", ".join(fan_parts)
 
         light_status = "on" if self.light_on else "off"

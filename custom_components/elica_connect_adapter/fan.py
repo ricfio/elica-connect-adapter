@@ -126,7 +126,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
 
     async def _set_fan_mode(self, percentage: int, intensive: bool):
         device = self.device
-        aimatic = device.state.aimatic
+        airmatic = device.state.airmatic
 
         if intensive:
             speed = self._attr_speed_count
@@ -135,7 +135,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
 
         return await self._controller.set_fan_mode(
             device.uid,
-            aimatic,
+            airmatic,
             speed,
             intensive,
         )

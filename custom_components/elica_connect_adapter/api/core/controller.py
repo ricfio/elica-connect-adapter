@@ -153,7 +153,7 @@ class Controller:
     # --------------------------
 
     def _get_command_capabilities(
-        self, speed: int, boost: bool, aimatic: bool
+        self, speed: int, boost: bool, airmatic: bool
     ) -> dict[str, int]:
         fan = speed >= 1 and speed <= 3
         boost = boost and fan
@@ -163,7 +163,7 @@ class Controller:
             mode += 1
         if boost:
             mode += 4
-        if aimatic:
+        if airmatic:
             mode += 32
 
         capabilities = {Capability.FAN_MODE: mode}
@@ -171,10 +171,10 @@ class Controller:
             capabilities[Capability.FAN_SPEED] = speed
         return capabilities
 
-    async def get_aimatic_state(self, device_id: str) -> bool:
-        """Return the AIMatic state for the device."""
+    async def get_airmatic_state(self, device_id: str) -> bool:
+        """Return the Airmatic state for the device."""
         device = await self.get_device(device_id)
-        return device.state.aimatic
+        return device.state.airmatic
 
     async def get_fan_speed(self, device_id: str) -> int:
         """Return the fan speed for the device."""
@@ -194,12 +194,12 @@ class Controller:
     async def set_fan_mode(
         self,
         device_id: str,
-        aimatic: bool,
+        airmatic: bool,
         speed: int,
         boost: bool,
     ) -> bool:
         """Set the fan mode for the device."""
-        capabilities = self._get_command_capabilities(speed, boost, aimatic)
+        capabilities = self._get_command_capabilities(speed, boost, airmatic)
         await self.auth_provider.ensure_authenticated()
         headers = await self.auth_provider.get_header_for_user_auth()
 
@@ -224,14 +224,14 @@ class Controller:
             raise ValueError("Speed must be between 0 and 3")
 
         device = await self.get_device(device_id)
-        return await self.set_fan_mode(device_id, device.state.aimatic, speed, boost)
+        return await self.set_fan_mode(device_id, device.state.airmatic, speed, boost)
 
-    async def toggle_aimatic(self, device_id: str, enabled: bool | None = None) -> bool:
-        """Toggle the aimatic mode for the device."""
+    async def toggle_airmatic(self, device_id: str, enabled: bool | None = None) -> bool:
+        """Toggle the Airmatic mode for the device."""
         device = await self.get_device(device_id)
         return await self.set_fan_mode(
             device_id,
-            enabled if enabled is not None else not device.state.aimatic,
+            enabled if enabled is not None else not device.state.airmatic,
             device.state.fan_speed,
             device.state.fan_boost,
         )

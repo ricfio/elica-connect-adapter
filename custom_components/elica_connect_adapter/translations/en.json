@@ -11,8 +11,8 @@
             }
         },
         "switch": {
-            "aimatic": {
-                "name": "AIMatic"
+            "airmatic": {
+                "name": "Airmatic"
             }
         },
         "sensor": {

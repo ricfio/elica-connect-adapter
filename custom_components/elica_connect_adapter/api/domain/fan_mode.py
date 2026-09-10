@@ -9,4 +9,4 @@ class FanMode(IntFlag):
     OFF = 0
     ON = 1
     BOOST = 4
-    AIMATIC = 32
+    AIRMATIC = 32
