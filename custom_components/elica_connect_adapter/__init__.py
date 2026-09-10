@@ -69,10 +69,9 @@ async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    mqtt_unsubscribes = hass.data.get(DOMAIN, {}).pop("mqtt_unsubscribes", [])
-    for unsubscribe in mqtt_unsubscribes:
-        if unsubscribe:
-            unsubscribe()
+    entry_data = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if entry_data:
+        await entry_data["controller"].stop_listening()
 
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:

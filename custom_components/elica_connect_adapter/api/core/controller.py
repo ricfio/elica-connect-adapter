@@ -291,3 +291,7 @@ class Controller:
             _LOGGER.info("Keyboard interrupt received, stopping MQTT client...")
         # finally:
         # await self.mqtt.stop()
+
+    async def stop_listening(self) -> None:
+        """Stop the MQTT listener and release its broker connection."""
+        await self._mqtt_subscriber.stop()
