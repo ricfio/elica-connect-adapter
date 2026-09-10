@@ -1,13 +1,13 @@
 {
     "entity": {
         "light": {
-            "hood_light": {
-                "name": "Luce cappa"
+            "light": {
+                "name": "Luce"
             }
         },
         "fan": {
-            "hood_fan": {
-                "name": "Ventola cappa"
+            "fan": {
+                "name": "Ventola"
             }
         },
         "switch": {
