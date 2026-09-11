@@ -17,6 +17,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 
+from .api.domain import MANUFACTURER
 from .const import DOMAIN
 from .utils import create_controller
 
@@ -62,7 +63,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         {
             "uid": device.uid,
             "name": device.name,
-            "manufacturer": "Elica",
+            "manufacturer": MANUFACTURER,
             "model": getattr(device, "model", None),
             "serial": getattr(device, "serial", None),
         }

@@ -12,6 +12,8 @@ from .hood_filter import HoodFilter
 
 _LOGGER = logging.getLogger(__name__)
 
+MANUFACTURER = "Elica"
+
 
 @dataclass
 class Device:
@@ -68,7 +70,7 @@ class Device:
         device_id = data["id"]
         cuid = data["cuid"]
         name = data.get("name", device_id)
-        manufacturer = "Elica"
+        manufacturer = MANUFACTURER
         device_type = data.get("type")
         model_id = data.get("code12nc")
         serial = data.get("serialNumber")

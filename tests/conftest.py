@@ -10,7 +10,7 @@ import pytest
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.elica_connect_adapter.api.domain.device import Device
+from custom_components.elica_connect_adapter.api.domain import MANUFACTURER, Device
 from custom_components.elica_connect_adapter.const import DOMAIN
 
 DEVICE_ID = "test_device"
@@ -32,7 +32,7 @@ def create_mock_device(
         uid=id,
         cuid=f"cuid_{id}",
         name=name,
-        manufacturer=kwargs.get("manufacturer", "Elica"),
+        manufacturer=kwargs.get("manufacturer", MANUFACTURER),
         model=kwargs.get("model", "Test Model"),
         sw_version=kwargs.get("sw_version", "1.0.0"),
         data_model=dm,
