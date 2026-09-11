@@ -43,6 +43,13 @@
                     "disconnected": "Disconnected"
                 }
             },
+            "device_information": {
+                "name": "Device Information",
+                "state": {
+                    "configured": "Configured",
+                    "unknown": "Unknown"
+                }
+            },
             "grease_filter_efficiency": {
                 "name": "Grease Filter Efficiency"
             },

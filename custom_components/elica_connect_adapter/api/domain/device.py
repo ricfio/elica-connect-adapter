@@ -3,6 +3,7 @@
 import json
 import logging
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from .capabilities import Capability
@@ -61,6 +62,10 @@ class Device:
     temperature: Temperature | None = None
     never_connected: bool | None = None
     purchase_date: int | None = None
+    installation_type: str | None = None
+    usage_frequency: str | None = None
+    commercial_name: str | None = None
+    product_url: str | None = None
     # --- end new fields ----------------------------------------------------
 
     @staticmethod
@@ -74,7 +79,10 @@ class Device:
         device_type = data.get("type")
         model_id = data.get("code12nc")
         serial = data.get("serialNumber")
-        sw_ver = data.get("configuration", {}).get("revisionInfo")
+        config = data.get("configuration", {}) or {}
+        revision_info = config.get("revisionInfo")
+        ts = config.get("ts")
+        sw_ver = f"{revision_info} ({ts})" if revision_info and ts else revision_info
 
         # parse capabilities from dataModel (keep raw mask too)
         data_model = data.get("dataModel", {}) or {}
@@ -117,8 +125,10 @@ class Device:
             "dataModelIdx": data.get("dataModelIdx"),
             "dataModel": data_model,
             "filters_raw": filters_raw,
-            # keep entire raw payload if desired:
-            # "raw": data
+            "configuration": data.get("configuration"),
+            "autoLightPauseInterval": data.get("autoLightPauseInterval"),
+            "productManualUrl": data.get("productManualUrl"),
+            "accessoriesURL": data.get("accessoriesURL"),
         }
 
         # state from dataModel
@@ -149,6 +159,23 @@ class Device:
 
         never_connected = data.get("neverConnected")
         purchase_date = data.get("purchaseDate")
+        installation_type = data.get("installationType")
+        usage_frequency = data.get("usageFrequency")
+
+        product_ref = data.get("prf")
+        commercial_name = None
+        product_url = None
+        try:
+            products_file = Path(__file__).parent.parent.parent / "manufaturer" / "products.json"
+            if products_file.exists():
+                with open(products_file, encoding="utf-8") as f:
+                    products_data = json.load(f)
+                    if product_ref in products_data:
+                        prod_info = products_data[product_ref]
+                        commercial_name = prod_info.get("name")
+                        product_url = prod_info.get("url")
+        except Exception:
+            pass
         # ---------------------------------------------------------------------------------------
 
         return Device(
@@ -164,7 +191,7 @@ class Device:
             is_legacy=data.get("isLegacy"),
             data_model=data_model,
             data_model_version=data.get("dataModelVersion"),
-            product_reference=data.get("prf"),
+            product_reference=product_ref,
             capabilities=capabilities,
             state=state,
             filters=filters,
@@ -178,6 +205,10 @@ class Device:
             temperature=temperature,
             never_connected=never_connected,
             purchase_date=purchase_date,
+            installation_type=installation_type,
+            usage_frequency=usage_frequency,
+            commercial_name=commercial_name,
+            product_url=product_url,
         )
 
     def update_from_mqtt(self, payload: str) -> None:

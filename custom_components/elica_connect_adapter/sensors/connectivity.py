@@ -25,3 +25,9 @@ class ConnectivitySensor(ElicaDiagnosticSensor):
     @property
     def native_value(self) -> str:
         return "connected" if self.device.state.connected else "disconnected"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "time_zone": self.device.metadata.get("timeZone"),
+        }

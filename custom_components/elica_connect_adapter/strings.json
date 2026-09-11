@@ -39,6 +39,9 @@
       "connectivity": {
         "name": "Connectivity"
       },
+      "device_information": {
+        "name": "Device Information"
+      },
       "grease_filter_efficiency": {
         "name": "Grease Filter Efficiency"
       },

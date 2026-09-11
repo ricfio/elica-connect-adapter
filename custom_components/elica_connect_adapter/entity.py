@@ -22,13 +22,22 @@ class ElicaDeviceEntity(CoordinatorEntity[ElicaConnectCoordinator]):
 
         device = self.device
         self._attr_device_info = DeviceInfo(
+            configuration_url=device.product_url
+            or device.metadata.get("productManualUrl"),
+            # connections: set[tuple[str, str]]
+            # entry_type: DeviceEntryType | None
             identifiers={(DOMAIN, device.uid)},
-            name=device.name,
             manufacturer=device.manufacturer,
-            model=device.model,
+            model=device.commercial_name or device.product_reference or device.model,
             model_id=device.model_id,
+            name=device.name,
             serial_number=device.serial_number,
+            # suggested_area: str | None
             sw_version=device.sw_version,
+            hw_version=device.installation_type,
+            # translation_key: str | None
+            # translation_placeholders: Mapping[str, str] | None
+            # via_device_id: str
         )
 
     @property
