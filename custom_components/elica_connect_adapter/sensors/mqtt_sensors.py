@@ -9,7 +9,7 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 
 from ..api.core.constants import MQTT_HOST
 from ..coordinator import ElicaConnectCoordinator
-from .base_sensors import ElicaDiagnosticSensor
+from .base import ElicaDiagnosticSensor
 
 _LOGGER = logging.getLogger(__name__)
 

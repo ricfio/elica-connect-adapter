@@ -17,6 +17,12 @@ kept independent so it can later move to its own repository.
 - Update `strings.json`, `translations/en.json`, and `translations/it.json`
   together whenever user-visible configuration text changes.
 - Do not change `PLATFORMS` without also handling platform setup and unload.
+- Commenting and Documentation:
+  - Keep comments concise and informative.
+  - Module-level docstrings should be brief.
+  - Class docstrings should use a concise noun phrase (e.g., "Elica sensor base class").
+  - Avoid redundant docstrings for `__init__` methods unless they provide non-obvious context.
+  - Commit messages must not include information about the AI agent that contributed.
 
 ## Architecture
 

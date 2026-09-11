@@ -5,7 +5,7 @@ from __future__ import annotations
 from homeassistant.components.sensor import SensorDeviceClass
 
 from ..coordinator import ElicaConnectCoordinator
-from .base_sensors import ElicaDiagnosticSensor
+from .base import ElicaDiagnosticSensor
 
 
 class ConnectivitySensor(ElicaDiagnosticSensor):

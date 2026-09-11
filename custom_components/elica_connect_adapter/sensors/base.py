@@ -1,4 +1,4 @@
-"""Support for Elica sensors."""
+"""Base sensor entities for Elica Connect."""
 
 from __future__ import annotations
 
@@ -10,13 +10,12 @@ from homeassistant.components.sensor import (
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
 
-# from .capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
 from ..coordinator import ElicaConnectCoordinator
 from ..entity import ElicaDeviceEntity
 
 
 class ElicaSensor(ElicaDeviceEntity, SensorEntity):
-    """Base representation of an Elica sensor."""
+    """Base class for Elica sensors."""
 
     def __init__(
         self,
@@ -30,7 +29,6 @@ class ElicaSensor(ElicaDeviceEntity, SensorEntity):
         entity_category: EntityCategory | None = None,
         translation_key: str | None = None,
     ) -> None:
-        """Initialize the sensor."""
         super().__init__(coordinator, device_id)
         if translation_key:
             self._attr_translation_key = translation_key
@@ -45,7 +43,7 @@ class ElicaSensor(ElicaDeviceEntity, SensorEntity):
 
 
 class ElicaDiagnosticSensor(ElicaSensor):
-    """Representation of Elica Diagnostic sensors."""
+    """Base class for Elica diagnostic sensor."""
 
     def __init__(
         self,
@@ -58,7 +56,6 @@ class ElicaDiagnosticSensor(ElicaSensor):
         native_unit: str | None = None,
         translation_key: str | None = None,
     ) -> None:
-        """Initialize the diagnostic sensor."""
         super().__init__(
             coordinator,
             device_id,

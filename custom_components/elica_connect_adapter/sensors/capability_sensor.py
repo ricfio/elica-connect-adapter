@@ -12,7 +12,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 from ..api.domain.capabilities import Capability
 from ..coordinator import ElicaConnectCoordinator
-from .base_sensors import ElicaSensor
+from .base import ElicaSensor
 
 _LOGGER = logging.getLogger(__name__)
 
