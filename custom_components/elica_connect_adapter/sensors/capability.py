@@ -1,4 +1,4 @@
-"""Capability sensors for Elica Connect devices."""
+"""Capability sensor entities for Elica Connect."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class CapabilitySensorDefinition:
-    """Definition for a device capability sensor."""
+    """Definition of a device capability sensor."""
 
     name: str
     icon: str
@@ -74,7 +74,7 @@ CAPABILITY_SENSORS: Final = {
 
 
 class CapabilitySensor(ElicaSensor):
-    """Representation of an Elica capability sensor."""
+    """Elica capability sensor."""
 
     def __init__(
         self,
@@ -89,7 +89,6 @@ class CapabilitySensor(ElicaSensor):
         entity_category: EntityCategory | None = None,
         translation_key: str | None = None,
     ) -> None:
-        """Initialize the sensor."""
         super().__init__(
             coordinator=coordinator,
             device_id=device_id,
@@ -105,7 +104,6 @@ class CapabilitySensor(ElicaSensor):
 
     @property
     def native_value(self) -> int | float | None:
-        """Return the sensor value."""
         device = self.coordinator.get_device(self.device_id)
         val = device.data_model.get(self._key)
         if val is not None and self._key == Capability.FILTER_SATURATION:
@@ -117,7 +115,6 @@ class CapabilitySensor(ElicaSensor):
 
     @property
     def extra_state_attributes(self) -> dict:
-        """Return additional state attributes."""
         attrs = {
             "capability_id": self._key,
         }

@@ -11,9 +11,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .api.domain.capabilities import Capability
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
-from .sensors.capability_sensor import CAPABILITY_SENSORS, CapabilitySensor
-from .sensors.connectivity_sensor import ConnectivitySensor
-from .sensors.mqtt_sensors import MqttMessagesSensor, MqttStateSensor
+from .sensors.capability import CAPABILITY_SENSORS, CapabilitySensor
+from .sensors.connectivity import ConnectivitySensor
+from .sensors.mqtt import MqttMessagesSensor, MqttStateSensor
 
 _LOGGER = logging.getLogger(__name__)
 

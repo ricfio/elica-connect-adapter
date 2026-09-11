@@ -1,4 +1,4 @@
-"""MQTT diagnostic sensors for Elica Connect."""
+"""MQTT sensor entities for Elica Connect."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class MqttStateSensor(ElicaDiagnosticSensor):
-    """Representation of MQTT State sensor."""
+    """Elica MQTT state sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
         super().__init__(
@@ -49,7 +49,7 @@ class MqttStateSensor(ElicaDiagnosticSensor):
 
 
 class MqttMessagesSensor(ElicaDiagnosticSensor):
-    """Representation of MQTT Messages sensor."""
+    """Elica MQTT messages sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
         super().__init__(

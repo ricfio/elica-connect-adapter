@@ -1,4 +1,4 @@
-"""Support for Elica sensors."""
+"""Connectivity sensor entity for Elica Connect."""
 
 from __future__ import annotations
 
@@ -9,10 +9,9 @@ from .base import ElicaDiagnosticSensor
 
 
 class ConnectivitySensor(ElicaDiagnosticSensor):
-    """Connectivity sensor."""
+    """Elica connectivity sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
-        """Initialize the sensor."""
         super().__init__(
             coordinator,
             device_id,
@@ -25,5 +24,4 @@ class ConnectivitySensor(ElicaDiagnosticSensor):
 
     @property
     def native_value(self) -> str:
-        """Return the sensor value."""
         return "connected" if self.device.state.connected else "disconnected"
