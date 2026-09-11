@@ -1,6 +1,6 @@
-"""Constants for the Elica Connect integration."""
+"""Constants for the Elica Connect integration."""  # noqa: EXE002
 
-from .api.domain.capabilities import Capability
+from .api.domain import Capability, FanPreset
 
 DOMAIN = "elica_connect_adapter"
 
@@ -28,4 +28,9 @@ CAPABILITIES = [
     Capability.CAPABILITY_72,
     Capability.FAN_SPEED,
     Capability.CAPABILITY_112,
+]
+
+FAN_PRESET = [
+    FanPreset.NORMAL,
+    FanPreset.INTENSIVE,
 ]

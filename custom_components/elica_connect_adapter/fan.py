@@ -6,8 +6,8 @@ from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.core import HomeAssistant
 
 from .api.core import Controller
-from .api.domain import Capability, Device
-from .const import DOMAIN
+from .api.domain import Capability, Device, FanPreset
+from .const import DOMAIN, FAN_PRESET
 from .coordinator import ElicaConnectCoordinator
 from .entity import ElicaDeviceEntity
 
@@ -35,7 +35,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         | FanEntityFeature.TURN_ON
     )
     _attr_speed_count = 3  # 1–2–3
-    _attr_preset_modes = ["boost"]
+    _attr_preset_modes = FAN_PRESET
 
     def __init__(
         self,
@@ -65,15 +65,15 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         return round((speed / self._attr_speed_count) * 100)
 
     @property
-    def preset_mode(self) -> str | None:
+    def preset_mode(self) -> str:
         """Return the current preset mode."""
-        return "boost" if self.device.state.fan_boost else None
+        return FanPreset.INTENSIVE if self.device.state.fan_boost else FanPreset.NORMAL
 
     async def async_turn_on(
         self, percentage: int | None = None, preset_mode: str | None = None, **kwargs
     ):
         """Turn the fan on."""
-        if preset_mode == "boost":
+        if preset_mode == FanPreset.INTENSIVE:
             accepted = await self._set_fan_mode(
                 self._attr_speed_count,
                 intensive=True,
@@ -113,13 +113,19 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
 
     async def async_set_preset_mode(self, preset_mode: str):
         """Set fan preset mode."""
-        if preset_mode != "boost":
+        if preset_mode != FanPreset.NORMAL and preset_mode != FanPreset.INTENSIVE:
             raise ValueError(f"Unsupported preset mode: {preset_mode}")
 
-        accepted = await self._set_fan_mode(
-            100,
-            intensive=True,
-        )
+        if preset_mode == FanPreset.INTENSIVE:
+            accepted = await self._set_fan_mode(
+                100,
+                intensive=True,
+            )
+        else:
+            accepted = await self._set_fan_mode(
+                self.percentage,
+                intensive=False,
+            )
         if accepted:
             await self.coordinator.async_request_refresh()
         self.async_write_ha_state()

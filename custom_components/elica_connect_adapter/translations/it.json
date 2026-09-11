@@ -7,7 +7,15 @@
         },
         "fan": {
             "fan": {
-                "name": "Ventola"
+                "name": "Ventola",
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "normal": "Normale",
+                            "intensive": "Intensiva"
+                        }
+                    }
+                }
             }
         },
         "switch": {

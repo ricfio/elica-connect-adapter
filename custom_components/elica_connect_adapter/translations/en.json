@@ -7,7 +7,15 @@
         },
         "fan": {
             "fan": {
-                "name": "Fan"
+                "name": "Fan",
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "normal": "Normal",
+                            "intensive": "Intensive"
+                        }
+                    }
+                }
             }
         },
         "switch": {
