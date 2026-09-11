@@ -1,4 +1,5 @@
 """Tests for Elica Connect sensors."""
+
 from __future__ import annotations
 
 from unittest.mock import patch
@@ -129,3 +130,31 @@ async def test_grease_filter_efficiency_capability_sensor(hass):
         assert state.attributes["max_value"] == 100
         assert state.attributes["scale"] == "100-0 (decreasing)"
         assert state.attributes["capability_id"] == "128"
+
+
+async def test_fan_boost_timer_capability_sensor(hass):
+    """Test fan boost timer sensor (capability 69) values and attributes."""
+    device = create_mock_device(
+        id=DEVICE_ID,
+        name=DEVICE_NAME,
+        dataModel={"69": 4},  # Boost timer remaining 4 minutes
+    )
+
+    patch_target = (
+        "custom_components.elica_connect_adapter.coordinator."
+        "ElicaConnectCoordinator._async_update_data"
+    )
+    with patch(
+        patch_target,
+        return_value={"devices": {DEVICE_ID: device}, "mqtt_stats": {}},
+    ):
+        await setup_platform(hass, DOMAIN, Platform.SENSOR)
+        await hass.async_block_till_done()
+
+        state = hass.states.get("sensor.test_elica_hood_boost_timer")
+        assert state is not None
+        assert state.state == "4"
+        assert state.attributes["unit_of_measurement"] == "min"
+        assert state.attributes["device_class"] == "duration"
+        assert state.attributes["capability_id"] == "69"
+        assert device.state.fan_boost is True

@@ -1,4 +1,5 @@
 """Common fixtures for the Elica Connect tests."""
+
 from __future__ import annotations
 
 from collections.abc import Generator
@@ -73,6 +74,7 @@ async def setup_platform(
     mock_controller.login = AsyncMock(return_value=True)
     mock_controller.is_logged_in = AsyncMock(return_value=True)
     mock_controller.get_devices = AsyncMock(return_value=[])
+    mock_controller.stop_listening = AsyncMock(return_value=None)
 
     with patch(
         "custom_components.elica_connect_adapter.create_controller",

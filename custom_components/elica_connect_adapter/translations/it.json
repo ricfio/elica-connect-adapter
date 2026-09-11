@@ -24,6 +24,18 @@
             }
         },
         "sensor": {
+            "light_brightness": {
+                "name": "Luminosità luce"
+            },
+            "fan_mode": {
+                "name": "Modalitá aspirazione"
+            },
+            "fan_speed": {
+                "name": "Velocità aspirazione"
+            },
+            "fan_boost_timer": {
+                "name": "Timer boost"
+            },
             "connectivity": {
                 "name": "Connettività",
                 "state": {

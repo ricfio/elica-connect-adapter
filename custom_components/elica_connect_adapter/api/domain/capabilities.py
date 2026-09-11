@@ -9,16 +9,19 @@ Unknown capabilities are included for completeness and future decoding.
 class Capability:
     """Device capabilities for Elica devices.
 
-    Each attribute represents a specific controllable or observable
-    feature. The value corresponds to the device-specific code.
+    Each attribute represents a specific controllable or observable feature.
+    The value corresponds to the device-specific code.
     Unknown capabilities are left for future analysis.
     """
 
     # Fan mode (bitmask: fan on/off, intensive on/off, airmatic on/off)
     FAN_MODE = "64"
 
-    # Fan speed (value = 0=off, 1=low, 2=medium, 3=high)
+    # Fan speed (value: 0=off, 1=low, 2=medium, 3=high)
     FAN_SPEED = "110"
+
+    # Fan boost timer / remaining minutes (value: 0-5 minutes) for intensive mode
+    FAN_BOOST = "69"
 
     # Grease filter saturation (value = 0-100)
     FILTER_SATURATION = "128"
@@ -31,8 +34,6 @@ class Capability:
     CAPABILITY_131 = "131"
 
     CAPABILITY_68 = "68"
-
-    CAPABILITY_69 = "69"
 
     CAPABILITY_5 = "5"
 

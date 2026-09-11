@@ -24,6 +24,18 @@
       }
     },
     "sensor": {
+      "light_brightness": {
+        "name": "Light brightness"
+      },
+      "fan_mode": {
+        "name": "Fan mode"
+      },
+      "fan_speed": {
+        "name": "Fan speed"
+      },
+      "fan_boost_timer": {
+        "name": "Boost timer"
+      },
       "connectivity": {
         "name": "Connectivity"
       },

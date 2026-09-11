@@ -21,7 +21,7 @@ CAPABILITIES = [
     Capability.CAPABILITY_129,
     Capability.CAPABILITY_131,
     Capability.CAPABILITY_68,
-    Capability.CAPABILITY_69,
+    Capability.FAN_BOOST,
     Capability.CAPABILITY_5,
     Capability.CAPABILITY_6,
     Capability.CAPABILITY_71,

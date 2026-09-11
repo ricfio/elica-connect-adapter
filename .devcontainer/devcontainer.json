@@ -11,7 +11,7 @@
       // Use -bullseye variants on local on arm64/Apple Silicon.
       "VARIANT": "3.12-bullseye",
       // Options
-      "NODE_VERSION": "none"
+      "NODE_VERSION": "lts/*"
     }
   },
 
@@ -24,7 +24,9 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-azuretools.vscode-docker",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "mhutchie.git-graph",
+        "Anthropic.claude-code"
       ]
     }
   },
@@ -35,12 +37,23 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "pip3 install --user -r requirements.txt",
   // "postCreateCommand": "poetry update && poetry run pre-commit install",
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "runArgs": ["--userns=keep-id"],
   // "runArgs": ["--user", "1000:1000"],
+  "runArgs": [
+    // "-e",
+    // "GIT_EDITOR=code --wait",
+    // "--security-opt",
+    // "label=disable",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
   "containerUser": "vscode",
   "updateRemoteUserUID": true,
   "containerEnv": {
-    "HOME": "/home/vscode"
+    "HOME": "/home/vscode",
+    "ANTHROPIC_BASE_URL": "http://host.docker.internal:8082",
+    "ANTHROPIC_AUTH_TOKEN": "freecc",
+    "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "190000"
   }
 }

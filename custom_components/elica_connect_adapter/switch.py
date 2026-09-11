@@ -39,7 +39,7 @@ class ElicaAirMaticSwitch(ElicaDeviceEntity, SwitchEntity):
         self._controller = controller
         self._attr_translation_key = "airmatic"
         self._attr_unique_id = f"elica_{device.uid}_airmatic"
-        self._attr_icon = "mdi:fan"
+        self._attr_icon = "mdi:fan-auto"
 
     @property
     def is_on(self) -> bool:

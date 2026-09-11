@@ -36,12 +36,13 @@ async def async_setup_entry(
 
         # Add capability sensors for each device's dataModel values
         for key in device.data_model:
-            if key in (
-                Capability.LIGHT_BRIGHTNESS,
-                Capability.FAN_SPEED,
-                Capability.FAN_MODE,
-            ):
-                continue
+            # if key in (
+            #     Capability.LIGHT_BRIGHTNESS,
+            #     Capability.FAN_SPEED,
+            #     Capability.FAN_MODE,
+            #     Capability.FAN_BOOST,
+            # ):
+            #     continue
             if key in CAPABILITY_SENSORS:
                 # Add known capability sensors
                 definition = CAPABILITY_SENSORS[key]

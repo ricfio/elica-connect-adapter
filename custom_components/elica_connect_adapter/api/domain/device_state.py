@@ -19,7 +19,7 @@ class DeviceState:
         connected (bool): Device is connected.
         airmatic (bool): Automatic fan mode that adjusts speed based on air quality.
         fan_speed (int): Current fan speed (0 = off, 1-3 = normal speeds).
-        fan_boost (bool): Intensive fan mode (temporary max speed, e.g., 5 minutes).
+        fan_boost (bool): Intensive fan mode active (timer > 0 minutes).
         light_on (bool): Light is on.
         light_brightness (int): Current light brightness (0-100).
     """
@@ -43,9 +43,14 @@ class DeviceState:
         """Create from API JSON data."""
         capabilities = data.get("dataModel", {})
         fan_mode = FanMode(capabilities.get(Capability.FAN_MODE, 0))
+
         # fan_on = bool(fan_mode & FanMode.ON)
+
         fan_speed = capabilities.get(Capability.FAN_SPEED, 0)
-        fan_boost = bool(fan_mode & FanMode.BOOST)
+
+        boost_timer = capabilities.get(Capability.FAN_BOOST, 0)
+        fan_boost = bool(boost_timer > 0) or bool(fan_mode & FanMode.BOOST)
+
         airmatic = bool(fan_mode & FanMode.AIRMATIC)
 
         return DeviceState(

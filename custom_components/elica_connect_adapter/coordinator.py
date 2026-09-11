@@ -77,9 +77,11 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     {
                         "id": d.uid,
                         "name": d.name,
-                        "dataModel": getattr(d, "dataModel", {})
-                        if hasattr(d, "dataModel")
-                        else {},
+                        "dataModel": (
+                            getattr(d, "dataModel", {})
+                            if hasattr(d, "dataModel")
+                            else {}
+                        ),
                     }
                     for d in devices
                 ],

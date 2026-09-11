@@ -43,6 +43,7 @@ class ElicaSensor(ElicaDeviceEntity, SensorEntity):
         self._attr_native_unit_of_measurement = native_unit
         self._attr_entity_category = entity_category
 
+
 class ElicaDiagnosticSensor(ElicaSensor):
     """Representation of Elica Diagnostic sensors."""
 
