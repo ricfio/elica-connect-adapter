@@ -1,46 +1,55 @@
-"""Capability constants for Elica devices.
+"""Capability constants and definitions for Elica devices."""
 
-This module defines the capabilities that can be queried or controlled
-on Elica devices, such as lights, fans, and hood features.
-Unknown capabilities are included for completeness and future decoding.
-"""
+from __future__ import annotations
 
 
 class Capability:
-    """Device capabilities for Elica devices.
+    """Device capabilities for Elica appliances.
 
-    Each attribute represents a specific controllable or observable feature.
-    The value corresponds to the device-specific code.
-    Unknown capabilities are left for future analysis.
+    Maps capability codes reported in device telemetry to semantic identifiers
+    for fan control, lighting, filters, and unmapped telemetry slots.
     """
 
-    # Fan mode (bitmask: fan on/off, intensive on/off, airmatic on/off)
+    # --- Fan & Ventilation ---
     FAN_MODE = "64"
+    """Fan mode bitmask (Bit 0: ON, Bit 2: BOOST, Bit 5: AIRMATIC)."""
 
-    # Fan speed (value: 0=off, 1=low, 2=medium, 3=high)
-    FAN_SPEED = "110"
-
-    # Fan boost timer / remaining minutes (value: 0-5 minutes) for intensive mode
     FAN_BOOST = "69"
+    """Fan boost countdown timer (remaining minutes)."""
 
-    # Grease filter saturation (value = 0-100)
-    FILTER_SATURATION = "128"
+    FAN_SPEED = "110"
+    """Fan speed level (0 = off, 1 = low, 2 = medium, 3 = high)."""
 
-    # Light brightness (value = 0-100)
+    # --- Lighting ---
     LIGHT_BRIGHTNESS = "96"
+    """Light brightness percentage (0-100 %)."""
 
+    # --- Maintenance & Filters ---
+    FILTER_SATURATION = "128"
+    """Grease filter saturation percentage (0-100 %)."""
+
+    # --- Unmapped / Reserved Telemetry Slots ---
+    CAPABILITY_5 = "5"
+    CAPABILITY_6 = "6"
+    CAPABILITY_68 = "68"
+    CAPABILITY_71 = "71"
+    CAPABILITY_72 = "72"
+    CAPABILITY_112 = "112"
     CAPABILITY_129 = "129"
-
     CAPABILITY_131 = "131"
 
-    CAPABILITY_68 = "68"
 
-    CAPABILITY_5 = "5"
+class FanSpeed:
+    """Fan speed numeric levels and labels."""
 
-    CAPABILITY_6 = "6"
+    OFF = 0
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
 
-    CAPABILITY_71 = "71"
-
-    CAPABILITY_72 = "72"
-
-    CAPABILITY_112 = "112"
+    LABELS = {
+        OFF: "off",
+        LOW: "low",
+        MEDIUM: "medium",
+        HIGH: "high",
+    }
