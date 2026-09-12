@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -12,7 +11,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .api.domain.capabilities import Capability
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
-from .sensors.capability import CAPABILITY_SENSORS, CapabilitySensor
+from .sensors.capability import UnknownCapabilitySensor
+from .sensors.definitions import CAPABILITY_SENSORS
 from .sensors.connectivity import ConnectivitySensor
 from .sensors.info import DeviceInformationSensor
 from .sensors.mqtt import MqttMessagesSensor, MqttStateSensor
@@ -39,61 +39,23 @@ async def async_setup_entry(
 
         # Add capability sensors for each device's dataModel values
         for key in device.data_model:
-            # if key in (
-            #     Capability.LIGHT_BRIGHTNESS,
-            #     Capability.FAN_SPEED,
-            #     Capability.FAN_MODE,
-            #     Capability.FAN_BOOST,
-            # ):
-            #     continue
             if key in CAPABILITY_SENSORS:
                 # Add known capability sensors
                 definition = CAPABILITY_SENSORS[key]
                 entities.append(
-                    CapabilitySensor(
-                        coordinator=coordinator,
-                        device_id=device_id,
-                        key=key,
-                        name=definition.name,
-                        icon=definition.icon,
-                        device_class=definition.device_class,
-                        state_class=definition.state_class,
-                        native_unit=definition.native_unit,
-                        entity_category=definition.entity_category,
-                        translation_key=definition.translation_key,
-                    )
+                    definition.create_sensor(coordinator, device_id, key)
                 )
             else:
                 # Add unknown capability sensors
                 entities.append(
-                    CapabilitySensor(
-                        coordinator=coordinator,
-                        device_id=device_id,
-                        key=key,
-                        name=f"Capability {key}",
-                        icon="mdi:circle",
-                        device_class=None,
-                        state_class=None,
-                        native_unit=None,
-                        entity_category=None,
-                    )
+                    UnknownCapabilitySensor(coordinator, device_id, key)
                 )
 
         # Add extra capability sensors
-        entities.extend(
-            [
-                CapabilitySensor(
-                    coordinator=coordinator,
-                    device_id=device_id,
-                    key=Capability.FAN_SHUTOFF_TIMER,
-                    name="Fan Shut-off Timer",
-                    icon="mdi:timer-sand",
-                    device_class=SensorDeviceClass.DURATION,
-                    state_class=SensorStateClass.MEASUREMENT,
-                    native_unit="min",
-                    translation_key="fan_shutoff_timer",
-                ),
-            ]
+        entities.append(
+            CAPABILITY_SENSORS[Capability.FAN_SHUTOFF_TIMER].create_sensor(
+                coordinator, device_id, Capability.FAN_SHUTOFF_TIMER
+            )
         )
 
         # Add MQTT sensors
