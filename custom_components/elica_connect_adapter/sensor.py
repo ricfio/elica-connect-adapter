@@ -12,10 +12,11 @@ from .api.domain.capabilities import Capability
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .sensors.capability import UnknownCapabilitySensor
-from .sensors.connectivity import ConnectivitySensor
+from .sensors.cloud_connectivity import CloudConnectivitySensor
 from .sensors.definitions import CAPABILITY_SENSORS
 from .sensors.info import DeviceInformationSensor
-from .sensors.mqtt import MqttMessagesSensor, MqttStateSensor
+from .sensors.mqtt_connectivity import MqttConnectivitySensor
+from .sensors.mqtt_messages import MqttMessagesSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ async def async_setup_entry(
     # Add MQTT diagnostic sensors for each device
     for device_id in coordinator.data["devices"]:
         device = coordinator.get_device(device_id)
-        entities.append(ConnectivitySensor(coordinator, device_id))
+        entities.append(CloudConnectivitySensor(coordinator, device_id))
         entities.append(DeviceInformationSensor(coordinator, device_id))
 
         # Add capability sensors for each device's dataModel values
@@ -60,7 +61,7 @@ async def async_setup_entry(
         # Add MQTT sensors
         entities.extend(
             [
-                MqttStateSensor(coordinator, device_id),
+                MqttConnectivitySensor(coordinator, device_id),
                 MqttMessagesSensor(coordinator, device_id),
             ]
         )

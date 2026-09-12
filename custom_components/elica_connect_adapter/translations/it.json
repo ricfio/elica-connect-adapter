@@ -49,13 +49,6 @@
             "fan_shutoff_timer": {
                 "name": "Timer spegnimento automatico"
             },
-            "connectivity": {
-                "name": "Connettività",
-                "state": {
-                    "connected": "Connesso",
-                    "disconnected": "Disconnesso"
-                }
-            },
             "device_information": {
                 "name": "Informazioni dispositivo",
                 "state": {
@@ -66,7 +59,14 @@
             "grease_filter_efficiency": {
                 "name": "Efficienza filtro antigrasso"
             },
-            "mqtt_state": {
+            "cloud_connectivity": {
+                "name": "Connettività Cloud",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
+            },
+            "mqtt_connectivity": {
                 "name": "Connettività MQTT",
                 "state": {
                     "connected": "Connesso",

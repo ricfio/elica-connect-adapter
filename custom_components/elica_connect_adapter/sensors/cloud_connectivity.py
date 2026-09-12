@@ -2,24 +2,27 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from homeassistant.components.sensor import SensorDeviceClass
 
 from ..coordinator import ElicaConnectCoordinator
 from .base import ElicaDiagnosticSensor
 
 
-class ConnectivitySensor(ElicaDiagnosticSensor):
-    """Elica connectivity sensor."""
+class CloudConnectivitySensor(ElicaDiagnosticSensor):
+    """Elica cloud connectivity sensor."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
         super().__init__(
             coordinator,
             device_id,
-            name="Connectivity",
+            name="Cloud Connectivity",
             icon="mdi:wifi",
-            translation_key="connectivity",
+            translation_key="cloud_connectivity",
             device_class=SensorDeviceClass.ENUM,
         )
+        self._attr_unique_id = f"elica_{device_id}_{self.translation_key}"
         self._attr_options = ["connected", "disconnected"]
 
     @property

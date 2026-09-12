@@ -49,17 +49,17 @@
       "fan_shutoff_timer": {
         "name": "Shut-off timer"
       },
-      "connectivity": {
-        "name": "Connectivity"
-      },
       "device_information": {
         "name": "Device Information"
       },
       "grease_filter_efficiency": {
         "name": "Grease Filter Efficiency"
       },
-      "mqtt_state": {
-        "name": "MQTT State"
+      "cloud_connectivity": {
+        "name": "Cloud Connectivity"
+      },
+      "mqtt_connectivity": {
+        "name": "MQTT Connectivity"
       },
       "mqtt_messages": {
         "name": "MQTT Messages"
