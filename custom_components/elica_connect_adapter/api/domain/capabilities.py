@@ -14,7 +14,7 @@ class Capability:
     FAN_MODE = "64"
     """Fan mode bitmask (Bit 0: ON, Bit 2: BOOST, Bit 5: AIRMATIC)."""
 
-    FAN_BOOST = "69"
+    FAN_BOOST_TIMER = "69"
     """Fan boost shut-off timer (remaining minutes)."""
 
     FAN_SPEED = "110"

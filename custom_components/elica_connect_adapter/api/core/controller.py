@@ -181,7 +181,7 @@ class Controller:
         device = await self.get_device(device_id)
         return device.state.fan_speed
 
-    async def get_fan_boot(self, device_id: str) -> bool:
+    async def get_fan_boost(self, device_id: str) -> bool:
         """Return the fan boost state for the device."""
         device = await self.get_device(device_id)
         return device.state.fan_boost

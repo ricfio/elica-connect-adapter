@@ -132,8 +132,8 @@ class Device:
             capabilities.append(Capability.FAN_SPEED)
         if Capability.FILTER_SATURATION in data_model:
             capabilities.append(Capability.FILTER_SATURATION)
-        if Capability.FAN_BOOST in data_model:
-            capabilities.append(Capability.FAN_BOOST)
+        if Capability.FAN_BOOST_TIMER in data_model:
+            capabilities.append(Capability.FAN_BOOST_TIMER)
         # you may also keep the raw data_model for reference in metadata
 
         # parse filters (if any)
@@ -329,8 +329,8 @@ class Device:
                 self.state.fan_speed = speed
                 state_changed = True
 
-        if Capability.FAN_BOOST in dataModel:
-            boost_timer = dataModel[Capability.FAN_BOOST]
+        if Capability.FAN_BOOST_TIMER in dataModel:
+            boost_timer = dataModel[Capability.FAN_BOOST_TIMER]
             is_boost = bool(boost_timer > 0)
             if time.time() < self.fan_boost_lock_until:
                 if self.expected_fan_boost == is_boost:

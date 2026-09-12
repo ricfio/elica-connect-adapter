@@ -48,7 +48,7 @@ class DeviceState:
 
         fan_speed = capabilities.get(Capability.FAN_SPEED, 0)
 
-        boost_timer = capabilities.get(Capability.FAN_BOOST, 0)
+        boost_timer = capabilities.get(Capability.FAN_BOOST_TIMER, 0)
         fan_boost = bool(boost_timer > 0) or bool(fan_mode & FanMode.BOOST)
 
         airmatic = bool(fan_mode & FanMode.AIRMATIC)

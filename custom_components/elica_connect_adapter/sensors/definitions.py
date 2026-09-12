@@ -75,7 +75,7 @@ CAPABILITY_SENSORS: Final = {
         state_class=SensorStateClass.MEASUREMENT,
         translation_key="fan_speed",
     ),
-    Capability.FAN_BOOST: CapabilitySensorDefinition(
+    Capability.FAN_BOOST_TIMER: CapabilitySensorDefinition(
         name="Boost Timer",
         icon="mdi:timer-sand",
         device_class=SensorDeviceClass.DURATION,
