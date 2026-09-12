@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -77,6 +78,23 @@ async def async_setup_entry(
                         entity_category=None,
                     )
                 )
+
+        # Add extra capability sensors
+        entities.extend(
+            [
+                CapabilitySensor(
+                    coordinator=coordinator,
+                    device_id=device_id,
+                    key=Capability.FAN_SHUTOFF_TIMER,
+                    name="Fan Shut-off Timer",
+                    icon="mdi:timer-sand",
+                    device_class=SensorDeviceClass.DURATION,
+                    state_class=SensorStateClass.MEASUREMENT,
+                    native_unit="min",
+                    translation_key="fan_shutoff_timer",
+                ),
+            ]
+        )
 
         # Add MQTT sensors
         entities.extend(

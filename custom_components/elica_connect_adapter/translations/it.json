@@ -35,6 +35,9 @@
             "fan_boost_timer": {
                 "name": "Timer aspirazione intensiva"
             },
+            "fan_shutoff_timer": {
+                "name": "Timer spegnimento automatico"
+            },
             "connectivity": {
                 "name": "Connettività",
                 "state": {

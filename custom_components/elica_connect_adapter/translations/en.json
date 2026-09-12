@@ -35,6 +35,9 @@
             "fan_boost_timer": {
                 "name": "Intensive extraction timer"
             },
+            "fan_shutoff_timer": {
+                "name": "Shut-off timer"
+            },
             "connectivity": {
                 "name": "Connectivity",
                 "state": {

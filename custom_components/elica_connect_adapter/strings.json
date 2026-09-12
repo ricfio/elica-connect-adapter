@@ -35,6 +35,9 @@
       "fan_boost_timer": {
         "name": "Boost timer"
       },
+      "fan_shutoff_timer": {
+        "name": "Shut-off timer"
+      },
       "connectivity": {
         "name": "Connectivity"
       },

@@ -15,10 +15,13 @@ class Capability:
     """Fan mode bitmask (Bit 0: ON, Bit 2: BOOST, Bit 5: AIRMATIC)."""
 
     FAN_BOOST = "69"
-    """Fan boost countdown timer (remaining minutes)."""
+    """Fan boost shut-off timer (remaining minutes)."""
 
     FAN_SPEED = "110"
     """Fan speed level (0 = off, 1 = low, 2 = medium, 3 = high)."""
+
+    FAN_SHUTOFF_TIMER = "432"
+    """Fan automatic shut-off timer (remaining minutes)."""
 
     # --- Lighting ---
     LIGHT_BRIGHTNESS = "96"
