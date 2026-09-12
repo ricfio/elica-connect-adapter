@@ -105,7 +105,9 @@ class MqttClientAiomqtt(MqttClientInterface):
                     async with self._client as client:
                         _LOGGER.debug("MQTT connection established, subscribing...")
                         for topic in self._topics:
-                            await client.subscribe(topic)
+                            # Use QoS 1 (At Least Once) to guarantee delivery of control/telemetry messages.
+                            # Revert: change qos=1 to qos=0 if QoS 1 causes message duplication or broker queues.
+                            await client.subscribe(topic, qos=1)
                         _LOGGER.info(
                             f"Connected to {self.hostname}:{self.port}, "  # noqa: G004
                             f"subscribed to topics: {self._topics}"
