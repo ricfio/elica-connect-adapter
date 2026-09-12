@@ -183,7 +183,11 @@ class MqttClientAiomqtt(MqttClientInterface):
         """Decode payload and call the callback."""
         if self._on_message:
             payload = message.payload.decode("utf-8", errors="replace")
-            result = self._on_message(message.topic.value, payload)
+            retain = getattr(message, "retain", False)
+            try:
+                result = self._on_message(message.topic.value, payload, retain)
+            except TypeError:
+                result = self._on_message(message.topic.value, payload)
             if asyncio.iscoroutine(result):
                 await result
 

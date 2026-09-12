@@ -105,7 +105,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 cuids = [getattr(d, "cuid", None) for d in devices]
                 _LOGGER.debug("Starting MQTT listener for cuids: %s", cuids)
 
-                async def _mqtt_logging_wrapper(topic: str, payload: str) -> None:
+                async def _mqtt_logging_wrapper(topic: str, payload: str, retain: bool = False) -> None:
                     if not self._mqtt_updates:
                         return
                     try:
@@ -122,20 +122,22 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
                         if self._mqtt_debug:
                             _LOGGER.info(
-                                "MQTT message received [stats: %s]: %s - %s",
+                                "MQTT message received [retained=%s, stats: %s]: %s - %s",
+                                retain,
                                 "present" if "mqtt_stats" in self.data else "missing",
                                 topic,
                                 display_payload,
                             )
                         else:
                             _LOGGER.debug(
-                                "MQTT message received [stats: %s]: %s - %s",
+                                "MQTT message received [retained=%s, stats: %s]: %s - %s",
+                                retain,
                                 "present" if "mqtt_stats" in self.data else "missing",
                                 topic,
                                 display_payload,
                             )
                         # Delegate to coordinator handler
-                        await self._async_update_from_mqtt(topic, payload)
+                        await self._async_update_from_mqtt(topic, payload, retain=retain)
                     except Exception:
                         _LOGGER.exception(
                             "Error while processing MQTT message for topic %s", topic
@@ -161,7 +163,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self.data["mqtt_stats"]["last_disconnection"] = datetime.now().isoformat()
         self.async_set_updated_data(self.data)
 
-    async def _async_update_from_mqtt(self, topic: str, payload: str) -> None:
+    async def _async_update_from_mqtt(self, topic: str, payload: str, retain: bool = False) -> None:
         """Process MQTT update message."""
         if not self._mqtt_updates:
             return
@@ -180,6 +182,8 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "last_message_timestamp": None,
                 "last_message_payload": None,
                 "total_messages": 0,
+                "retained_messages": 0,
+                "last_message_retained": False,
             }
 
         # Update MQTT statistics
@@ -191,6 +195,9 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         mqtt_stats["last_message_timestamp"] = now_str
         mqtt_stats["last_message_payload"] = payload
         mqtt_stats["total_messages"] = mqtt_stats.get("total_messages", 0) + 1
+        if retain:
+            mqtt_stats["retained_messages"] = mqtt_stats.get("retained_messages", 0) + 1
+        mqtt_stats["last_message_retained"] = retain
 
         _LOGGER.debug("Updated MQTT stats: %s", mqtt_stats)
 

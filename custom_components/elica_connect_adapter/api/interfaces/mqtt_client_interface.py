@@ -3,7 +3,7 @@
 from collections.abc import Awaitable, Callable
 from typing import Any, Protocol
 
-OnMqttMessageCallback = Callable[[str, Any], None | Awaitable[None]]
+OnMqttMessageCallback = Callable[..., None | Awaitable[None]]
 OnMqttConnectionCallback = Callable[[bool], None | Awaitable[None]]
 
 
