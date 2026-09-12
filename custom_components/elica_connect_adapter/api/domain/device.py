@@ -2,6 +2,7 @@
 
 import json
 import logging
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -68,6 +69,40 @@ class Device:
     commercial_name: str | None = None
     product_url: str | None = None
     # --- end new fields ----------------------------------------------------
+
+    # Optimistic locking fields
+    airmatic_lock_until: float = field(default=0.0, repr=False)
+    expected_airmatic: bool | None = field(default=None, repr=False)
+    fan_speed_lock_until: float = field(default=0.0, repr=False)
+    expected_fan_speed: int | None = field(default=None, repr=False)
+    fan_boost_lock_until: float = field(default=0.0, repr=False)
+    expected_fan_boost: bool | None = field(default=None, repr=False)
+    light_lock_until: float = field(default=0.0, repr=False)
+    expected_light_brightness: int | None = field(default=None, repr=False)
+
+    def set_airmatic_optimistic(self, enabled: bool) -> None:
+        """Set airmatic state optimistically with a lock grace period."""
+        self.state.airmatic = enabled
+        self.expected_airmatic = enabled
+        self.airmatic_lock_until = time.time() + 25.0
+
+    def set_fan_speed_optimistic(self, speed: int) -> None:
+        """Set fan speed state optimistically with a lock grace period."""
+        self.state.fan_speed = speed
+        self.expected_fan_speed = speed
+        self.fan_speed_lock_until = time.time() + 25.0
+
+    def set_fan_boost_optimistic(self, boost: bool) -> None:
+        """Set fan boost state optimistically with a lock grace period."""
+        self.state.fan_boost = boost
+        self.expected_fan_boost = boost
+        self.fan_boost_lock_until = time.time() + 25.0
+
+    def set_light_brightness_optimistic(self, brightness: int) -> None:
+        """Set light brightness state optimistically with a lock grace period."""
+        self.state.light_brightness = brightness
+        self.expected_light_brightness = brightness
+        self.light_lock_until = time.time() + 25.0
 
     @staticmethod
     def create_from_json(data: dict[str, Any]) -> "Device":
@@ -260,11 +295,23 @@ class Device:
             try:
                 fan_mode_val = int(dataModel[Capability.FAN_MODE])
                 fan_mode = FanMode(fan_mode_val)
+
                 is_airmatic = bool(fan_mode & FanMode.AIRMATIC)
+                if time.time() < self.airmatic_lock_until:
+                    if self.expected_airmatic == is_airmatic:
+                        self.airmatic_lock_until = 0.0
+                    else:
+                        is_airmatic = self.state.airmatic
                 if self.state.airmatic != is_airmatic:
                     self.state.airmatic = is_airmatic
                     state_changed = True
+
                 is_boost = bool(fan_mode & FanMode.BOOST)
+                if time.time() < self.fan_boost_lock_until:
+                    if self.expected_fan_boost == is_boost:
+                        self.fan_boost_lock_until = 0.0
+                    else:
+                        is_boost = self.state.fan_boost
                 if self.state.fan_boost != is_boost:
                     self.state.fan_boost = is_boost
                     state_changed = True
@@ -272,20 +319,37 @@ class Device:
                 _LOGGER.warning("Invalid fan mode value: %s", dataModel[Capability.FAN_MODE])
 
         if Capability.FAN_SPEED in dataModel:
-            if self.state.fan_speed != dataModel[Capability.FAN_SPEED]:
-                self.state.fan_speed = dataModel[Capability.FAN_SPEED]
+            speed = dataModel[Capability.FAN_SPEED]
+            if time.time() < self.fan_speed_lock_until:
+                if self.expected_fan_speed == speed:
+                    self.fan_speed_lock_until = 0.0
+                else:
+                    speed = self.state.fan_speed
+            if self.state.fan_speed != speed:
+                self.state.fan_speed = speed
                 state_changed = True
 
         if Capability.FAN_BOOST in dataModel:
             boost_timer = dataModel[Capability.FAN_BOOST]
             is_boost = bool(boost_timer > 0)
+            if time.time() < self.fan_boost_lock_until:
+                if self.expected_fan_boost == is_boost:
+                    self.fan_boost_lock_until = 0.0
+                else:
+                    is_boost = self.state.fan_boost
             if self.state.fan_boost != is_boost:
                 self.state.fan_boost = is_boost
                 state_changed = True
 
         if Capability.LIGHT_BRIGHTNESS in dataModel:
-            if self.state.light_brightness != dataModel[Capability.LIGHT_BRIGHTNESS]:
-                self.state.light_brightness = dataModel[Capability.LIGHT_BRIGHTNESS]
+            brightness = dataModel[Capability.LIGHT_BRIGHTNESS]
+            if time.time() < self.light_lock_until:
+                if self.expected_light_brightness == brightness:
+                    self.light_lock_until = 0.0
+                else:
+                    brightness = self.state.light_brightness
+            if self.state.light_brightness != brightness:
+                self.state.light_brightness = brightness
                 state_changed = True
 
         if Capability.FILTER_SATURATION in dataModel:

@@ -61,7 +61,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
             brightness_pct,
         )
         if accepted:
-            await self.coordinator.async_request_refresh()
+            self.device.set_light_brightness_optimistic(brightness_pct)
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:  # noqa: D102
@@ -70,5 +70,5 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
             False,
         )
         if accepted:
-            await self.coordinator.async_request_refresh()
+            self.device.set_light_brightness_optimistic(0)
         self.async_write_ha_state()

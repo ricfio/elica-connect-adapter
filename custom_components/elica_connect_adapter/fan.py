@@ -88,7 +88,13 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             )
 
         if accepted:
-            await self.coordinator.async_request_refresh()
+            if preset_mode == FanPreset.BOOST:
+                self.device.set_fan_speed_optimistic(self._attr_speed_count)
+                self.device.set_fan_boost_optimistic(True)
+            else:
+                speed = self._calculate_speed(percentage)
+                self.device.set_fan_speed_optimistic(speed)
+                self.device.set_fan_boost_optimistic(False)
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
@@ -98,7 +104,8 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             intensive=False,
         )
         if accepted:
-            await self.coordinator.async_request_refresh()
+            self.device.set_fan_speed_optimistic(0)
+            self.device.set_fan_boost_optimistic(False)
         self.async_write_ha_state()
 
     async def async_set_percentage(self, percentage: int):
@@ -108,7 +115,9 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             intensive=False,
         )
         if accepted:
-            await self.coordinator.async_request_refresh()
+            speed = self._calculate_speed(percentage)
+            self.device.set_fan_speed_optimistic(speed)
+            self.device.set_fan_boost_optimistic(False)
         self.async_write_ha_state()
 
     async def async_set_preset_mode(self, preset_mode: str | None):
@@ -127,7 +136,10 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
                 intensive=False,
             )
         if accepted:
-            await self.coordinator.async_request_refresh()
+            is_boost = preset_mode == FanPreset.BOOST
+            if is_boost:
+                self.device.set_fan_speed_optimistic(self._attr_speed_count)
+            self.device.set_fan_boost_optimistic(is_boost)
         self.async_write_ha_state()
 
     async def _set_fan_mode(self, percentage: int, intensive: bool):

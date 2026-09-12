@@ -56,9 +56,10 @@ class ElicaAirMaticSwitch(ElicaDeviceEntity, SwitchEntity):
 
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle Airmatic mode."""
-        await self._controller.toggle_airmatic(
+        accepted = await self._controller.toggle_airmatic(
             self.device.uid,
             enable,
         )
-        await self.coordinator.async_request_refresh()
+        if accepted:
+            self.device.set_airmatic_optimistic(enable)
         self.async_write_ha_state()
