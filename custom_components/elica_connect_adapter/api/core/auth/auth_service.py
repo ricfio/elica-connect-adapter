@@ -36,8 +36,13 @@ class AuthService:
         return self.generate_basic_token(self.client_id, self.client_secret)
 
     async def login(self, username: str, password: str) -> dict:
-        timeout = aiohttp.ClientTimeout(total=10)
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(
+            total=10.0, connect=5.0, sock_connect=5.0, sock_read=10.0
+        )
+        connector = aiohttp.TCPConnector(
+            limit=5, limit_per_host=2, keepalive_timeout=60.0, enable_cleanup_closed=True
+        )
+        async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
             async with session.post(
                 f"{self.base_url}/oauth/token",
                 data={
@@ -47,7 +52,6 @@ class AuthService:
                     "password": password,
                     "app_uuid": self.app_uuid,
                 },
-                timeout=timeout,
                 headers=self._generate_headers(),
             ) as response:
                 response.raise_for_status()
@@ -55,8 +59,13 @@ class AuthService:
 
     async def refresh_token(self, refresh_token: str) -> dict:
         """Refresh token."""
-        timeout = aiohttp.ClientTimeout(total=10)
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(
+            total=10.0, connect=5.0, sock_connect=5.0, sock_read=10.0
+        )
+        connector = aiohttp.TCPConnector(
+            limit=5, limit_per_host=2, keepalive_timeout=60.0, enable_cleanup_closed=True
+        )
+        async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
             async with session.post(
                 f"{self.base_url}/oauth/token",
                 data={
@@ -65,7 +74,6 @@ class AuthService:
                     "refresh_token": refresh_token,
                     "app_uuid": self.app_uuid,
                 },
-                timeout=timeout,
                 headers=self._generate_headers(),
             ) as response:
                 response.raise_for_status()

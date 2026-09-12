@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from aiohttp import ClientResponse, ClientSession, ClientTimeout, ContentTypeError
+from aiohttp import ClientResponse, ClientSession, ClientTimeout, ContentTypeError, TCPConnector
 
 from ...interfaces import RestClientInterface
 
@@ -19,7 +19,12 @@ class AioHttpRestClient(RestClientInterface):
         """Initialize aiohttp client."""
         super().__init__()
         self.base_url = base_url.rstrip("/")
-        self.timeout = ClientTimeout(total=timeout)
+        self.timeout = ClientTimeout(
+            total=timeout,
+            connect=5.0,
+            sock_connect=5.0,
+            sock_read=timeout,
+        )
         self.session: ClientSession | None = None
 
     # ----------------------------
@@ -43,8 +48,14 @@ class AioHttpRestClient(RestClientInterface):
         return self.session
 
     def _create_session(self) -> ClientSession:
-        """Create a new aiohttp session."""
-        return ClientSession(timeout=self.timeout)
+        """Create a new aiohttp session with persistent TCPConnector."""
+        connector = TCPConnector(
+            limit=10,
+            limit_per_host=5,
+            keepalive_timeout=60.0,
+            enable_cleanup_closed=True,
+        )
+        return ClientSession(connector=connector, timeout=self.timeout)
 
     async def close(self) -> None:
         """Close the aiohttp session if open."""

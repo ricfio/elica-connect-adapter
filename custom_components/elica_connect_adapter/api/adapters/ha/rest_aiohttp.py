@@ -22,7 +22,12 @@ class AioHttpRestClient(RestClientInterface):
         self.hass = hass
         self.base_url = base_url.rstrip("/")
         self.session = async_get_clientsession(hass)
-        self.timeout = ClientTimeout(total=timeout)
+        self.timeout = ClientTimeout(
+            total=timeout,
+            connect=5.0,
+            sock_connect=5.0,
+            sock_read=timeout,
+        )
 
     async def get(
         self,
