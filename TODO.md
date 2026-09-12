@@ -26,3 +26,4 @@
 - [ ] Implementare il lookup del nome prodotto da `manufacturer/products.json`
 - [ ] Rimuovere file `.pyc` residui dalla working directory
 - [ ] Completare internazionalizzazione i18n (`strings.json` e file di traduzione)
+- [ ] Abilitare i controlli interattivi (Number e Switch) per il timer di spegnimento automatico (Capability 432 / FAN_SHUTOFF_TIMER) non appena validata la chiamata API di set/stop

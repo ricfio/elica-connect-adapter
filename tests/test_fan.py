@@ -37,7 +37,9 @@ async def test_fan_turn_on_default_percentage(hass):
         assert state is not None
         assert state.state == "off"
 
-        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN, SERVICE_TURN_ON
+        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN
+        from homeassistant.components.fan import SERVICE_TURN_ON
+
         await hass.services.async_call(
             FAN_DOMAIN,
             SERVICE_TURN_ON,
@@ -75,7 +77,9 @@ async def test_fan_turn_on_with_percentage(hass):
         mock_controller = entry_data["controller"]
         mock_controller.set_fan_mode = AsyncMock(return_value=True)
 
-        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN, SERVICE_TURN_ON
+        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN
+        from homeassistant.components.fan import SERVICE_TURN_ON
+
         await hass.services.async_call(
             FAN_DOMAIN,
             SERVICE_TURN_ON,
@@ -113,7 +117,9 @@ async def test_fan_turn_off(hass):
         mock_controller = entry_data["controller"]
         mock_controller.set_fan_mode = AsyncMock(return_value=True)
 
-        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN, SERVICE_TURN_OFF
+        from homeassistant.components.fan import DOMAIN as FAN_DOMAIN
+        from homeassistant.components.fan import SERVICE_TURN_OFF
+
         await hass.services.async_call(
             FAN_DOMAIN,
             SERVICE_TURN_OFF,

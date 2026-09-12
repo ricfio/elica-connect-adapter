@@ -10,7 +10,11 @@ import pytest
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.elica_connect_adapter.api.domain import MANUFACTURER, Device, DeviceState
+from custom_components.elica_connect_adapter.api.domain import (
+    MANUFACTURER,
+    Device,
+    DeviceState,
+)
 from custom_components.elica_connect_adapter.const import DOMAIN
 
 DEVICE_ID = "test_device"

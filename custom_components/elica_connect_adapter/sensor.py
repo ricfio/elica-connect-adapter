@@ -12,8 +12,8 @@ from .api.domain.capabilities import Capability
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .sensors.capability import UnknownCapabilitySensor
-from .sensors.definitions import CAPABILITY_SENSORS
 from .sensors.connectivity import ConnectivitySensor
+from .sensors.definitions import CAPABILITY_SENSORS
 from .sensors.info import DeviceInformationSensor
 from .sensors.mqtt import MqttMessagesSensor, MqttStateSensor
 
@@ -45,14 +45,10 @@ async def async_setup_entry(
             if key in CAPABILITY_SENSORS:
                 # Add known capability sensors
                 definition = CAPABILITY_SENSORS[key]
-                entities.append(
-                    definition.create_sensor(coordinator, device_id, key)
-                )
+                entities.append(definition.create_sensor(coordinator, device_id, key))
             else:
                 # Add unknown capability sensors
-                entities.append(
-                    UnknownCapabilitySensor(coordinator, device_id, key)
-                )
+                entities.append(UnknownCapabilitySensor(coordinator, device_id, key))
 
         # Add extra capability sensors
         entities.append(

@@ -238,13 +238,15 @@ class Controller:
             device.state.fan_boost,
         )
 
-    async def toggle_boost(
-        self, device_id: str, enabled: bool | None = None
-    ) -> bool:
+    async def toggle_boost(self, device_id: str, enabled: bool | None = None) -> bool:
         """Toggle the Boost mode for the device."""
         device = await self.get_device(device_id)
         boost = enabled if enabled is not None else not device.state.fan_boost
-        speed = 3 if boost else (device.state.fan_speed if device.state.fan_speed > 0 else 3)
+        speed = (
+            3
+            if boost
+            else (device.state.fan_speed if device.state.fan_speed > 0 else 3)
+        )
         return await self.set_fan_mode(
             device_id,
             device.state.airmatic,
@@ -265,6 +267,27 @@ class Controller:
             json={
                 "async": True,
                 "capabilities": {Capability.LIGHT_BRIGHTNESS: brightness},
+                "name": "capabilities",
+                "type": "Hood",
+                "timeout": self._command_timeout,
+            },
+            headers=headers,
+        )
+        return data["status"] == "accepted"
+
+    async def set_fan_shutoff_timer(self, device_id: str, minutes: int) -> bool:
+        """Set or stop the fan shut-off timer."""
+        if not (0 <= minutes <= 180):
+            raise ValueError("Shut-off timer must be between 0 and 180 minutes")
+
+        await self.auth_provider.ensure_authenticated()
+        headers = await self.auth_provider.get_header_for_user_auth()
+
+        data = await self.rest.post(
+            f"devices/{device_id}/commands",
+            json={
+                "async": True,
+                "capabilities": {Capability.FAN_SHUTOFF_TIMER: minutes},
                 "name": "capabilities",
                 "type": "Hood",
                 "timeout": self._command_timeout,

@@ -17,12 +17,20 @@
                 }
             }
         },
+        "number": {
+            "shutoff_timer_number": {
+                "name": "Timer spegnimento automatico"
+            }
+        },
         "switch": {
             "airmatic": {
                 "name": "Aspirazione automatica"
             },
             "boost": {
                 "name": "Aspirazione intensiva"
+            },
+            "shutoff_timer_switch": {
+                "name": "Timer spegnimento automatico"
             }
         },
         "sensor": {

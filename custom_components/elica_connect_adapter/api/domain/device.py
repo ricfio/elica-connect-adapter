@@ -134,6 +134,8 @@ class Device:
             capabilities.append(Capability.FILTER_SATURATION)
         if Capability.FAN_BOOST_TIMER in data_model:
             capabilities.append(Capability.FAN_BOOST_TIMER)
+        if Capability.FAN_SHUTOFF_TIMER in data_model:
+            capabilities.append(Capability.FAN_SHUTOFF_TIMER)
         # you may also keep the raw data_model for reference in metadata
 
         # parse filters (if any)
@@ -202,7 +204,9 @@ class Device:
         commercial_name = None
         product_url = None
         try:
-            products_file = Path(__file__).parent.parent.parent / "manufaturer" / "products.json"
+            products_file = (
+                Path(__file__).parent.parent.parent / "manufaturer" / "products.json"
+            )
             if products_file.exists():
                 with open(products_file, encoding="utf-8") as f:
                     products_data = json.load(f)
@@ -316,7 +320,9 @@ class Device:
                     self.state.fan_boost = is_boost
                     state_changed = True
             except (ValueError, TypeError):
-                _LOGGER.warning("Invalid fan mode value: %s", dataModel[Capability.FAN_MODE])
+                _LOGGER.warning(
+                    "Invalid fan mode value: %s", dataModel[Capability.FAN_MODE]
+                )
 
         if Capability.FAN_SPEED in dataModel:
             speed = dataModel[Capability.FAN_SPEED]
@@ -339,6 +345,12 @@ class Device:
                     is_boost = self.state.fan_boost
             if self.state.fan_boost != is_boost:
                 self.state.fan_boost = is_boost
+                state_changed = True
+
+        if Capability.FAN_SHUTOFF_TIMER in dataModel:
+            shutoff_timer = dataModel[Capability.FAN_SHUTOFF_TIMER]
+            if self.state.shutoff_timer != shutoff_timer:
+                self.state.shutoff_timer = shutoff_timer
                 state_changed = True
 
         if Capability.LIGHT_BRIGHTNESS in dataModel:

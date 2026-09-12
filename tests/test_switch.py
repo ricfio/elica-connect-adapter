@@ -47,7 +47,9 @@ async def test_airmatic_switch_mqtt_update(hass):
 
         # Simulate MQTT update turning off airmatic (bitmask 0)
         payload_off = json.dumps([{"cuid": device.cuid, "dataModel": {"64": 0}}])
-        await coordinator._async_update_from_mqtt(f"elica/{device.cuid}/state", payload_off)
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_off
+        )
         await hass.async_block_till_done()
 
         state_off = hass.states.get("switch.test_elica_hood_automatic_extraction")
@@ -81,7 +83,9 @@ async def test_airmatic_switch_optimistic_lock_ignores_stale_mqtt(hass):
         payload_stale = json.dumps([{"cuid": device.cuid, "dataModel": {"64": 32}}])
         entry_data = hass.data[DOMAIN][entry.entry_id]
         coordinator = entry_data["coordinator"]
-        await coordinator._async_update_from_mqtt(f"elica/{device.cuid}/state", payload_stale)
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_stale
+        )
         await hass.async_block_till_done()
 
         # State should remain False (stale MQTT ignored)
@@ -119,7 +123,9 @@ async def test_boost_switch_mqtt_update(hass):
 
         # Simulate MQTT update turning off boost (bitmask 0)
         payload_off = json.dumps([{"cuid": device.cuid, "dataModel": {"64": 0}}])
-        await coordinator._async_update_from_mqtt(f"elica/{device.cuid}/state", payload_off)
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_off
+        )
         await hass.async_block_till_done()
 
         state_off = hass.states.get("switch.test_elica_hood_intensive_extraction")
@@ -153,9 +159,10 @@ async def test_boost_switch_optimistic_lock_ignores_stale_mqtt(hass):
         payload_stale = json.dumps([{"cuid": device.cuid, "dataModel": {"64": 4}}])
         entry_data = hass.data[DOMAIN][entry.entry_id]
         coordinator = entry_data["coordinator"]
-        await coordinator._async_update_from_mqtt(f"elica/{device.cuid}/state", payload_stale)
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_stale
+        )
         await hass.async_block_till_done()
 
         # State should remain False (stale MQTT ignored)
         assert device.state.fan_boost is False
-

@@ -17,12 +17,20 @@
                 }
             }
         },
+        "number": {
+            "shutoff_timer_number": {
+                "name": "Shut-off timer duration"
+            }
+        },
         "switch": {
             "airmatic": {
                 "name": "Automatic extraction"
             },
             "boost": {
                 "name": "Intensive extraction"
+            },
+            "shutoff_timer_switch": {
+                "name": "Shut-off timer"
             }
         },
         "sensor": {

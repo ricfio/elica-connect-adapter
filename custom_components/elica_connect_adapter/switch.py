@@ -22,6 +22,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
         if Capability.FAN_SPEED in device.capabilities:
             entities.append(ElicaAirmaticSwitch(controller, coordinator, device))
             entities.append(ElicaBoostSwitch(controller, coordinator, device))
+            # entities.append(ElicaShutoffTimerSwitch(controller, coordinator, device))
     async_add_entities(entities)
 
 
@@ -103,3 +104,48 @@ class ElicaBoostSwitch(ElicaDeviceEntity, SwitchEntity):
         if accepted:
             self.device.set_fan_boost_optimistic(enable)
         self.async_write_ha_state()
+
+
+class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
+    """Representation of an Elica Shut-off Timer switch (Start/Stop)."""
+
+    def __init__(
+        self,
+        controller: Controller,
+        coordinator: ElicaConnectCoordinator,
+        device: Device,
+    ) -> None:
+        """Initialize the switch."""
+        super().__init__(coordinator, device.uid)
+        self._controller = controller
+        self._attr_translation_key = "shutoff_timer_switch"
+        self._attr_unique_id = f"elica_{device.uid}_shutoff_timer_switch"
+        self._attr_icon = "mdi:timer-play"
+
+    @property
+    def is_on(self) -> bool:
+        """Return True if Shut-off Timer is active (> 0)."""
+        return self.device.state.shutoff_timer > 0
+
+    async def async_turn_on(self, **kwargs):
+        """Turn on Shut-off Timer (starts with current number value or default 15 min)."""
+        minutes = (
+            self.device.state.shutoff_timer
+            if self.device.state.shutoff_timer > 0
+            else 15
+        )
+        accepted = await self._controller.set_fan_shutoff_timer(
+            self.device.uid, minutes
+        )
+        if accepted:
+            self.device.state.shutoff_timer = minutes
+        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()
+
+    async def async_turn_off(self, **kwargs):
+        """Turn off Shut-off Timer (stops / sets to 0)."""
+        accepted = await self._controller.set_fan_shutoff_timer(self.device.uid, 0)
+        if accepted:
+            self.device.state.shutoff_timer = 0
+        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()

@@ -31,6 +31,7 @@ class DeviceState:
     airmatic: bool = False
     fan_speed: int = 0
     fan_boost: bool = False  # Intensive mode / temporary max speed
+    shutoff_timer: int = 0  # Automatic shut-off timer (minutes)
 
     # Filter
     filter_saturation: int = 0  # Grease filter saturation (0-100)
@@ -52,12 +53,14 @@ class DeviceState:
         fan_boost = bool(boost_timer > 0) or bool(fan_mode & FanMode.BOOST)
 
         airmatic = bool(fan_mode & FanMode.AIRMATIC)
+        shutoff_timer = capabilities.get(Capability.FAN_SHUTOFF_TIMER, 0)
 
         return DeviceState(
             connected=data.get("connected"),
             airmatic=airmatic,
             fan_speed=fan_speed,
             fan_boost=fan_boost,
+            shutoff_timer=shutoff_timer,
             filter_saturation=capabilities.get(Capability.FILTER_SATURATION, 0),
             light_brightness=capabilities.get(Capability.LIGHT_BRIGHTNESS, 0),
         )
