@@ -3,5 +3,4 @@
 
 class FanPreset:
 
-    NORMAL = "normal"
-    INTENSIVE = "intensive"
+    BOOST = "boost"

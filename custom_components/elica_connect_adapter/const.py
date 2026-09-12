@@ -15,6 +15,5 @@ OAUTH_TOKEN_URL = f"{API_BASE_URL}/oauth/token"
 APP_UUID = "0ba86de295087670"
 
 FAN_PRESET = [
-    FanPreset.NORMAL,
-    FanPreset.INTENSIVE,
+    FanPreset.BOOST,
 ]

@@ -65,15 +65,15 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         return round((speed / self._attr_speed_count) * 100)
 
     @property
-    def preset_mode(self) -> str:
+    def preset_mode(self) -> str | None:
         """Return the current preset mode."""
-        return FanPreset.INTENSIVE if self.device.state.fan_boost else FanPreset.NORMAL
+        return FanPreset.BOOST if self.device.state.fan_boost else None
 
     async def async_turn_on(
         self, percentage: int | None = None, preset_mode: str | None = None, **kwargs
     ):
         """Turn the fan on."""
-        if preset_mode == FanPreset.INTENSIVE:
+        if preset_mode == FanPreset.BOOST:
             accepted = await self._set_fan_mode(
                 self._attr_speed_count,
                 intensive=True,
@@ -111,12 +111,12 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             await self.coordinator.async_request_refresh()
         self.async_write_ha_state()
 
-    async def async_set_preset_mode(self, preset_mode: str):
+    async def async_set_preset_mode(self, preset_mode: str | None):
         """Set fan preset mode."""
-        if preset_mode != FanPreset.NORMAL and preset_mode != FanPreset.INTENSIVE:
+        if preset_mode is not None and preset_mode != FanPreset.BOOST:
             raise ValueError(f"Unsupported preset mode: {preset_mode}")
 
-        if preset_mode == FanPreset.INTENSIVE:
+        if preset_mode == FanPreset.BOOST:
             accepted = await self._set_fan_mode(
                 100,
                 intensive=True,

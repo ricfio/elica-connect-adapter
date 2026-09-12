@@ -11,8 +11,7 @@
                 "state_attributes": {
                     "preset_mode": {
                         "state": {
-                            "normal": "Normale",
-                            "intensive": "Intensiva"
+                            "boost": "Boost"
                         }
                     }
                 }
