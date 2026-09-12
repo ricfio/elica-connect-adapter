@@ -19,7 +19,10 @@
         },
         "switch": {
             "airmatic": {
-                "name": "Airmatic"
+                "name": "Aspirazione automatica"
+            },
+            "boost": {
+                "name": "Aspirazione intensiva"
             }
         },
         "sensor": {

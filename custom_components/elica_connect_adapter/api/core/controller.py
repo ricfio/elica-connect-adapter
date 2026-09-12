@@ -238,6 +238,20 @@ class Controller:
             device.state.fan_boost,
         )
 
+    async def toggle_boost(
+        self, device_id: str, enabled: bool | None = None
+    ) -> bool:
+        """Toggle the Boost mode for the device."""
+        device = await self.get_device(device_id)
+        boost = enabled if enabled is not None else not device.state.fan_boost
+        speed = 3 if boost else (device.state.fan_speed if device.state.fan_speed > 0 else 3)
+        return await self.set_fan_mode(
+            device_id,
+            device.state.airmatic,
+            speed,
+            boost,
+        )
+
     async def set_light_brightness(self, device_id: str, brightness: int) -> bool:
         """Set the light brightness for the device."""
         if not (0 <= brightness <= 100):

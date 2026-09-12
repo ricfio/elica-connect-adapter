@@ -151,7 +151,7 @@ async def test_fan_boost_timer_capability_sensor(hass):
         await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()
 
-        state = hass.states.get("sensor.test_elica_hood_boost_timer")
+        state = hass.states.get("sensor.test_elica_hood_intensive_extraction_timer")
         assert state is not None
         assert state.state == "4"
         assert state.attributes["unit_of_measurement"] == "min"

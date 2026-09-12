@@ -10,7 +10,7 @@ import pytest
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.elica_connect_adapter.api.domain import MANUFACTURER, Device
+from custom_components.elica_connect_adapter.api.domain import MANUFACTURER, Device, DeviceState
 from custom_components.elica_connect_adapter.const import DOMAIN
 
 DEVICE_ID = "test_device"
@@ -28,6 +28,7 @@ def create_mock_device(
 ) -> Device:
     """Create a mock device for testing."""
     dm = dataModel or kwargs.get("data_model", {})
+    state = DeviceState.from_json({"dataModel": dm})
     device = Device(
         uid=id,
         cuid=f"cuid_{id}",
@@ -37,6 +38,7 @@ def create_mock_device(
         sw_version=kwargs.get("sw_version", "1.0.0"),
         data_model=dm,
         capabilities=list(dm.keys()),
+        state=state,
     )
     if mqtt_stats:
         setattr(device, "mqtt_stats", mqtt_stats)
@@ -53,7 +55,7 @@ def mock_setup_entry() -> Generator[AsyncMock, None, None]:
         yield mock_setup
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def auto_mock_mqtt(mqtt_mock):
     """Auto mock MQTT integration."""
     return mqtt_mock

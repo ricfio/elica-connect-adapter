@@ -19,7 +19,10 @@
         },
         "switch": {
             "airmatic": {
-                "name": "Airmatic"
+                "name": "Automatic extraction"
+            },
+            "boost": {
+                "name": "Intensive extraction"
             }
         },
         "sensor": {
