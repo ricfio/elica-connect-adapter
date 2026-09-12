@@ -79,8 +79,12 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
                 intensive=True,
             )
         else:
-            if percentage is None:
-                percentage = self.percentage
+            if percentage is None or percentage == 0:
+                percentage = (
+                    self.percentage
+                    if self.percentage > 0
+                    else round((1 / self._attr_speed_count) * 100)
+                )
 
             accepted = await self._set_fan_mode(
                 percentage,
