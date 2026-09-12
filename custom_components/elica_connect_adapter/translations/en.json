@@ -7,11 +7,11 @@
         },
         "fan": {
             "fan": {
-                "name": "Fan",
+                "name": "Extraction",
                 "state_attributes": {
                     "preset_mode": {
                         "state": {
-                            "boost": "Boost"
+                            "boost": "Intensive"
                         }
                     }
                 }
@@ -33,7 +33,7 @@
                 "name": "Fan speed"
             },
             "fan_boost_timer": {
-                "name": "Boost timer"
+                "name": "Intensive extraction timer"
             },
             "connectivity": {
                 "name": "Connectivity",

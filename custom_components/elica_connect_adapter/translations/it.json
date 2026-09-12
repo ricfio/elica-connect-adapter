@@ -7,11 +7,11 @@
         },
         "fan": {
             "fan": {
-                "name": "Ventola",
+                "name": "Aspirazione",
                 "state_attributes": {
                     "preset_mode": {
                         "state": {
-                            "boost": "Boost"
+                            "boost": "Intensiva"
                         }
                     }
                 }
@@ -27,13 +27,13 @@
                 "name": "Luminosità luce"
             },
             "fan_mode": {
-                "name": "Modalitá aspirazione"
+                "name": "Modalità aspirazione"
             },
             "fan_speed": {
                 "name": "Velocità aspirazione"
             },
             "fan_boost_timer": {
-                "name": "Timer boost"
+                "name": "Timer aspirazione intensiva"
             },
             "connectivity": {
                 "name": "Connettività",

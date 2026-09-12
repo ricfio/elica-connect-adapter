@@ -9,6 +9,7 @@ from typing import Any
 from .capabilities import Capability
 from .device_extra import Group, Media, Owner, Share, SnapTimer, Temperature
 from .device_state import DeviceState
+from .fan_mode import FanMode
 from .hood_filter import HoodFilter
 
 _LOGGER = logging.getLogger(__name__)
@@ -254,6 +255,21 @@ class Device:
             if self.data_model.get(key) != value:
                 self.data_model[key] = value
                 state_changed = True
+
+        if Capability.FAN_MODE in dataModel:
+            try:
+                fan_mode_val = int(dataModel[Capability.FAN_MODE])
+                fan_mode = FanMode(fan_mode_val)
+                is_airmatic = bool(fan_mode & FanMode.AIRMATIC)
+                if self.state.airmatic != is_airmatic:
+                    self.state.airmatic = is_airmatic
+                    state_changed = True
+                is_boost = bool(fan_mode & FanMode.BOOST)
+                if self.state.fan_boost != is_boost:
+                    self.state.fan_boost = is_boost
+                    state_changed = True
+            except (ValueError, TypeError):
+                _LOGGER.warning("Invalid fan mode value: %s", dataModel[Capability.FAN_MODE])
 
         if Capability.FAN_SPEED in dataModel:
             if self.state.fan_speed != dataModel[Capability.FAN_SPEED]:
