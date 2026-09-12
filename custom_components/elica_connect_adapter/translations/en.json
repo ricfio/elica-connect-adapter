@@ -49,12 +49,8 @@
             "fan_shutoff_timer": {
                 "name": "Shut-off timer"
             },
-            "device_information": {
-                "name": "Device Information",
-                "state": {
-                    "configured": "Configured",
-                    "unknown": "Unknown"
-                }
+            "device_details": {
+                "name": "Device"
             },
             "grease_filter_efficiency": {
                 "name": "Grease Filter Efficiency"

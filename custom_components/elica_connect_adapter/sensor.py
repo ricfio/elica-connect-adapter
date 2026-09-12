@@ -14,7 +14,7 @@ from .coordinator import ElicaConnectCoordinator
 from .sensors.capability import UnknownCapabilitySensor
 from .sensors.cloud_connectivity import CloudConnectivitySensor
 from .sensors.definitions import CAPABILITY_SENSORS
-from .sensors.info import DeviceInformationSensor
+from .sensors.details import DeviceDetailsSensor
 from .sensors.mqtt_connectivity import MqttConnectivitySensor
 from .sensors.mqtt_messages import MqttMessagesSensor
 
@@ -32,15 +32,21 @@ async def async_setup_entry(
 
     entities = []
 
-    # Add MQTT diagnostic sensors for each device
+    # Add sensors for each device
     for device_id in coordinator.data["devices"]:
-        device = coordinator.get_device(device_id)
-        entities.append(CloudConnectivitySensor(coordinator, device_id))
-        entities.append(DeviceInformationSensor(coordinator, device_id))
+        entities.extend(
+            [
+                DeviceDetailsSensor(coordinator, device_id),
+                CloudConnectivitySensor(coordinator, device_id),
+                MqttConnectivitySensor(coordinator, device_id),
+                MqttMessagesSensor(coordinator, device_id),
+            ]
+        )
 
-        # Add capability sensors for each device's dataModel values
+        # Add setup capability sensors
+        device = coordinator.get_device(device_id)
         for key in device.data_model:
-            # Skip some specific known capability sensors
+            # Skip some known specific capability sensors
             if key in [Capability.FAN_MODE]:
                 continue
             if key in CAPABILITY_SENSORS:
@@ -56,14 +62,6 @@ async def async_setup_entry(
             CAPABILITY_SENSORS[Capability.FAN_SHUTOFF_TIMER].create_sensor(
                 coordinator, device_id, Capability.FAN_SHUTOFF_TIMER
             )
-        )
-
-        # Add MQTT sensors
-        entities.extend(
-            [
-                MqttConnectivitySensor(coordinator, device_id),
-                MqttMessagesSensor(coordinator, device_id),
-            ]
         )
 
     async_add_entities(entities)

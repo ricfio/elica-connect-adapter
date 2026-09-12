@@ -1,33 +1,29 @@
-"""Device information sensor entity for Elica Connect."""
+"""Device details sensor entity for Elica Connect."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.components.sensor import SensorDeviceClass
-
 from ..coordinator import ElicaConnectCoordinator
 from .base import ElicaDiagnosticSensor
 
 
-class DeviceInformationSensor(ElicaDiagnosticSensor):
-    """Elica device information sensor containing all extended metadata attributes."""
+class DeviceDetailsSensor(ElicaDiagnosticSensor):
+    """Elica device details sensor containing all extended metadata attributes."""
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
         super().__init__(
             coordinator,
             device_id,
-            name="Device Information",
+            name="Device Details",
             icon="mdi:information-outline",
-            translation_key="device_information",
-            device_class=SensorDeviceClass.ENUM,
+            translation_key="device_details",
         )
-        self._attr_unique_id = f"elica_{device_id}_device_information"
-        self._attr_options = ["configured", "unknown"]
+        self._attr_unique_id = f"elica_{device_id}_device_details"
 
     @property
     def native_value(self) -> str:
-        return "configured" if self.device else "unknown"
+        return self.device.uid if self.device else "unknown"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

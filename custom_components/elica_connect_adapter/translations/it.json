@@ -49,12 +49,8 @@
             "fan_shutoff_timer": {
                 "name": "Timer spegnimento automatico"
             },
-            "device_information": {
-                "name": "Informazioni dispositivo",
-                "state": {
-                    "configured": "Configurato",
-                    "unknown": "Sconosciuto"
-                }
+            "device_details": {
+                "name": "Dispositivo"
             },
             "grease_filter_efficiency": {
                 "name": "Efficienza filtro antigrasso"
