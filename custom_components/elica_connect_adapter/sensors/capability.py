@@ -23,7 +23,7 @@ class CapabilitySensor(ElicaSensor):
         coordinator: ElicaConnectCoordinator,
         device_id: str,
         key: str,
-        name: str,
+        name: str | None = None,
         icon: str | None = None,
         device_class: SensorDeviceClass | None = None,
         state_class: SensorStateClass | None = None,
@@ -34,7 +34,7 @@ class CapabilitySensor(ElicaSensor):
         super().__init__(
             coordinator=coordinator,
             device_id=device_id,
-            name=name,
+            name=name or "",
             icon=icon,
             device_class=device_class,
             state_class=state_class,

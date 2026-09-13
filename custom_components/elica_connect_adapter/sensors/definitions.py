@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 class CapabilitySensorDefinition:
     """Definition of a device capability sensor."""
 
-    name: str
-    icon: str
+    name: str | None = None
+    icon: str | None = None
     device_class: SensorDeviceClass | None = None
     state_class: SensorStateClass | None = None
     native_unit: str | None = None
@@ -41,7 +41,7 @@ class CapabilitySensorDefinition:
             coordinator=coordinator,
             device_id=device_id,
             key=key,
-            name=self.name,
+            name=self.name or "",
             icon=self.icon,
             device_class=self.device_class,
             state_class=self.state_class,
@@ -55,7 +55,6 @@ class CapabilitySensorDefinition:
 CAPABILITY_SENSORS: Final = {
     # Light brightness (skipped because integrated into light entity)
     Capability.LIGHT_BRIGHTNESS: CapabilitySensorDefinition(
-        name="Light Brightness",
         icon="mdi:brightness-percent",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,
@@ -63,20 +62,17 @@ CAPABILITY_SENSORS: Final = {
     ),
     # Fan mode (skipped because integrated into fan entity)
     Capability.FAN_MODE: CapabilitySensorDefinition(
-        name="Fan Mode",
         icon="mdi:fan",
         state_class=SensorStateClass.MEASUREMENT,
         translation_key="fan_mode",
     ),
     # Fan speed (skipped because integrated into fan entity)
     Capability.FAN_SPEED: CapabilitySensorDefinition(
-        name="Fan Speed",
         icon="mdi:fan-speed-1",
         state_class=SensorStateClass.MEASUREMENT,
         translation_key="fan_speed",
     ),
     Capability.FAN_BOOST_TIMER: CapabilitySensorDefinition(
-        name="Boost Timer",
         icon="mdi:timer-sand",
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
@@ -84,7 +80,6 @@ CAPABILITY_SENSORS: Final = {
         translation_key="fan_boost_timer",
     ),
     Capability.FAN_SHUTOFF_TIMER: CapabilitySensorDefinition(
-        name="Fan Shut-off Timer",
         icon="mdi:timer-sand",
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
@@ -92,7 +87,6 @@ CAPABILITY_SENSORS: Final = {
         translation_key="fan_shutoff_timer",
     ),
     Capability.FILTER_SATURATION: CapabilitySensorDefinition(
-        name="Grease Filter Efficiency",
         icon="mdi:air-filter",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit=PERCENTAGE,

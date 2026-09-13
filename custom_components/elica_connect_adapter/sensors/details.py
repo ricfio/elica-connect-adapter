@@ -15,11 +15,10 @@ class DeviceDetailsSensor(ElicaDiagnosticSensor):
         super().__init__(
             coordinator,
             device_id,
-            name="Device Details",
             icon="mdi:information-outline",
             translation_key="device_details",
         )
-        self._attr_unique_id = f"elica_{device_id}_device_details"
+        self._attr_unique_id = f"elica_{device_id}_{self.translation_key}"
 
     @property
     def native_value(self) -> str:

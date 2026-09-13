@@ -21,7 +21,7 @@ class ElicaSensor(ElicaDeviceEntity, SensorEntity):
         self,
         coordinator: ElicaConnectCoordinator,
         device_id: str,
-        name: str,
+        name: str | None = None,
         icon: str | None = None,
         device_class: SensorDeviceClass | None = None,
         state_class: SensorStateClass | None = None,
@@ -32,9 +32,9 @@ class ElicaSensor(ElicaDeviceEntity, SensorEntity):
         super().__init__(coordinator, device_id)
         if translation_key:
             self._attr_translation_key = translation_key
-        else:
+        if name:
             self._attr_name = name
-        self._attr_unique_id = slugify(f"{self.device.cuid}_{name}")
+        self._attr_unique_id = slugify(f"{self.device.cuid}_{name or translation_key}")
         self._attr_icon = icon
         self._attr_device_class = device_class
         self._attr_state_class = state_class
@@ -49,7 +49,7 @@ class ElicaDiagnosticSensor(ElicaSensor):
         self,
         coordinator: ElicaConnectCoordinator,
         device_id: str,
-        name: str,
+        name: str | None = None,
         icon: str | None = None,
         device_class: SensorDeviceClass | None = None,
         state_class: SensorStateClass | None = None,

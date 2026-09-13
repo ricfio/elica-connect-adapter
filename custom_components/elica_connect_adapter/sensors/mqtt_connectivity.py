@@ -18,7 +18,6 @@ class MqttConnectivitySensor(ElicaDiagnosticSensor):
         super().__init__(
             coordinator,
             device_id,
-            name="Connettività MQTT",
             icon="mdi:connection",
             translation_key="mqtt_connectivity",
             device_class=SensorDeviceClass.ENUM,

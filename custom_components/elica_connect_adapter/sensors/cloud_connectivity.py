@@ -17,7 +17,6 @@ class CloudConnectivitySensor(ElicaDiagnosticSensor):
         super().__init__(
             coordinator,
             device_id,
-            name="Cloud Connectivity",
             icon="mdi:wifi",
             translation_key="cloud_connectivity",
             device_class=SensorDeviceClass.ENUM,

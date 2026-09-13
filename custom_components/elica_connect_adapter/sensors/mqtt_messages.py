@@ -17,7 +17,6 @@ class MqttMessagesSensor(ElicaDiagnosticSensor):
         super().__init__(
             coordinator,
             device_id,
-            name="MQTT Messages",
             icon="mdi:message-badge",
             state_class=SensorStateClass.TOTAL_INCREASING,
             translation_key="mqtt_messages",
