@@ -7,3 +7,5 @@ __pycache__/
 *.pyc
 .env
 .coverage
+
+scripts/deploy-ha.env
