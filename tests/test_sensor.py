@@ -46,7 +46,7 @@ async def test_sensor_registration(hass):
 
         # Verify MQTT sensors
         mqtt_sensors = [
-            "sensor.test_elica_hood_mqtt_state",
+            "sensor.test_elica_hood_mqtt_connectivity",
             "sensor.test_elica_hood_mqtt_messages",
         ]
         for entity_id in mqtt_sensors:
@@ -100,7 +100,7 @@ async def test_mqtt_sensor_values(hass):
         assert msg_count is not None
         assert msg_count.state == "42"
 
-        mqtt_state = hass.states.get("sensor.test_elica_hood_mqtt_state")
+        mqtt_state = hass.states.get("sensor.test_elica_hood_mqtt_connectivity")
         assert mqtt_state is not None
 
 

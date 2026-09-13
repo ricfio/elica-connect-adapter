@@ -42,7 +42,12 @@ class MqttClientAiomqtt(MqttClientInterface):
         self.hostname = hostname
         self.port = port
 
-        # TLS context was prepared here previously but not used; remove allocation to avoid unused variable
+        tls_context = None
+        if tls:
+            import ssl
+            tls_context = ssl.create_default_context()
+            tls_context.check_hostname = True
+            tls_context.verify_mode = ssl.CERT_REQUIRED
 
         self._client = Client(
             hostname=hostname,
@@ -50,7 +55,7 @@ class MqttClientAiomqtt(MqttClientInterface):
             identifier=identifier,
             username=username,
             password=password,
-            # If TLS is needed in future, pass a `tls_context` created by `ssl.create_default_context()`
+            tls_context=tls_context,
             keepalive=keepalive,
         )
 
