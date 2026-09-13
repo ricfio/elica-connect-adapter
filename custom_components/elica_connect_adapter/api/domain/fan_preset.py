@@ -2,5 +2,7 @@
 
 
 class FanPreset:
-
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
     BOOST = "boost"

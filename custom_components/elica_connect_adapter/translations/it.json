@@ -11,6 +11,9 @@
                 "state_attributes": {
                     "preset_mode": {
                         "state": {
+                            "low": "Bassa",
+                            "medium": "Media",
+                            "high": "Alta",
                             "boost": "Intensiva"
                         }
                     }

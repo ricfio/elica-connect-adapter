@@ -15,6 +15,7 @@ so it can later move to its own repository.
 - Use asynchronous APIs for network and Home Assistant I/O.
 - Do not run `git commit`; upon completing any requested implementation task, always propose a structured git commit message summarizing the changes.
 - Keep comments and identifiers in English.
+- Be concise.
 - Update `strings.json`, `translations/en.json`, and `translations/it.json`
   together whenever user-visible configuration text changes.
 - Do not change `PLATFORMS` without also handling platform setup and unload.
