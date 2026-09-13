@@ -15,10 +15,23 @@
     }
   },
 
+  "mounts": [
+    // SSH keys
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    // Home Assistant (production)
+    "source=/homeassistant/config/custom_components/elica_connect_adapter,target=/homeassistant/config/custom_components/elica_connect_adapter,type=bind,consistency=cached"
+  ],
+
   // Set *default* container specific settings.json values on container create.
   "customizations": {
     "vscode": {
-      "settings": {},
+      "settings": {
+        "claudeCode.environmentVariables": [
+          { "name": "ANTHROPIC_BASE_URL", "value": "http://host.docker.internal:8082" },
+          { "name": "ANTHROPIC_AUTH_TOKEN", "value": "freecc" },
+          { "name": "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY", "value": "1" }
+        ]
+      },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "ms-python.python",
@@ -50,10 +63,6 @@
   "containerUser": "vscode",
   "updateRemoteUserUID": true,
   "containerEnv": {
-    "HOME": "/home/vscode",
-    "ANTHROPIC_BASE_URL": "http://host.docker.internal:8082",
-    "ANTHROPIC_AUTH_TOKEN": "freecc",
-    "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
-    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "190000"
+    "HOME": "/home/vscode"
   }
 }
