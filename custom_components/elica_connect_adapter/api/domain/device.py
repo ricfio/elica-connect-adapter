@@ -1,5 +1,3 @@
-"""Device."""
-
 import json
 import logging
 import time
@@ -17,6 +15,22 @@ _LOGGER = logging.getLogger(__name__)
 
 MANUFACTURER = "Elica"
 
+_PRODUCTS_DATA = None
+
+def _get_products_data():
+    global _PRODUCTS_DATA
+    if _PRODUCTS_DATA is not None:
+        return _PRODUCTS_DATA
+
+    products_file = (
+        Path(__file__).parent.parent.parent / "manufaturer" / "products.json"
+    )
+    if products_file.exists():
+        with open(products_file, encoding="utf-8") as f:
+            _PRODUCTS_DATA = json.load(f)
+    else:
+        _PRODUCTS_DATA = {}
+    return _PRODUCTS_DATA
 
 @dataclass
 class Device:
@@ -203,19 +217,13 @@ class Device:
         product_ref = data.get("prf")
         commercial_name = None
         product_url = None
-        try:
-            products_file = (
-                Path(__file__).parent.parent.parent / "manufaturer" / "products.json"
-            )
-            if products_file.exists():
-                with open(products_file, encoding="utf-8") as f:
-                    products_data = json.load(f)
-                    if product_ref in products_data:
-                        prod_info = products_data[product_ref]
-                        commercial_name = prod_info.get("name")
-                        product_url = prod_info.get("url")
-        except Exception:
-            pass
+
+        products_data = _get_products_data()
+        if product_ref in products_data:
+            prod_info = products_data[product_ref]
+            commercial_name = prod_info.get("name")
+            product_url = prod_info.get("url")
+
         # ---------------------------------------------------------------------------------------
 
         return Device(
