@@ -1,12 +1,9 @@
 """Constants for the Elica Connect integration."""  # noqa: EXE002
 
-from .api.domain import Capability, FanPreset
 from .api.core.constants import (
     API_BASE_URL,
-    API_CLIENT_ID as CLIENT_ID,
-    API_CLIENT_SECRET as CLIENT_SECRET,
-    APPLICATION_UUID as APP_UUID,
 )
+from .api.domain import FanPreset
 
 DOMAIN = "elica_connect_adapter"
 

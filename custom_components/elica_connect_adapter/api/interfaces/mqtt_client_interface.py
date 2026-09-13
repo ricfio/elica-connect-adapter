@@ -1,7 +1,7 @@
 """MQTT Subscriber Interface."""
 
 from collections.abc import Awaitable, Callable
-from typing import Any, Protocol
+from typing import Protocol
 
 OnMqttMessageCallback = Callable[..., None | Awaitable[None]]
 OnMqttConnectionCallback = Callable[[bool], None | Awaitable[None]]

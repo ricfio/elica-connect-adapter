@@ -113,7 +113,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         display_payload = payload
                         try:
                             if (
-                                isinstance(payload, (str, bytes))
+                                isinstance(payload, str | bytes)
                                 and len(str(payload)) > 1024
                             ):
                                 display_payload = str(payload)[:1024] + "...(truncated)"
@@ -205,9 +205,12 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         try:
             # Parse the JSON payload
-            data = json.loads(
-                payload.decode() if isinstance(payload, bytes) else payload
-            )
+            json_payload: str
+            if isinstance(payload, bytes):
+                json_payload = payload.decode()
+            else:
+                json_payload = payload
+            data = json.loads(json_payload)
 
             # Log parsed data at debug level for diagnostics
             _LOGGER.debug("Parsed MQTT data: %s", data)
@@ -235,7 +238,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             _LOGGER.info(
                                 "Initializing dataModel for device %s", device.uid
                             )
-                            setattr(device, "dataModel", {})
+                            device.dataModel = {}
 
                         # Update with new values
                         device.dataModel.update(

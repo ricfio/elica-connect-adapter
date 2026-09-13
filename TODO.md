@@ -13,7 +13,8 @@
 ## Testing e CI/CD
 
 - [ ] Espandere copertura test per `coordinator.py`, piattaforme (Fan/Light/Switch) e adapter
-- [ ] Configurare e verificare linting e tipizzazione statica (`mypy`, `ruff`, CI GitHub Actions)
+- [x] Configurare e verificare linting e tipizzazione statica (mypy, ruff)
+- [ ] Configurare CI GitHub Actions per linting e tipizzazione
 
 ## Home Assistant & Best Practices
 
@@ -22,5 +23,4 @@
 
 ## Manutenzione e Codice
 
-- [ ] Rimuovere file `.pyc` residui dalla working directory
 - [ ] Abilitare i controlli interattivi (Number e Switch) per il timer di spegnimento automatico (Capability 432 / FAN_SHUTOFF_TIMER) non appena validata la chiamata API di set/stop

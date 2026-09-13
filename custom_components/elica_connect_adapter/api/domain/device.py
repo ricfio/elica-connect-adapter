@@ -372,10 +372,12 @@ class Device:
                 self.state.light_brightness = brightness
                 state_changed = True
 
-        if Capability.FILTER_SATURATION in dataModel:
-            if self.state.filter_saturation != dataModel[Capability.FILTER_SATURATION]:
-                self.state.filter_saturation = dataModel[Capability.FILTER_SATURATION]
-                state_changed = True
+        if (
+            Capability.FILTER_SATURATION in dataModel
+            and self.state.filter_saturation != dataModel[Capability.FILTER_SATURATION]
+        ):
+            self.state.filter_saturation = dataModel[Capability.FILTER_SATURATION]
+            state_changed = True
 
         if state_changed:
             _LOGGER.debug("Device %s updated from MQTT: %s", self.uid, dataModel)

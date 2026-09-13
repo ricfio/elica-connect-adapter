@@ -7,7 +7,7 @@ expect a synchronous client interface.
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Dict, Optional
+from typing import Any
 
 from .core.auth.auth_service import AuthService
 
@@ -24,7 +24,7 @@ class ElicaClient:
         self.client_id = client_id
         self.client_secret = client_secret
 
-    def login(self, username: str, password: str, app_uuid: str) -> Optional[str]:
+    def login(self, username: str, password: str, app_uuid: str) -> str | None:
         """Perform an authentication request and return the access token string.
 
         Runs the underlying async `AuthService.login` in an event loop and
@@ -35,7 +35,7 @@ class ElicaClient:
         )
 
         try:
-            result: Dict[str, Any] = asyncio.run(
+            result: dict[str, Any] = asyncio.run(
                 auth_service.login(username, password)  # type: ignore
             )
         except Exception:

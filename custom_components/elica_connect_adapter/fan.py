@@ -96,7 +96,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
                 self.device.set_fan_speed_optimistic(self._attr_speed_count)
                 self.device.set_fan_boost_optimistic(True)
             else:
-                speed = self._calculate_speed(percentage)
+                speed = self._calculate_speed(percentage or self.percentage)
                 self.device.set_fan_speed_optimistic(speed)
                 self.device.set_fan_boost_optimistic(False)
         self.async_write_ha_state()

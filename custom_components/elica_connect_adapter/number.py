@@ -8,8 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api.core import Controller
-from .api.domain import Capability, Device
-from .const import DOMAIN
+from .api.domain import Device
 from .coordinator import ElicaConnectCoordinator
 from .entity import ElicaDeviceEntity
 
@@ -21,12 +20,12 @@ async def async_setup_entry(
     # entry_data = hass.data[DOMAIN][entry.entry_id]
     # controller: Controller = entry_data["controller"]
     # coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
-    entities = [
-        # ElicaShutoffTimerNumber(controller, coordinator, device)
-        # for device in coordinator.data["devices"].values()
-        # if Capability.FAN_SPEED in device.capabilities
-    ]
-    async_add_entities(entities)
+    # entities = [
+    #     ElicaShutoffTimerNumber(controller, coordinator, device)
+    #     for device in coordinator.data["devices"].values()
+    #     if Capability.FAN_SPEED in device.capabilities
+    # ]
+    # async_add_entities(entities)
 
 
 class ElicaShutoffTimerNumber(ElicaDeviceEntity, NumberEntity):

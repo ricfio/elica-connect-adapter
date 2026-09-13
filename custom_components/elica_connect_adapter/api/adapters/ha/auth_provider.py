@@ -124,10 +124,26 @@ class HaAuthProvider(AuthProviderBase):
             }
         )
 
-    def debug_tokens(self) -> dict[str, Any]:
-        """Return token info (for logging/debugging)."""
-        return {
-            "access_token": bool(self._access_token),
-            "refresh_token": bool(self._refresh_token),
-            "expires_in": max(0, int(self._expires_at - time.time())),
-        }
+    async def clear_tokens(self) -> None:
+        """Clear stored tokens and force new authentication."""
+        self._access_token = None
+        self._refresh_token = None
+        self._expires_at = 0
+        if "elica_auth" in self.hass.data:
+            self.hass.data["elica_auth"] = {}
+
+    @staticmethod
+    def generate_auth_for_client(
+        client_id: str, client_secret: str
+    ) -> dict[str, str] | None:
+        """Generate authorization basic header for the client."""
+        # Using AuthService static method logic
+        from ...core.auth.auth_service import AuthService
+
+        token = AuthService.generate_basic_token(client_id, client_secret)
+        return {"Authorization": f"Basic {token}"}
+
+    async def get_client_token(self) -> dict[str, str] | None:
+        """Generate client token."""
+        return self.get_header_for_client_auth()
+

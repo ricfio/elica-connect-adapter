@@ -57,7 +57,7 @@ class MqttClientAiomqtt(MqttClientInterface):
             password=password,
             tls_context=tls_context,
             keepalive=keepalive,
-        )
+        )  # type: ignore
 
         _LOGGER.info(
             f"MQTT client configured for {self.hostname}:{self.port} "
@@ -125,7 +125,7 @@ class MqttClientAiomqtt(MqttClientInterface):
                         # reset backoff after successful connection
                         reconnect_delay = 5
 
-                        async for message in client.messages:
+                        async for message in client.messages:  # type: ignore
                             if not self._running:
                                 break
                             await self._handle_message(message)

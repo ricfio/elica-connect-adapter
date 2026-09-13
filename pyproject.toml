@@ -36,11 +36,20 @@ line-length = 88
 include = '\.pyi?$'
 extend-exclude = "external"
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 88
-known_first_party = ["custom_components.elica_connect_adapter"]
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = ["external", "tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
 
 [project.urls]
 "Homepage" = "https://github.com/ricfio/elica-connect-ha"

@@ -11,6 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .api.domain.capabilities import Capability
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
+from .sensors.base import ElicaSensor
 from .sensors.capability import UnknownCapabilitySensor
 from .sensors.cloud_connectivity import CloudConnectivitySensor
 from .sensors.definitions import CAPABILITY_SENSORS
@@ -30,7 +31,7 @@ async def async_setup_entry(
     entry_data = hass.data[DOMAIN][config_entry.entry_id]
     coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
 
-    entities = []
+    entities: list[ElicaSensor] = []
 
     # Add sensors for each device
     for device_id in coordinator.data["devices"]:

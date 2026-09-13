@@ -2,8 +2,6 @@
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api.core import Controller
 from .api.domain import Capability, Device
@@ -17,7 +15,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
     entry_data = hass.data[DOMAIN][entry.entry_id]
     controller: Controller = entry_data["controller"]
     coordinator: ElicaConnectCoordinator = entry_data["coordinator"]
-    entities = []
+    entities: list[SwitchEntity] = []
     for device in coordinator.data["devices"].values():
         if Capability.FAN_SPEED in device.capabilities:
             entities.append(ElicaAirmaticSwitch(controller, coordinator, device))

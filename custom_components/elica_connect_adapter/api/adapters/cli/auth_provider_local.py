@@ -87,11 +87,11 @@ class LocalAuthProvider(AuthProviderBase):
 
         return self._access_token
 
-    def get_refresh_token(self) -> str | None:
+    async def get_refresh_token(self) -> str | None:
         """Return the current refresh token if available."""
         return self._refresh_token
 
-    def authenticate_with_token(self, access_token: str) -> None:
+    async def authenticate_with_token(self, access_token: str) -> None:
         """Authenticate using an existing access token."""
         self._access_token = access_token
 
