@@ -7,7 +7,7 @@ to easily query fan and light status, as well as validation of state values.
 
 from dataclasses import dataclass
 
-from .capabilities import Capability
+from .capabilities import Capability, normalize_data_model
 from .fan_mode import FanMode
 
 
@@ -42,7 +42,7 @@ class DeviceState:
     @staticmethod
     def from_json(data: dict) -> "DeviceState":
         """Create from API JSON data."""
-        capabilities = data.get("dataModel", {})
+        capabilities = normalize_data_model(data.get("dataModel"))
         fan_mode = FanMode(capabilities.get(Capability.FAN_MODE, 0))
 
         # fan_on = bool(fan_mode & FanMode.ON)

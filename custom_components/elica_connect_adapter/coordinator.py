@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api.core import Controller
-from .api.domain import Device
+from .api.domain import Device, normalize_data_model
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -241,9 +241,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             device.dataModel = {}
 
                         # Update with new values
-                        device.dataModel.update(
-                            {str(k): v for k, v in dataModel.items()}
-                        )
+                        device.dataModel.update(normalize_data_model(dataModel))
                         _LOGGER.debug(
                             "Updated device %s dataModel: %s",
                             device.uid,

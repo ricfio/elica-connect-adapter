@@ -2,6 +2,15 @@
 
 from __future__ import annotations
 
+from typing import Any
+
+
+def normalize_data_model(data_model: dict[Any, Any] | None) -> dict[str, Any]:
+    """Normalize data model dictionary keys to strings."""
+    if not data_model:
+        return {}
+    return {str(k): v for k, v in data_model.items()}
+
 
 class Capability:
     """Device capabilities for Elica appliances.

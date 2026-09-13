@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .capabilities import Capability
+from .capabilities import Capability, normalize_data_model
 from .device_extra import Group, Media, Owner, Share, SnapTimer, Temperature
 from .device_state import DeviceState
 from .fan_mode import FanMode
@@ -16,6 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 MANUFACTURER = "Elica"
 
 _PRODUCTS_DATA = None
+
 
 def _get_products_data():
     global _PRODUCTS_DATA
@@ -31,6 +32,7 @@ def _get_products_data():
     else:
         _PRODUCTS_DATA = {}
     return _PRODUCTS_DATA
+
 
 @dataclass
 class Device:
@@ -135,7 +137,7 @@ class Device:
         sw_ver = f"{revision_info} ({ts})" if revision_info and ts else revision_info
 
         # parse capabilities from dataModel (keep raw mask too)
-        data_model = data.get("dataModel", {}) or {}
+        data_model = normalize_data_model(data.get("dataModel"))
 
         capabilities = []
         # capabilities: dict[Capability, int] = field(default_factory=dict)
@@ -296,6 +298,7 @@ class Device:
             )
 
     def _update_capabilities_state(self, dataModel: dict) -> None:
+        dataModel = normalize_data_model(dataModel)
         state_changed = False
 
         for key, value in dataModel.items():
