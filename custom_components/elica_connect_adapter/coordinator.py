@@ -150,17 +150,26 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except Exception as err:
             raise UpdateFailed(f"Error while fetching devices: {err}") from err
         else:
-            # Update devices while preserving mqtt_stats
-            self.data["devices"] = {device.uid: device for device in devices}
+            # Update devices while preserving mqtt_stats immutably
+            self.data = {
+                **self.data,
+                "devices": {device.uid: device for device in devices},
+            }
             return self.data
 
     async def _mqtt_connection_changed(self, connected: bool) -> None:
         """Handle MQTT connection state changes."""
-        self.data["mqtt_stats"]["connected"] = connected
+        mqtt_stats = dict(self.data.get("mqtt_stats", {}))
+        mqtt_stats["connected"] = connected
         if connected:
-            self.data["mqtt_stats"]["last_connection"] = datetime.now().isoformat()
+            mqtt_stats["last_connection"] = datetime.now().isoformat()
         else:
-            self.data["mqtt_stats"]["last_disconnection"] = datetime.now().isoformat()
+            mqtt_stats["last_disconnection"] = datetime.now().isoformat()
+
+        self.data = {
+            **self.data,
+            "mqtt_stats": mqtt_stats,
+        }
         self.async_set_updated_data(self.data)
 
     async def _async_update_from_mqtt(self, topic: str, payload: str, retain: bool = False) -> None:
@@ -172,22 +181,21 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             {k: "..." if k == "devices" else v for k, v in self.data.items()},
         )
 
-        # Ensure mqtt_stats exists
+        # Ensure mqtt_stats exists (immutably)
+        mqtt_stats = dict(self.data.get("mqtt_stats", {
+            "connected": False,
+            "last_connection": None,
+            "last_disconnection": None,
+            "last_message_timestamp": None,
+            "last_message_payload": None,
+            "total_messages": 0,
+            "retained_messages": 0,
+            "last_message_retained": False,
+        }))
         if "mqtt_stats" not in self.data:
             _LOGGER.warning("Reinitializing missing mqtt_stats in MQTT handler")
-            self.data["mqtt_stats"] = {
-                "connected": False,
-                "last_connection": None,
-                "last_disconnection": None,
-                "last_message_timestamp": None,
-                "last_message_payload": None,
-                "total_messages": 0,
-                "retained_messages": 0,
-                "last_message_retained": False,
-            }
 
         # Update MQTT statistics
-        mqtt_stats = self.data["mqtt_stats"]
         mqtt_stats["connected"] = True
         now_str = datetime.now().isoformat()
         if not mqtt_stats.get("last_connection"):
@@ -216,10 +224,11 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER.debug("Parsed MQTT data: %s", data)
 
             # Find device by CUID
+            devices = dict(self.data.get("devices", {}))
             device = next(
                 (
                     d
-                    for d in self.data.get("devices", {}).values()
+                    for d in devices.values()
                     if getattr(d, "cuid", None) == cuid
                 ),
                 None,
@@ -256,8 +265,23 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
                 # Call original update method
                 device.update_from_mqtt(payload)
+                self.data = {
+                    **self.data,
+                    "mqtt_stats": mqtt_stats,
+                    "devices": devices,
+                }
                 self.async_set_updated_data(self.data)
             else:
                 _LOGGER.warning("No matching device found for CUID: %s", cuid)
+                self.data = {
+                    **self.data,
+                    "mqtt_stats": mqtt_stats,
+                }
+                self.async_set_updated_data(self.data)
         except Exception as err:
             _LOGGER.exception("Error processing MQTT message: %s", err)
+            self.data = {
+                **self.data,
+                "mqtt_stats": mqtt_stats,
+            }
+            self.async_set_updated_data(self.data)
