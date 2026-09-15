@@ -100,25 +100,29 @@ class Device:
         """Set airmatic state optimistically with a lock grace period."""
         self.state.airmatic = enabled
         self.expected_airmatic = enabled
-        self.airmatic_lock_until = time.time() + 25.0
+        self.airmatic_lock_until = self._get_lock_until()
 
     def set_fan_speed_optimistic(self, speed: int) -> None:
         """Set fan speed state optimistically with a lock grace period."""
         self.state.fan_speed = speed
         self.expected_fan_speed = speed
-        self.fan_speed_lock_until = time.time() + 25.0
+        self.fan_speed_lock_until = self._get_lock_until()
 
     def set_fan_boost_optimistic(self, boost: bool) -> None:
         """Set fan boost state optimistically with a lock grace period."""
         self.state.fan_boost = boost
         self.expected_fan_boost = boost
-        self.fan_boost_lock_until = time.time() + 25.0
+        self.fan_boost_lock_until = self._get_lock_until()
 
     def set_light_brightness_optimistic(self, brightness: int) -> None:
         """Set light brightness state optimistically with a lock grace period."""
         self.state.light_brightness = brightness
         self.expected_light_brightness = brightness
-        self.light_lock_until = time.time() + 25.0
+        self.light_lock_until = self._get_lock_until()
+
+    @staticmethod
+    def _get_lock_until(grace_period = 3.0):
+        return time.time() + grace_period
 
     @staticmethod
     def create_from_json(data: dict[str, Any]) -> "Device":
