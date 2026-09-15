@@ -63,24 +63,25 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         """Return fan speed as percentage (0-100)."""
         if self.device.state.fan_boost:
             return 100
-        speed = self.device.state.fan_speed
-        if speed <= 0:
-            return 0
-        return round((speed / (self._attr_speed_count + 1)) * 100)
+
+        return round((self.device.state.fan_speed / (self._attr_speed_count + 1)) * 100)
 
     @property
     def preset_mode(self) -> str | None:
         """Return the current preset mode."""
         if self.device.state.fan_boost:
             return FanPreset.BOOST
-        elif self.device.state.fan_speed == 3:
+
+        if self.device.state.fan_speed == 3:
             return FanPreset.HIGH
-        elif self.device.state.fan_speed == 2:
+
+        if self.device.state.fan_speed == 2:
             return FanPreset.MEDIUM
-        elif self.device.state.fan_speed == 1:
+
+        if self.device.state.fan_speed == 1:
             return FanPreset.LOW
-        else:
-            return None
+
+        return None
 
     async def async_turn_on(
         self, percentage: int | None = None, preset_mode: str | None = None, **kwargs
@@ -113,8 +114,8 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         self.async_write_ha_state()
 
     async def async_set_percentage(self, percentage: int):
-        """Set fan speed as percentage (0-100)."""
-        speed = self._calculate_speed(percentage)
+        """Set fan percentage (0-100)."""
+        speed = self._convert_percent_to_speed(percentage)
         intensive = False  # Speed changes via percentage never trigger boost
 
         accepted = await self._controller.set_fan_mode(
@@ -157,10 +158,8 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             self.device.set_fan_boost_optimistic(intensive)
         self.async_write_ha_state()
 
-    def _calculate_speed(self, percentage: int) -> int:
+    def _convert_percent_to_speed(self, percentage: int) -> int:
         """Convert percentage (0-100) to fan speed level (0-3)."""
-        speed = round((self._attr_speed_count + 1) * percentage / 100)
-        if speed > self._attr_speed_count:
-            speed = self._attr_speed_count
+        speed = round((self._attr_speed_count) * percentage / 100)
 
-        return speed
+        return min(speed, self._attr_speed_count)
