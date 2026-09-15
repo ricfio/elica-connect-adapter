@@ -64,7 +64,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         if self.device.state.fan_boost:
             return 100
 
-        return round((self.device.state.fan_speed / (self._attr_speed_count + 1)) * 100)
+        return round((self.device.state.fan_speed / self._attr_speed_count) * 100)
 
     @property
     def preset_mode(self) -> str | None:
