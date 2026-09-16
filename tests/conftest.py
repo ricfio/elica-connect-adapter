@@ -10,10 +10,11 @@ import pytest
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.elica_connect_adapter.api.domain import (MANUFACTURER,
-                                                                Device,
-                                                                DeviceState)
-from custom_components.elica_connect_adapter.const import DOMAIN
+from custom_components.elica_connect_adapter.api.domain import (
+    MANUFACTURER,
+    Device,
+    DeviceState,
+)
 
 DEVICE_ID = "test_device"
 DEVICE_NAME = "Test Elica Hood"
@@ -43,7 +44,7 @@ def create_mock_device(
         state=state,
     )
     if mqtt_stats:
-        setattr(device, "mqtt_stats", mqtt_stats)
+        device.mqtt_stats = mqtt_stats
     return device
 
 

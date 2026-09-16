@@ -5,8 +5,11 @@ import logging
 
 from aiomqtt import Client, MqttError
 
-from ...interfaces import MqttClientInterface  # noqa: TID252
-from ...interfaces import OnMqttConnectionCallback, OnMqttMessageCallback
+from ...interfaces import (
+    MqttClientInterface,  # noqa: TID252
+    OnMqttConnectionCallback,
+    OnMqttMessageCallback,
+)
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)

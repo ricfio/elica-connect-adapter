@@ -7,8 +7,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
-                                                      UpdateFailed)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api.core import Controller
 from .api.domain import Device, normalize_data_model
@@ -221,8 +220,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         try:
             # Parse the JSON payload
-            json_payload: str
-            if isinstance(payload, bytes):
+            if isinstance(payload, bytes):  # noqa: SIM108
                 json_payload = payload.decode()
             else:
                 json_payload = payload

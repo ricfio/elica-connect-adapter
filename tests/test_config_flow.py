@@ -8,8 +8,6 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.elica_connect_adapter.config_flow import (CannotConnect,
-                                                                 InvalidAuth)
 from custom_components.elica_connect_adapter.const import DOMAIN
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")

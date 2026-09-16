@@ -10,8 +10,7 @@ from homeassistant.helpers import entity_registry
 
 from custom_components.elica_connect_adapter.const import DOMAIN
 
-from .conftest import (DEVICE_ID, DEVICE_NAME, create_mock_device,
-                       setup_platform)
+from .conftest import DEVICE_ID, DEVICE_NAME, create_mock_device, setup_platform
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
@@ -67,7 +66,7 @@ async def test_grease_filter_efficiency_sensor_value(hass):
         "custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator._async_update_data",
         return_value={"devices": {DEVICE_ID: device}, "mqtt_stats": {}},
     ):
-        entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
+        await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()
 
         state = hass.states.get("sensor.test_elica_hood_grease_filter_efficiency")
@@ -94,7 +93,7 @@ async def test_mqtt_sensor_values(hass):
             "mqtt_stats": getattr(device, "mqtt_stats", {}),
         },
     ):
-        entry = await setup_platform(hass, DOMAIN, Platform.SENSOR)
+        await setup_platform(hass, DOMAIN, Platform.SENSOR)
         await hass.async_block_till_done()
 
         msg_count = hass.states.get("sensor.test_elica_hood_mqtt_messages")

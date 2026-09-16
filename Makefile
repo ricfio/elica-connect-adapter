@@ -30,10 +30,14 @@ clean:
 
 # 🔍 Run code quality checks
 lint:
-	$(VENV_PATH)/bin/black .
-	$(VENV_PATH)/bin/isort .
-	$(VENV_PATH)/bin/pylint custom_components tests
-	@echo "✅ Code quality checks complete."
+	$(VENV_PATH)/bin/ruff check .
+	$(VENV_PATH)/bin/ruff format --check .
+	$(VENV_PATH)/bin/mypy custom_components
+
+# ✨ Format code automatically with Ruff
+format:
+	$(VENV_PATH)/bin/ruff check --fix .
+	$(VENV_PATH)/bin/ruff format .
 
 # 🧪 Run tests with coverage
 test:

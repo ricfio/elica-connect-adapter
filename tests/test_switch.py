@@ -7,12 +7,10 @@ from unittest.mock import patch
 
 import pytest
 from homeassistant.const import Platform
-from homeassistant.helpers import entity_registry
 
 from custom_components.elica_connect_adapter.const import DOMAIN
 
-from .conftest import (DEVICE_ID, DEVICE_NAME, create_mock_device,
-                       setup_platform)
+from .conftest import DEVICE_ID, DEVICE_NAME, create_mock_device, setup_platform
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
