@@ -5,13 +5,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from aiohttp import (
-    ClientResponse,
-    ClientSession,
-    ClientTimeout,
-    ContentTypeError,
-    TCPConnector,
-)
+from aiohttp import (ClientResponse, ClientSession, ClientTimeout,
+                     ContentTypeError, TCPConnector)
 
 from ...interfaces import RestClientInterface
 

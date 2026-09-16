@@ -58,3 +58,39 @@ async def test_light_mqtt_update(hass):
         state_off = hass.states.get("light.test_elica_hood_light")
         assert state_off.state == "off"
         assert device.state.light_brightness == 0
+
+
+async def test_light_optimistic_lock_ignores_stale_mqtt(hass):
+    """Test that during the optimistic lock grace period, stale MQTT messages reporting old state are ignored for light."""
+    device = create_mock_device(
+        id=DEVICE_ID,
+        name=DEVICE_NAME,
+        dataModel={"96": 100},
+    )
+    device.state.light_brightness = 100
+
+    with patch(
+        "custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator._async_update_data",
+        return_value={"devices": {DEVICE_ID: device}, "mqtt_stats": {}},
+    ):
+        entry = await setup_platform(hass, DOMAIN, Platform.LIGHT)
+        await hass.async_block_till_done()
+
+        state = hass.states.get("light.test_elica_hood_light")
+        assert state.state == "on"
+
+        # Optimistically set light brightness to 0 (turn off)
+        device.set_light_brightness_optimistic(0)
+        assert device.state.light_brightness == 0
+
+        # Simulate receiving a stale MQTT message with brightness 100 during the lock window
+        payload_stale = json.dumps([{"cuid": device.cuid, "dataModel": {"96": 100}}])
+        entry_data = hass.data[DOMAIN][entry.entry_id]
+        coordinator = entry_data["coordinator"]
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_stale
+        )
+        await hass.async_block_till_done()
+
+        # State should remain 0 (stale MQTT ignored)
+        assert device.state.light_brightness == 0

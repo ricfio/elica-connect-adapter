@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -9,7 +10,8 @@ from homeassistant.const import Platform
 
 from custom_components.elica_connect_adapter.const import DOMAIN
 
-from .conftest import DEVICE_ID, DEVICE_NAME, create_mock_device, setup_platform
+from .conftest import (DEVICE_ID, DEVICE_NAME, create_mock_device,
+                       setup_platform)
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
@@ -234,3 +236,39 @@ async def test_fan_preset_modes_and_percentages(hass):
 
         await hass.config_entries.async_unload(entry.entry_id)
         await hass.async_block_till_done()
+
+
+async def test_fan_speed_optimistic_lock_ignores_stale_mqtt(hass):
+    """Test that during the optimistic lock grace period, stale MQTT messages reporting old state are ignored for fan speed."""
+    device = create_mock_device(
+        id=DEVICE_ID,
+        name=DEVICE_NAME,
+        dataModel={"110": 3, "64": 0},
+    )
+    device.state.fan_speed = 3
+
+    with patch(
+        "custom_components.elica_connect_adapter.coordinator.ElicaConnectCoordinator._async_update_data",
+        return_value={"devices": {DEVICE_ID: device}, "mqtt_stats": {}},
+    ):
+        entry = await setup_platform(hass, DOMAIN, Platform.FAN)
+        await hass.async_block_till_done()
+
+        state = hass.states.get("fan.test_elica_hood_extraction")
+        assert state.attributes["percentage"] == 100
+
+        # Optimistically set fan speed to 0 (turn off)
+        device.set_fan_speed_optimistic(0)
+        assert device.state.fan_speed == 0
+
+        # Simulate receiving a stale MQTT message with speed 3 during the lock window
+        payload_stale = json.dumps([{"cuid": device.cuid, "dataModel": {"110": 3}}])
+        entry_data = hass.data[DOMAIN][entry.entry_id]
+        coordinator = entry_data["coordinator"]
+        await coordinator._async_update_from_mqtt(
+            f"elica/{device.cuid}/state", payload_stale
+        )
+        await hass.async_block_till_done()
+
+        # State should remain 0 (stale MQTT ignored)
+        assert device.state.fan_speed == 0

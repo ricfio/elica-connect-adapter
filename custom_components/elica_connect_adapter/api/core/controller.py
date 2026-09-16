@@ -7,20 +7,12 @@ from typing import Any, ParamSpec, TypeVar
 
 from aiohttp import ClientConnectionError, ClientResponseError
 
-from ..core.constants import (  # noqa: TID252
-    MQTT_HOST,
-    MQTT_KEEPALIVE,
-    MQTT_PORT,
-    MQTT_TLS,
-    MQTT_TOPIC_FORMAT,
-)
+from ..core.constants import MQTT_KEEPALIVE  # noqa: TID252
+from ..core.constants import MQTT_HOST, MQTT_PORT, MQTT_TLS, MQTT_TOPIC_FORMAT
 from ..domain import Capability, Device  # noqa: TID252
-from ..interfaces import (  # noqa: TID252
-    MqttClientInterface,
-    OnMqttConnectionCallback,
-    OnMqttMessageCallback,
-    RestClientInterface,
-)
+from ..interfaces import MqttClientInterface  # noqa: TID252
+from ..interfaces import (OnMqttConnectionCallback, OnMqttMessageCallback,
+                          RestClientInterface)
 from .auth import AuthProviderBase
 
 _LOGGER = logging.getLogger(__name__)

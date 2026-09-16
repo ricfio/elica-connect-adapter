@@ -7,7 +7,8 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
+                                                      UpdateFailed)
 
 from .api.core import Controller
 from .api.domain import Device, normalize_data_model
@@ -101,7 +102,9 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 cuids = [getattr(d, "cuid", None) for d in devices]
                 _LOGGER.debug("Starting MQTT listener for cuids: %s", cuids)
 
-                async def _mqtt_logging_wrapper(topic: str, payload: str, retain: bool = False) -> None:
+                async def _mqtt_logging_wrapper(
+                    topic: str, payload: str, retain: bool = False
+                ) -> None:
                     if not self._mqtt_updates:
                         return
                     try:
@@ -133,7 +136,9 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                                 display_payload,
                             )
                         # Delegate to coordinator handler
-                        await self._async_update_from_mqtt(topic, payload, retain=retain)
+                        await self._async_update_from_mqtt(
+                            topic, payload, retain=retain
+                        )
                     except Exception:
                         _LOGGER.exception(
                             "Error while processing MQTT message for topic %s", topic
@@ -168,7 +173,9 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         }
         self.async_set_updated_data(self.data)
 
-    async def _async_update_from_mqtt(self, topic: str, payload: str, retain: bool = False) -> None:
+    async def _async_update_from_mqtt(
+        self, topic: str, payload: str, retain: bool = False
+    ) -> None:
         """Process MQTT update message."""
         if not self._mqtt_updates:
             return
@@ -178,16 +185,21 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
 
         # Ensure mqtt_stats exists (immutably)
-        mqtt_stats = dict(self.data.get("mqtt_stats", {
-            "connected": False,
-            "last_connection": None,
-            "last_disconnection": None,
-            "last_message_timestamp": None,
-            "last_message_payload": None,
-            "total_messages": 0,
-            "retained_messages": 0,
-            "last_message_retained": False,
-        }))
+        mqtt_stats = dict(
+            self.data.get(
+                "mqtt_stats",
+                {
+                    "connected": False,
+                    "last_connection": None,
+                    "last_disconnection": None,
+                    "last_message_timestamp": None,
+                    "last_message_payload": None,
+                    "total_messages": 0,
+                    "retained_messages": 0,
+                    "last_message_retained": False,
+                },
+            )
+        )
         if "mqtt_stats" not in self.data:
             _LOGGER.warning("Reinitializing missing mqtt_stats in MQTT handler")
 
@@ -222,11 +234,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # Find device by CUID
             devices = dict(self.data.get("devices", {}))
             device = next(
-                (
-                    d
-                    for d in devices.values()
-                    if getattr(d, "cuid", None) == cuid
-                ),
+                (d for d in devices.values() if getattr(d, "cuid", None) == cuid),
                 None,
             )
 

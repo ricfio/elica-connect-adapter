@@ -146,4 +146,3 @@ class HaAuthProvider(AuthProviderBase):
     async def get_client_token(self) -> dict[str, str] | None:
         """Generate client token."""
         return self.get_header_for_client_auth()
-

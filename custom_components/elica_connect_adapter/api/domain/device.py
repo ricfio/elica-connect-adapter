@@ -121,7 +121,7 @@ class Device:
         self.light_lock_until = self._get_lock_until()
 
     @staticmethod
-    def _get_lock_until(grace_period = 5.0):
+    def _get_lock_until(grace_period=5.0):
         return time.time() + grace_period
 
     @staticmethod

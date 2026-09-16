@@ -40,21 +40,25 @@ class AuthService:
             total=10.0, connect=5.0, sock_connect=5.0, sock_read=10.0
         )
         connector = aiohttp.TCPConnector(
-            limit=5, limit_per_host=2, keepalive_timeout=60.0, enable_cleanup_closed=True
+            limit=5,
+            limit_per_host=2,
+            keepalive_timeout=60.0,
+            enable_cleanup_closed=True,
         )
-        async with aiohttp.ClientSession(
-            connector=connector, timeout=timeout
-        ) as session, session.post(
-            f"{self.base_url}/oauth/token",
-            data={
-                "scope": "default",
-                "grant_type": "password",
-                "username": username,
-                "password": password,
-                "app_uuid": self.app_uuid,
-            },
-            headers=self._generate_headers(),
-        ) as response:
+        async with (
+            aiohttp.ClientSession(connector=connector, timeout=timeout) as session,
+            session.post(
+                f"{self.base_url}/oauth/token",
+                data={
+                    "scope": "default",
+                    "grant_type": "password",
+                    "username": username,
+                    "password": password,
+                    "app_uuid": self.app_uuid,
+                },
+                headers=self._generate_headers(),
+            ) as response,
+        ):
             response.raise_for_status()
             return await response.json()
 
@@ -64,19 +68,23 @@ class AuthService:
             total=10.0, connect=5.0, sock_connect=5.0, sock_read=10.0
         )
         connector = aiohttp.TCPConnector(
-            limit=5, limit_per_host=2, keepalive_timeout=60.0, enable_cleanup_closed=True
+            limit=5,
+            limit_per_host=2,
+            keepalive_timeout=60.0,
+            enable_cleanup_closed=True,
         )
-        async with aiohttp.ClientSession(
-            connector=connector, timeout=timeout
-        ) as session, session.post(
-            f"{self.base_url}/oauth/token",
-            data={
-                "scope": "default",
-                "grant_type": "refresh_token",
-                "refresh_token": refresh_token,
-                "app_uuid": self.app_uuid,
-            },
-            headers=self._generate_headers(),
-        ) as response:
+        async with (
+            aiohttp.ClientSession(connector=connector, timeout=timeout) as session,
+            session.post(
+                f"{self.base_url}/oauth/token",
+                data={
+                    "scope": "default",
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "app_uuid": self.app_uuid,
+                },
+                headers=self._generate_headers(),
+            ) as response,
+        ):
             response.raise_for_status()
             return await response.json()

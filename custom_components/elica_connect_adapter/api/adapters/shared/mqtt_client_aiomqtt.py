@@ -5,11 +5,8 @@ import logging
 
 from aiomqtt import Client, MqttError
 
-from ...interfaces import (  # noqa: TID252
-    MqttClientInterface,
-    OnMqttConnectionCallback,
-    OnMqttMessageCallback,
-)
+from ...interfaces import MqttClientInterface  # noqa: TID252
+from ...interfaces import OnMqttConnectionCallback, OnMqttMessageCallback
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
@@ -45,6 +42,7 @@ class MqttClientAiomqtt(MqttClientInterface):
         tls_context = None
         if tls:
             import ssl
+
             tls_context = ssl.create_default_context()
             tls_context.check_hostname = True
             tls_context.verify_mode = ssl.CERT_REQUIRED
