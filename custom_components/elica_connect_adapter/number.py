@@ -29,7 +29,7 @@ async def async_setup_entry(
 
 
 class ElicaShutoffTimerNumber(ElicaDeviceEntity, NumberEntity):
-    """Representation of Elica fan shut-off timer duration number."""
+    """Elica fan shut-off timer number entity."""
 
     _attr_native_min_value = 0
     _attr_native_max_value = 180
@@ -44,7 +44,6 @@ class ElicaShutoffTimerNumber(ElicaDeviceEntity, NumberEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize number entity."""
         super().__init__(coordinator, device.uid)
         self._controller = controller
         self._attr_translation_key = "shutoff_timer_number"

@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
 
 
 class ElicaLight(ElicaDeviceEntity, LightEntity):
-    """Representation of an Elica light."""
+    """Elica hood light entity."""
 
     def __init__(
         self,
@@ -32,7 +32,6 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize the light."""
         ElicaDeviceEntity.__init__(self, coordinator, device.uid)
         LightEntity.__init__(self)
         self.coordinator = coordinator

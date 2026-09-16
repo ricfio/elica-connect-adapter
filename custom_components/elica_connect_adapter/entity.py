@@ -9,12 +9,11 @@ from .coordinator import ElicaConnectCoordinator
 
 
 class ElicaDeviceEntity(CoordinatorEntity[ElicaConnectCoordinator]):
-    """Representation of Elica Device entity."""
+    """Elica device entity base class."""
 
     _attr_has_entity_name = True
 
     def __init__(self, coordinator: ElicaConnectCoordinator, device_id: str) -> None:
-        """Initialize the entity."""
         super().__init__(coordinator)
 
         self.coordinator = coordinator

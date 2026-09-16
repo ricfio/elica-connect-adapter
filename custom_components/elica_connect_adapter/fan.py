@@ -26,7 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
 
 
 class ElicaFan(ElicaDeviceEntity, FanEntity):
-    """Representation of Elica hood fan."""
+    """Elica hood fan entity."""
 
     _attr_supported_features = (
         FanEntityFeature.SET_SPEED
@@ -43,7 +43,6 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize the fan entity."""
         super().__init__(coordinator, device.uid)
 
         self.coordinator = coordinator

@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities):
 
 
 class ElicaAirmaticSwitch(ElicaDeviceEntity, SwitchEntity):
-    """Representation of an Elica Airmatic switch."""
+    """Elica Airmatic switch entity."""
 
     def __init__(
         self,
@@ -33,7 +33,6 @@ class ElicaAirmaticSwitch(ElicaDeviceEntity, SwitchEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize the switch."""
         super().__init__(coordinator, device.uid)
         self._controller = controller
         self._attr_translation_key = "airmatic"
@@ -65,7 +64,7 @@ class ElicaAirmaticSwitch(ElicaDeviceEntity, SwitchEntity):
 
 
 class ElicaBoostSwitch(ElicaDeviceEntity, SwitchEntity):
-    """Representation of an Elica Boost switch."""
+    """Elica Boost switch entity."""
 
     def __init__(
         self,
@@ -73,7 +72,6 @@ class ElicaBoostSwitch(ElicaDeviceEntity, SwitchEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize the switch."""
         super().__init__(coordinator, device.uid)
         self._controller = controller
         self._attr_translation_key = "boost"
@@ -105,7 +103,7 @@ class ElicaBoostSwitch(ElicaDeviceEntity, SwitchEntity):
 
 
 class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
-    """Representation of an Elica Shut-off Timer switch (Start/Stop)."""
+    """Elica shut-off timer switch entity."""
 
     def __init__(
         self,
@@ -113,7 +111,6 @@ class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
         coordinator: ElicaConnectCoordinator,
         device: Device,
     ) -> None:
-        """Initialize the switch."""
         super().__init__(coordinator, device.uid)
         self._controller = controller
         self._attr_translation_key = "shutoff_timer_switch"

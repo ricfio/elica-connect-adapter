@@ -17,15 +17,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    """Data Update Coordinator for Elica.
-
-    self.data: dict with key "devices", value dict[str, Device]
-    """
+    """Elica data update coordinator."""
 
     def __init__(
         self, hass: HomeAssistant, controller: Controller, config_entry: ConfigEntry
     ) -> None:
-        """Initialize the coordinator."""
         # Options
         self._scan_interval = config_entry.options.get("scan_interval", 60)
         self._mqtt_updates = config_entry.options.get("mqtt_updates", True)
