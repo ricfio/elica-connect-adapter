@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-11-13
+
+### Changed
+
+- Improved README installation, configuration, requirements, and troubleshooting guidance.
+- Added direct My Home Assistant links for HACS installation and config flow setup.
+
 ## [0.2.0] - 2026-11-12
 
 ### Changed

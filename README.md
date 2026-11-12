@@ -1,5 +1,62 @@
 # Elica Connect - Custom Component for Home Assistant
 
+[![Open your Home Assistant instance and show the Elica Connect integration in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ricfio&repository=elica-connect-adapter&category=integration)
+[![Open your Home Assistant instance and start setting up the Elica Connect integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=elica_connect_adapter)
+
+Home Assistant custom integration for Elica Connect hoods and compatible
+appliances. It connects to the Elica cloud account, discovers the associated
+devices, and exposes fan, light, switch, number, and diagnostic sensor entities.
+
+## Installation
+
+### HACS
+
+1. Open HACS in Home Assistant.
+2. Open **Integrations** and search for **Elica Connect**.
+3. Install the integration and restart Home Assistant.
+4. Add **Elica Connect** from **Settings → Devices & services → Add integration**.
+
+If the repository is not yet listed in the HACS default repository, add it as a
+custom repository using:
+
+```text
+https://github.com/ricfio/elica-connect-adapter
+```
+
+Select **Integration** as the repository category.
+
+### Manual
+
+1. Download or clone this repository.
+2. Copy `custom_components/elica_connect_adapter` into the `custom_components`
+   directory of your Home Assistant configuration.
+3. Restart Home Assistant.
+4. Add **Elica Connect** from **Settings → Devices & services**.
+
+## Configuration and requirements
+
+Configuration is performed through the Home Assistant UI. Enter the Elica
+Connect account username and password used by the official Elica mobile app.
+
+The integration requires:
+
+- Home Assistant `2024.8.0` or newer;
+- outbound HTTPS access to the Elica cloud API;
+- outbound MQTT access to `cloudprodmqtt.elica.com` on secure port `8883`;
+- valid Elica account credentials and at least one compatible connected device.
+
+The application credential used by the official Elica mobile app is bundled in
+the integration and is not a personal user credential. User credentials are
+stored by Home Assistant in the config entry.
+
+## Troubleshooting
+
+- If setup fails, verify the Elica account credentials and that the account can
+  access the device in the official mobile app.
+- Ensure the Home Assistant host can reach the Elica API and MQTT endpoint.
+- Enable the integration debug option only while troubleshooting; avoid sharing
+  logs containing account or device information.
+
 ## Sensors Documentation
 
 This integration provides a comprehensive set of entities and sensors for Elica connected devices (hoods and appliances), divided into connectivity, capability telemetry, and MQTT diagnostics.
