@@ -1,0 +1,118 @@
+{
+    "entity": {
+        "light": {
+            "light": {
+                "name": "Light"
+            }
+        },
+        "fan": {
+            "fan": {
+                "name": "Extraction",
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "low": "Low",
+                            "medium": "Medium",
+                            "high": "High",
+                            "boost": "Intensive"
+                        }
+                    }
+                }
+            }
+        },
+        "number": {
+            "shutoff_timer_number": {
+                "name": "Shut-off timer duration"
+            }
+        },
+        "switch": {
+            "airmatic": {
+                "name": "Automatic extraction"
+            },
+            "boost": {
+                "name": "Intensive extraction"
+            },
+            "shutoff_timer_switch": {
+                "name": "Shut-off timer"
+            }
+        },
+        "sensor": {
+            "light_brightness": {
+                "name": "Light brightness"
+            },
+            "fan_mode": {
+                "name": "Fan mode"
+            },
+            "fan_speed": {
+                "name": "Fan speed"
+            },
+            "fan_boost_timer": {
+                "name": "Intensive extraction timer"
+            },
+            "fan_shutoff_timer": {
+                "name": "Shut-off timer"
+            },
+            "device_details": {
+                "name": "Device"
+            },
+            "grease_filter_efficiency": {
+                "name": "Grease Filter Efficiency"
+            },
+            "cloud_connectivity": {
+                "name": "Cloud Connectivity",
+                "state": {
+                    "connected": "Connected",
+                    "disconnected": "Disconnected"
+                }
+            },
+            "mqtt_connectivity": {
+                "name": "MQTT Connectivity",
+                "state": {
+                    "connected": "Connected",
+                    "disconnected": "Disconnected"
+                }
+            },
+            "mqtt_messages": {
+                "name": "MQTT Messages"
+            },
+            "mqtt_connection": {
+                "name": "MQTT Connection",
+                "state": {
+                    "connected": "Connected",
+                    "disconnected": "Disconnected"
+                }
+            }
+        }
+    },
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "password": "Password",
+                    "username": "Username"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Options",
+                "data": {
+                    "scan_interval": "Polling interval (seconds)",
+                    "mqtt_updates": "MQTT updates",
+                    "mqtt_debug": "MQTT debug",
+                    "debug": "Debug"
+                }
+            }
+        }
+    }
+}

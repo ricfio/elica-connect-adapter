@@ -1,0 +1,118 @@
+{
+    "entity": {
+        "light": {
+            "light": {
+                "name": "Luce"
+            }
+        },
+        "fan": {
+            "fan": {
+                "name": "Aspirazione",
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "low": "Bassa",
+                            "medium": "Media",
+                            "high": "Alta",
+                            "boost": "Intensiva"
+                        }
+                    }
+                }
+            }
+        },
+        "number": {
+            "shutoff_timer_number": {
+                "name": "Timer spegnimento automatico"
+            }
+        },
+        "switch": {
+            "airmatic": {
+                "name": "Aspirazione automatica"
+            },
+            "boost": {
+                "name": "Aspirazione intensiva"
+            },
+            "shutoff_timer_switch": {
+                "name": "Timer spegnimento automatico"
+            }
+        },
+        "sensor": {
+            "light_brightness": {
+                "name": "Luminosità luce"
+            },
+            "fan_mode": {
+                "name": "Modalità aspirazione"
+            },
+            "fan_speed": {
+                "name": "Velocità aspirazione"
+            },
+            "fan_boost_timer": {
+                "name": "Timer aspirazione intensiva"
+            },
+            "fan_shutoff_timer": {
+                "name": "Timer spegnimento automatico"
+            },
+            "device_details": {
+                "name": "Dispositivo"
+            },
+            "grease_filter_efficiency": {
+                "name": "Efficienza filtro antigrasso"
+            },
+            "cloud_connectivity": {
+                "name": "Connettività Cloud",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
+            },
+            "mqtt_connectivity": {
+                "name": "Connettività MQTT",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
+            },
+            "mqtt_messages": {
+                "name": "Messaggi MQTT"
+            },
+            "mqtt_connection": {
+                "name": "Connessione MQTT",
+                "state": {
+                    "connected": "Connesso",
+                    "disconnected": "Disconnesso"
+                }
+            }
+        }
+    },
+    "config": {
+        "abort": {
+            "already_configured": "Il dispositivo è già configurato"
+        },
+        "error": {
+            "cannot_connect": "Impossibile connettersi",
+            "invalid_auth": "Autenticazione non valida",
+            "unknown": "Errore imprevisto"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "password": "Password",
+                    "username": "Nome utente"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Opzioni",
+                "data": {
+                    "scan_interval": "Intervallo di aggiornamento (secondi)",
+                    "mqtt_updates": "Aggiornamenti MQTT",
+                    "mqtt_debug": "Debug MQTT",
+                    "debug": "Debug"
+                }
+            }
+        }
+    }
+}

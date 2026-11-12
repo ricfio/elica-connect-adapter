@@ -1,0 +1,103 @@
+{
+  "entity": {
+    "light": {
+      "light": {
+        "name": "Light"
+      }
+    },
+    "fan": {
+      "fan": {
+        "name": "Fan",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "low": "Low",
+              "medium": "Medium",
+              "high": "High",
+              "boost": "Intensive"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "shutoff_timer_number": {
+        "name": "Shut-off timer duration"
+      }
+    },
+    "switch": {
+      "airmatic": {
+        "name": "Automatic extraction"
+      },
+      "boost": {
+        "name": "Intensive extraction"
+      },
+      "shutoff_timer_switch": {
+        "name": "Shut-off timer"
+      }
+    },
+    "sensor": {
+      "light_brightness": {
+        "name": "Light brightness"
+      },
+      "fan_mode": {
+        "name": "Fan mode"
+      },
+      "fan_speed": {
+        "name": "Fan speed"
+      },
+      "fan_boost_timer": {
+        "name": "Boost timer"
+      },
+      "fan_shutoff_timer": {
+        "name": "Shut-off timer"
+      },
+      "device_details": {
+        "name": "Device"
+      },
+      "grease_filter_efficiency": {
+        "name": "Grease Filter Efficiency"
+      },
+      "cloud_connectivity": {
+        "name": "Cloud Connectivity"
+      },
+      "mqtt_connectivity": {
+        "name": "MQTT Connectivity"
+      },
+      "mqtt_messages": {
+        "name": "MQTT Messages"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)",
+          "mqtt_updates": "MQTT updates",
+          "mqtt_debug": "MQTT debug",
+          "debug": "Debug"
+        }
+      }
+    }
+  }
+}

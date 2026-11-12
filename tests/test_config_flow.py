@@ -1,13 +1,16 @@
 """Test the Elica Connect config flow."""
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from homeassistant import config_entries
-from homeassistant.components.elica.config_flow import CannotConnect, InvalidAuth
-from homeassistant.components.elica.const import DOMAIN
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+
+from custom_components.elica_connect_adapter.const import DOMAIN
+
+pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
 
 async def test_form(hass: HomeAssistant, mock_setup_entry: AsyncMock) -> None:
@@ -18,9 +21,15 @@ async def test_form(hass: HomeAssistant, mock_setup_entry: AsyncMock) -> None:
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {}
 
+    mock_controller = MagicMock()
+    mock_controller.login = AsyncMock(return_value=None)
+    mock_controller.is_logged_in = AsyncMock(return_value=True)
+    mock_controller.get_account = AsyncMock(return_value={"id": "test_account_id"})
+    mock_controller.get_devices = AsyncMock(return_value=[])
+
     with patch(
-        "homeassistant.components.elica.config_flow.Hub.authenticate",
-        return_value=True,
+        "custom_components.elica_connect_adapter.config_flow.create_controller",
+        return_value=mock_controller,
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -32,10 +41,11 @@ async def test_form(hass: HomeAssistant, mock_setup_entry: AsyncMock) -> None:
         await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Name of the device"
+    assert result["title"] == "test-username"
     assert result["data"] == {
         CONF_USERNAME: "test-username",
         CONF_PASSWORD: "test-password",
+        "account_id": "test_account_id",
     }
     assert len(mock_setup_entry.mock_calls) == 1
 
@@ -48,9 +58,13 @@ async def test_form_invalid_auth(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
 
+    mock_controller = MagicMock()
+    mock_controller.login = AsyncMock(return_value=None)
+    mock_controller.is_logged_in = AsyncMock(return_value=False)
+
     with patch(
-        "homeassistant.components.elica.config_flow.PlaceholderHub.authenticate",
-        side_effect=InvalidAuth,
+        "custom_components.elica_connect_adapter.config_flow.create_controller",
+        return_value=mock_controller,
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -63,12 +77,15 @@ async def test_form_invalid_auth(
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "invalid_auth"}
 
-    # Make sure the config flow tests finish with either an
-    # FlowResultType.CREATE_ENTRY or FlowResultType.ABORT so
-    # we can show the config flow is able to recover from an error.
+    mock_controller_ok = MagicMock()
+    mock_controller_ok.login = AsyncMock(return_value=None)
+    mock_controller_ok.is_logged_in = AsyncMock(return_value=True)
+    mock_controller_ok.get_account = AsyncMock(return_value={"id": "test_account_id"})
+    mock_controller_ok.get_devices = AsyncMock(return_value=[])
+
     with patch(
-        "homeassistant.components.elica.config_flow.PlaceholderHub.authenticate",
-        return_value=True,
+        "custom_components.elica_connect_adapter.config_flow.create_controller",
+        return_value=mock_controller_ok,
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -80,10 +97,11 @@ async def test_form_invalid_auth(
         await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Name of the device"
+    assert result["title"] == "test-username"
     assert result["data"] == {
         CONF_USERNAME: "test-username",
         CONF_PASSWORD: "test-password",
+        "account_id": "test_account_id",
     }
     assert len(mock_setup_entry.mock_calls) == 1
 
@@ -96,14 +114,16 @@ async def test_form_cannot_connect(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
 
+    mock_controller = MagicMock()
+    mock_controller.login = AsyncMock(side_effect=Exception("Connection error"))
+
     with patch(
-        "homeassistant.components.elica.config_flow.PlaceholderHub.authenticate",
-        side_effect=CannotConnect,
+        "custom_components.elica_connect_adapter.config_flow.create_controller",
+        return_value=mock_controller,
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                CONF_HOST: "1.1.1.1",
                 CONF_USERNAME: "test-username",
                 CONF_PASSWORD: "test-password",
             },
@@ -112,13 +132,15 @@ async def test_form_cannot_connect(
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "cannot_connect"}
 
-    # Make sure the config flow tests finish with either an
-    # FlowResultType.CREATE_ENTRY or FlowResultType.ABORT so
-    # we can show the config flow is able to recover from an error.
+    mock_controller_ok = MagicMock()
+    mock_controller_ok.login = AsyncMock(return_value=None)
+    mock_controller_ok.is_logged_in = AsyncMock(return_value=True)
+    mock_controller_ok.get_account = AsyncMock(return_value={"id": "test_account_id"})
+    mock_controller_ok.get_devices = AsyncMock(return_value=[])
 
     with patch(
-        "homeassistant.components.elica.config_flow.PlaceholderHub.authenticate",
-        return_value=True,
+        "custom_components.elica_connect_adapter.config_flow.create_controller",
+        return_value=mock_controller_ok,
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -130,9 +152,10 @@ async def test_form_cannot_connect(
         await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Name of the device"
+    assert result["title"] == "test-username"
     assert result["data"] == {
         CONF_USERNAME: "test-username",
         CONF_PASSWORD: "test-password",
+        "account_id": "test_account_id",
     }
     assert len(mock_setup_entry.mock_calls) == 1
