@@ -9,3 +9,5 @@ __pycache__/
 .coverage
 
 scripts/deploy-ha.env
+
+.devcontainer/*.local.json

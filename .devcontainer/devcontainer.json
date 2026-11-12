@@ -28,7 +28,7 @@
       "settings": {
         "claudeCode.environmentVariables": [
           { "name": "ANTHROPIC_BASE_URL", "value": "http://host.docker.internal:8082" },
-          { "name": "ANTHROPIC_AUTH_TOKEN", "value": "freecc" },
+          // Set credentials through a local, untracked environment file.
           { "name": "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY", "value": "1" }
         ]
       },
