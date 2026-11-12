@@ -57,6 +57,28 @@ stored by Home Assistant in the config entry.
 - Enable the integration debug option only while troubleshooting; avoid sharing
   logs containing account or device information.
 
+## Supported devices and features
+
+The integration has been verified with the following Elica hood:
+
+| Device | Firmware | Verified features |
+| --- | --- | --- |
+| BOXIN ADV PLUS IX/A/90 | A1 | Fan control, automatic and intensive modes, light control, fan speed, light brightness, timers, grease filter efficiency, Cloud connectivity, MQTT connectivity, and MQTT message diagnostics |
+
+Support for other Elica Connect devices may vary according to the capabilities
+reported by the Elica cloud service. If your device is not listed, open an issue
+with the model name and anonymized diagnostic information. Do not include serial
+numbers, account identifiers, access tokens, passwords, or complete MQTT payloads.
+
+### Entities provided
+
+- **Fan:** power, percentage, speed presets, intensive mode, and automatic mode.
+- **Light:** on/off and brightness where supported by the device.
+- **Sensors:** fan speed, light brightness, intensive timer, auto-off timer,
+  grease filter efficiency, Cloud connectivity, MQTT connectivity, and MQTT
+  message statistics.
+- **Switches:** intensive and automatic operation modes.
+
 ## Sensors Documentation
 
 This integration provides a comprehensive set of entities and sensors for Elica connected devices (hoods and appliances), divided into connectivity, capability telemetry, and MQTT diagnostics.
