@@ -8,7 +8,7 @@ API_CLIENT_ID = "eiot-app"
 API_CLIENT_SECRET = "VqwG1KTB77UeROu"
 
 MQTT_HOST = "cloudprodmqtt.elica.com"
-MQTT_PORT = 1883
-MQTT_TLS = False
+MQTT_PORT = 8883
+MQTT_TLS = True
 MQTT_KEEPALIVE = 60
 MQTT_TOPIC_FORMAT = "v1/device/{CUID}/statusjson"

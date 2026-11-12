@@ -2,12 +2,13 @@
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .api.core import Controller
 from .api.domain import Device, normalize_data_model
@@ -107,32 +108,19 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     if not self._mqtt_updates:
                         return
                     try:
-                        # Log incoming message (truncate large payloads)
-                        display_payload = payload
-                        try:
-                            if (
-                                isinstance(payload, str | bytes)
-                                and len(str(payload)) > 1024
-                            ):
-                                display_payload = str(payload)[:1024] + "...(truncated)"
-                        except Exception:
-                            display_payload = "<unserializable>"
-
                         if self._mqtt_debug:
                             _LOGGER.info(
-                                "MQTT message received [retained=%s, stats: %s]: %s - %s",
+                                "MQTT message received [retained=%s, stats: %s]: %s",
                                 retain,
                                 "present" if "mqtt_stats" in self.data else "missing",
                                 topic,
-                                display_payload,
                             )
                         else:
                             _LOGGER.debug(
-                                "MQTT message received [retained=%s, stats: %s]: %s - %s",
+                                "MQTT message received [retained=%s, stats: %s]: %s",
                                 retain,
                                 "present" if "mqtt_stats" in self.data else "missing",
                                 topic,
-                                display_payload,
                             )
                         # Delegate to coordinator handler
                         await self._async_update_from_mqtt(
@@ -162,9 +150,9 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         mqtt_stats = dict(self.data.get("mqtt_stats", {}))
         mqtt_stats["connected"] = connected
         if connected:
-            mqtt_stats["last_connection"] = datetime.now().isoformat()
+            mqtt_stats["last_connection"] = dt_util.utcnow().isoformat()
         else:
-            mqtt_stats["last_disconnection"] = datetime.now().isoformat()
+            mqtt_stats["last_disconnection"] = dt_util.utcnow().isoformat()
 
         self.data = {
             **self.data,
@@ -204,7 +192,7 @@ class ElicaConnectCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         # Update MQTT statistics
         mqtt_stats["connected"] = True
-        now_str = datetime.now().isoformat()
+        now_str = dt_util.utcnow().isoformat()
         if not mqtt_stats.get("last_connection"):
             mqtt_stats["last_connection"] = now_str
         mqtt_stats["last_message_timestamp"] = now_str

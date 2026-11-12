@@ -9,3 +9,9 @@
 - Add deterministic tests for behavior changes; mock REST and MQTT traffic.
 - Run `make lint` and the relevant pytest tests before handoff.
 - Do not commit credentials, personal data, generated caches, or local prompts.
+- Treat the Elica mobile-app client credential as an application credential; never add user tokens or passwords.
+- Never log access tokens, MQTT credentials, or complete MQTT payloads.
+- Keep authentication state isolated per Home Assistant config entry.
+- Preserve the API package boundary; do not import Home Assistant from `api/core`, `api/domain`, or `api/interfaces`.
+- Do not change MQTT transport settings without a compatibility test against the Elica broker.
+- Do not create Git commits without explicit user confirmation; show the proposed message first.

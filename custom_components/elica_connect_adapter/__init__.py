@@ -32,7 +32,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     """Set up Elica Connect from a config entry."""
 
     controller = create_controller(
-        hass, config_entry.data["username"], config_entry.data["password"]
+        hass,
+        config_entry.data["username"],
+        config_entry.data["password"],
+        config_entry.entry_id,
     )
 
     try:

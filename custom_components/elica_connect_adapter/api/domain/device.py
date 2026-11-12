@@ -270,15 +270,13 @@ class Device:
         try:
             raw = json.loads(payload)
         except json.JSONDecodeError:
-            _LOGGER.warning("Invalid MQTT payload for device %s: %s", self.uid, payload)
+            _LOGGER.warning("Invalid MQTT payload for device %s", self.uid)
             return
 
         try:
             data = raw[0]
         except (KeyError, IndexError, TypeError):
-            _LOGGER.warning(
-                "Unexpected MQTT payload structure for device %s: %s", self.uid, payload
-            )
+            _LOGGER.warning("Unexpected MQTT payload structure for device %s", self.uid)
             return
 
         self._parse_mqtt_payload(data)
@@ -292,7 +290,7 @@ class Device:
             self._update_capabilities_state(data["dataModel"])
             return
 
-        _LOGGER.debug("Device %s ignored unknown MQTT payload: %s", self.uid, data)
+        _LOGGER.debug("Device %s ignored unknown MQTT payload", self.uid)
 
     def _update_connection_state(self, connected: bool) -> None:
         if self.state.connected != connected:

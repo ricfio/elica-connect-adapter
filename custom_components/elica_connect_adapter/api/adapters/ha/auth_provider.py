@@ -23,6 +23,7 @@ class HaAuthProvider(AuthProviderBase):
         auth_service: AuthService,
         username: str,
         password: str,
+        storage_key: str,
     ) -> None:
         """Initialize the authentication provider."""
         super().__init__(auth_service, username, password)
@@ -30,9 +31,10 @@ class HaAuthProvider(AuthProviderBase):
         self._access_token: str | None = None
         self._refresh_token: str | None = None
         self._expires_at: float = 0
+        self._storage_key = storage_key
 
-        # Cache dei token in memoria (evita accesso a disco)
-        hass.data.setdefault("elica_auth", {})
+        # Cache tokens in memory only, isolated per config entry.
+        hass.data.setdefault(self._storage_key, {})
 
     # --------------------------------------------------
     # Internal helpers
@@ -47,7 +49,7 @@ class HaAuthProvider(AuthProviderBase):
         self._expires_at = time.time() + expires_in
         self._access_token = auth.get("access_token")
         self._refresh_token = auth.get("refresh_token")
-        self.hass.data["elica_auth"] = {
+        self.hass.data[self._storage_key] = {
             "access_token": self._access_token,
             "token_type": auth.get("token_type"),
             "refresh_token": self._refresh_token,
@@ -61,7 +63,7 @@ class HaAuthProvider(AuthProviderBase):
 
     def _load_auth(self) -> dict[str, Any] | None:
         """Load auth data from hass.data cache."""
-        auth_data = self.hass.data.get("elica_auth")
+        auth_data = self.hass.data.get(self._storage_key)
         if not isinstance(auth_data, dict) or not auth_data.get("access_token"):
             return None
         return auth_data
@@ -117,7 +119,7 @@ class HaAuthProvider(AuthProviderBase):
         """Authenticate using an existing access token."""
         self._access_token = access_token
         self._expires_at = time.time() + 3600  # Default 1h unless known otherwise
-        self.hass.data["elica_auth"].update(
+        self.hass.data.setdefault(self._storage_key, {}).update(
             {
                 "access_token": access_token,
                 "expires_at": self._expires_at,
@@ -129,8 +131,7 @@ class HaAuthProvider(AuthProviderBase):
         self._access_token = None
         self._refresh_token = None
         self._expires_at = 0
-        if "elica_auth" in self.hass.data:
-            self.hass.data["elica_auth"] = {}
+        self.hass.data[self._storage_key] = {}
 
     @staticmethod
     def generate_auth_for_client(

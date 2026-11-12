@@ -8,7 +8,12 @@ from .api.adapters.shared import MqttClientAiomqtt
 from .api.core import AuthService, Controller
 
 
-def create_controller(hass: HomeAssistant, username: str, password: str) -> Controller:
+def create_controller(
+    hass: HomeAssistant,
+    username: str,
+    password: str,
+    entry_id: str | None = None,
+) -> Controller:
     """Create the Controller instance with the given username and password."""
     auth_service = AuthService(
         API_BASE_URL,
@@ -22,6 +27,7 @@ def create_controller(hass: HomeAssistant, username: str, password: str) -> Cont
         auth_service=auth_service,
         username=username,
         password=password,
+        storage_key=f"elica_auth_{entry_id or id(hass)}",
     )
 
     rest_client = AioHttpRestClient(

@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Security
 
 - Removed the personal development token from the devcontainer configuration.
+- Enabled TLS for MQTT connections using the broker's secure port (`8883`).
 
 ## [0.1.0] - 2026-10-24
 
