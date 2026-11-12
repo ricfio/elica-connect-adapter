@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-11-12
+
+### Changed
+
+- Consolidated the integration for a preparatory release before `1.0.0`.
+- Updated repository guidance, release metadata, and automated quality checks.
+
+### Security
+
+- Removed the personal development token from the devcontainer configuration.
+
 ## [0.1.0] - 2026-10-24
 
 ### Added
