@@ -11,3 +11,4 @@ __pycache__/
 scripts/deploy-ha.env
 
 .devcontainer/*.local.json
+.github/prompts/
