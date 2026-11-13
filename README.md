@@ -174,3 +174,29 @@ Elica devices communicate via numerical capability codes reported in the device'
 
 *Note:*  
 *Capability rows without description and mapping are reserved / unmapped slots observed in device telemetry.*
+
+## License
+
+This project is released under the [MIT License](LICENSE).
+
+Copyright (c) 2025-2026 Riccardo Fiorenza.
+
+## Disclaimer
+
+This is an unofficial community integration and is not affiliated with,
+endorsed by, or supported by Elica S.p.A. or the Home Assistant project. It
+uses an undocumented, reverse-engineered cloud interface that may change or
+stop working without notice. Use it at your own risk; the authors are not
+responsible for service interruptions, account issues, device malfunction, or
+data loss.
+
+## Project history and related integrations
+
+This project was started independently in October 2025, with the first commit
+created on 3 November 2025. Similarities with later implementations reflect
+the shared Elica API and MQTT protocol, not code derivation.
+
+For comparison and protocol research, see the independent implementations by
+[Benedetto Siddi](https://github.com/benedettosiddi/elica-connect-ha) and the
+later [Elica Connect Plus fork](https://github.com/marturano/elica-connect-plus).
+This project keeps a separate API layer and Home Assistant adapter architecture.
