@@ -1,4 +1,4 @@
-.PHONY: help venv clean lint test install
+.PHONY: help venv clean lint test install bump-version
 
 VENV_PATH = .venv
 PYTHON = python3
@@ -48,6 +48,11 @@ test:
 install:
 	$(VENV_PATH)/bin/pip install -r requirements_test.txt
 	@echo "✅ Dependencies installed."
+
+# 🚀 Update release metadata (usage: make bump-version VERSION=0.2.4)
+bump-version:
+	@test -n "$(VERSION)" || (echo "Usage: make bump-version VERSION=X.Y.Z"; exit 2)
+	$(PYTHON) scripts/bump-version.py $(VERSION)
 
 # 🎯 Initialize development environment
 init: clean venv install
