@@ -14,6 +14,15 @@ so it can later move to its own repository.
   changes.
 - Use asynchronous APIs for network and Home Assistant I/O.
 - Do not run `git commit`; upon completing any requested implementation task, always propose a structured git commit message summarizing the changes.
+- Before a release, use Git Flow: start the release branch before release changes
+  with `git flow release start X.Y.Z`, then stage and commit the completed changes
+  on that branch, and finish it with `git flow release finish X.Y.Z`. The configured
+  tag prefix is `v`, so the resulting tag is `vX.Y.Z`.
+- Always show the proposed commit message and wait for explicit user confirmation
+  before creating a commit; never create a commit autonomously.
+- For a release, update the release metadata with
+  `make bump-version VERSION=X.Y.Z`, add the changelog entry manually, then run
+  the validation checks before proposing the commit.
 - Keep comments and identifiers in English.
 - Be concise.
 - Update `strings.json`, `translations/en.json`, and `translations/it.json`
