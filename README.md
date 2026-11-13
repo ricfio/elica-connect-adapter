@@ -79,6 +79,34 @@ numbers, account identifiers, access tokens, passwords, or complete MQTT payload
   message statistics.
 - **Switches:** intensive and automatic operation modes.
 
+## Screenshots
+
+The following screenshots show the integration running in Home Assistant with a
+verified Elica hood, including the dashboard, controls, entities, diagnostics,
+and device history.
+
+<table>
+  <tr>
+    <td><img src="docs/images/hood-dashboard.png" alt="Elica hood dashboard" width="280"></td>
+    <td><img src="docs/images/hood-fun.png" alt="Elica hood fan speed controls" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/hood-light.png" alt="Elica hood light control" width="280"></td>
+    <td><img src="docs/images/hood-filter.png" alt="Elica grease filter history" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-info.png" alt="Elica hood device information" width="280"></td>
+    <td><img src="docs/images/device-diagnostics.png" alt="Elica Cloud and MQTT diagnostics" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-controls.png" alt="Elica hood controls" width="280"></td>
+    <td><img src="docs/images/device-sensors.png" alt="Elica hood sensors" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-activities.png" alt="Elica hood activity history" width="280"></td>
+  </tr>
+</table>
+
 ## Sensors Documentation
 
 This integration provides a comprehensive set of entities and sensors for Elica connected devices (hoods and appliances), divided into connectivity, capability telemetry, and MQTT diagnostics.
