@@ -1,11 +1,16 @@
 # Elica Connect - Custom Component for Home Assistant
 
+[![CI](https://github.com/ricfio/elica-connect-adapter/actions/workflows/ci.yml/badge.svg)](https://github.com/ricfio/elica-connect-adapter/actions/workflows/ci.yml)
+
 [![Open your Home Assistant instance and show the Elica Connect integration in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ricfio&repository=elica-connect-adapter&category=integration)
 [![Open your Home Assistant instance and start setting up the Elica Connect integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=elica_connect_adapter)
 
 Home Assistant custom integration for Elica Connect hoods and compatible
 appliances. It connects to the Elica cloud account, discovers the associated
 devices, and exposes fan, light, switch, number, and diagnostic sensor entities.
+
+> Community custom integration. Not affiliated with or supported by Elica or
+> the Home Assistant project.
 
 ## Installation
 
@@ -56,6 +61,56 @@ stored by Home Assistant in the config entry.
 - Ensure the Home Assistant host can reach the Elica API and MQTT endpoint.
 - Enable the integration debug option only while troubleshooting; avoid sharing
   logs containing account or device information.
+
+## Supported devices and features
+
+The integration has been verified with the following Elica hood:
+
+| Device | Firmware | Verified features |
+| --- | --- | --- |
+| BOXIN ADV PLUS IX/A/90 | A1 | Fan control, automatic and intensive modes, light control, fan speed, light brightness, timers, grease filter efficiency, Cloud connectivity, MQTT connectivity, and MQTT message diagnostics |
+
+Support for other Elica Connect devices may vary according to the capabilities
+reported by the Elica cloud service. If your device is not listed, open an issue
+with the model name and anonymized diagnostic information. Do not include serial
+numbers, account identifiers, access tokens, passwords, or complete MQTT payloads.
+
+### Entities provided
+
+- **Fan:** power, percentage, speed presets, intensive mode, and automatic mode.
+- **Light:** on/off and brightness where supported by the device.
+- **Sensors:** fan speed, light brightness, intensive timer, auto-off timer,
+  grease filter efficiency, Cloud connectivity, MQTT connectivity, and MQTT
+  message statistics.
+- **Switches:** intensive and automatic operation modes.
+
+## Screenshots
+
+The following screenshots show the integration running in Home Assistant with a
+verified Elica hood, including the dashboard, controls, entities, diagnostics,
+and device history.
+
+<table>
+  <tr>
+    <td><img src="docs/images/hood-dashboard.png" alt="Elica hood dashboard" width="280"></td>
+    <td><img src="docs/images/hood-fun.png" alt="Elica hood fan speed controls" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/hood-light.png" alt="Elica hood light control" width="280"></td>
+    <td><img src="docs/images/hood-filter.png" alt="Elica grease filter history" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-info.png" alt="Elica hood device information" width="280"></td>
+    <td><img src="docs/images/device-diagnostics.png" alt="Elica Cloud and MQTT diagnostics" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-controls.png" alt="Elica hood controls" width="280"></td>
+    <td><img src="docs/images/device-sensors.png" alt="Elica hood sensors" width="280"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/device-activities.png" alt="Elica hood activity history" width="280"></td>
+  </tr>
+</table>
 
 ## Sensors Documentation
 
