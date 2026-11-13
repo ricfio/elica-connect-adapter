@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-11-13
+
+### Changed
+
+- Improved the README with a visible screenshot gallery and clearer installation guidance.
+- Added community promotion materials, contribution guidance, and structured issue templates.
+- Documented the verified Elica BOXIN ADV PLUS IX/A/90 device and supported features.
+
 ## [0.2.1] - 2026-11-13
 
 ### Changed
