@@ -16,13 +16,12 @@
 - Do not change MQTT transport settings without a compatibility test against the Elica broker.
 - Do not create Git commits without explicit user confirmation; show the proposed message first.
 
-## Release workflow
+## Branch and release workflow
 
-- Use Git Flow for releases: start with `git flow release start X.Y.Z` before
-  release changes and finish with `git flow release finish X.Y.Z` after the
-  confirmed commit.
-- The repository uses the `v` tag prefix, so release `0.2.4` produces tag
-  `v0.2.4`.
+- Keep `main` stable and use short-lived `feature/*` or `fix/*` branches with
+  reviewed pull requests.
+- Create releases from `main` with semantic-version tags using the `v` prefix;
+  release `0.2.5` produces tag `v0.2.5`.
 - Run `make bump-version VERSION=X.Y.Z` to update release metadata, then add
   the `CHANGELOG.md` entry manually.
 - Run `make lint` and the relevant tests before proposing the release commit.

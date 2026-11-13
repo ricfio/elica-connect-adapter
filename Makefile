@@ -49,7 +49,7 @@ install:
 	$(VENV_PATH)/bin/pip install -r requirements_test.txt
 	@echo "✅ Dependencies installed."
 
-# 🚀 Update release metadata (usage: make bump-version VERSION=0.2.4)
+# 🚀 Update release metadata (usage: make bump-version VERSION=X.Y.Z)
 bump-version:
 	@test -n "$(VERSION)" || (echo "Usage: make bump-version VERSION=X.Y.Z"; exit 2)
 	$(PYTHON) scripts/bump-version.py $(VERSION)
