@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3] - 2026-11-13
+
+### Fixed
+
+- Updated the manifest and setup schema for current Home Assistant validation.
+
+### Changed
+
+- Added MIT license, integration categories, local brand assets, and HACS/Hassfest validation workflows.
+
 ## [0.2.2] - 2026-11-13
 
 ### Changed

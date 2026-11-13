@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "elica-connect-adapter"
-version = "0.2.2"
+version = "0.2.3"
 authors = [{name = "ricfio"}]
 description = "Elica Connect integration for Home Assistant"
 readme = "README.md"
