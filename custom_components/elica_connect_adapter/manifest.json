@@ -1,16 +1,16 @@
 {
   "domain": "elica_connect_adapter",
   "name": "Elica Connect (Adapter)",
-  "version": "0.2.3",
+  "categories": ["appliances_cleaning.cooking"],
   "codeowners": ["@ricfio"],
   "config_flow": true,
   "dependencies": ["mqtt"],
   "documentation": "https://github.com/ricfio/elica-connect-adapter",
   "issue_tracker": "https://github.com/ricfio/elica-connect-adapter/issues",
   "iot_class": "cloud_push",
-  "categories": ["appliances_cleaning.cooking"],
   "quality_scale": "bronze",
   "requirements": [
     "aiomqtt>=2.0.0"
-  ]
+  ],
+  "version": "0.2.3"
 }
