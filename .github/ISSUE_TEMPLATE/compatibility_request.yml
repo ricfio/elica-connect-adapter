@@ -1,0 +1,28 @@
+name: Device compatibility request
+description: Report an Elica device model or capability set for compatibility work
+title: "[Compatibility]: "
+labels:
+  - compatibility
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include serial numbers, account IDs, access tokens, passwords, or complete MQTT payloads.
+  - type: input
+    id: device-model
+    attributes:
+      label: Elica device model
+      placeholder: BOXIN ADV PLUS IX/A/90
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version
+  - type: textarea
+    id: capabilities
+    attributes:
+      label: Available capabilities
+      description: List the controls or sensors that work or are missing.
+    validations:
+      required: true

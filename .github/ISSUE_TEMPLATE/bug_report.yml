@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a reproducible problem with the integration
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please remove passwords, access tokens, serial numbers, account IDs, and complete MQTT payloads before submitting.
+  - type: input
+    id: integration-version
+    attributes:
+      label: Integration version
+      placeholder: 0.2.1
+    validations:
+      required: true
+  - type: input
+    id: home-assistant-version
+    attributes:
+      label: Home Assistant version
+      placeholder: 2026.11.0
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Elica device model
+      placeholder: BOXIN ADV PLUS IX/A/90
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem description
+      description: Describe what happened and what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste sanitized logs only. Never include credentials or complete payloads.
+      render: text

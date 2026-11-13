@@ -1,11 +1,16 @@
 # Elica Connect - Custom Component for Home Assistant
 
+[![CI](https://github.com/ricfio/elica-connect-adapter/actions/workflows/ci.yml/badge.svg)](https://github.com/ricfio/elica-connect-adapter/actions/workflows/ci.yml)
+
 [![Open your Home Assistant instance and show the Elica Connect integration in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ricfio&repository=elica-connect-adapter&category=integration)
 [![Open your Home Assistant instance and start setting up the Elica Connect integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=elica_connect_adapter)
 
 Home Assistant custom integration for Elica Connect hoods and compatible
 appliances. It connects to the Elica cloud account, discovers the associated
 devices, and exposes fan, light, switch, number, and diagnostic sensor entities.
+
+> Community custom integration. Not affiliated with or supported by Elica or
+> the Home Assistant project.
 
 ## Installation
 
