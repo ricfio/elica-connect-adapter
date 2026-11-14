@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import ssl
 
 from aiomqtt import Client, MqttError
 
@@ -44,9 +45,7 @@ class MqttClientAiomqtt(MqttClientInterface):
 
         tls_context = None
         if tls:
-            import ssl
-
-            tls_context = ssl.create_default_context()
+            tls_context = await asyncio.to_thread(ssl.create_default_context)
             tls_context.check_hostname = True
             tls_context.verify_mode = ssl.CERT_REQUIRED
 

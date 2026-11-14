@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -123,6 +124,11 @@ class Device:
     @staticmethod
     def _get_lock_until(grace_period=5.0):
         return time.time() + grace_period
+
+    @staticmethod
+    async def preload_products_data() -> None:
+        """Load the product catalog without blocking the event loop."""
+        await asyncio.to_thread(_get_products_data)
 
     @staticmethod
     def create_from_json(data: dict[str, Any]) -> "Device":

@@ -135,6 +135,7 @@ class Controller:
 
         json_list = await self.rest.get("devices", headers=headers)
 
+        await Device.preload_products_data()
         return [Device.create_from_json(json) for json in json_list]
 
     async def get_device(self, device_id: str) -> Device:
@@ -146,6 +147,7 @@ class Controller:
         headers = await self.auth_provider.get_header_for_user_auth()
 
         json = await self.rest.get(f"devices/{device_id}", headers=headers)
+        await Device.preload_products_data()
         return Device.create_from_json(json)
 
     # --------------------------
