@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2026-11-14
+
+### Fixed
+
+- Prevented synchronous product-catalog and TLS certificate operations from
+  blocking Home Assistant's event loop during integration setup and device
+  loading.
+
 ## [0.2.5] - 2026-11-13
 
 ### Changed

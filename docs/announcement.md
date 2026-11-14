@@ -1,4 +1,4 @@
-# Elica Connect for Home Assistant — v0.2.5
+# Elica Connect for Home Assistant — v0.2.6
 
 Elica Connect is a community custom integration for Home Assistant that brings
 Elica Connect hoods and compatible appliances into the Home Assistant UI.
