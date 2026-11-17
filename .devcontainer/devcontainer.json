@@ -11,42 +11,43 @@
     }
   },
 
-  "mounts": [
-    // SSH keys
-    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
-    // Home Assistant (production)
-    "source=/homeassistant/config/custom_components/elica_connect_adapter,target=/homeassistant/config/custom_components/elica_connect_adapter,type=bind,consistency=cached"
-  ],
-
   // Set *default* container specific settings.json values on container create.
   "customizations": {
     "vscode": {
-      "settings": {
-        "claudeCode.environmentVariables": [
-          { "name": "ANTHROPIC_BASE_URL", "value": "http://host.docker.internal:8082" },
-          // Set credentials through a local, untracked environment file.
-          { "name": "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY", "value": "1" }
-        ]
-      },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance",
         "ms-azuretools.vscode-docker",
         "github.vscode-github-actions",
         "mhutchie.git-graph",
-        "Anthropic.claude-code"
-      ]
+        "Anthropic.claude-code",
+        "openai.chatgpt"
+      ],
+      "settings": {
+        "claudeCode.environmentVariables": [
+          { "name": "ANTHROPIC_BASE_URL", "value": "http://host.docker.internal:8082" },
+          { "name": "ANTHROPIC_AUTH_TOKEN", "value": "freecc" },
+          { "name": "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY", "value": "1" }
+        ],
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
     }
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
 
+  // Persists Claude Code login and config across container rebuilds
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "pip3 install --user -r requirements.txt",
   // "postCreateCommand": "poetry update && poetry run pre-commit install",
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
+  // Install the Claude Code CLI (requires Node from the Dockerfile)
+  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.claude && npm install -g @anthropic-ai/claude-code",
+
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   // "runArgs": ["--user", "1000:1000"],
   "runArgs": [
@@ -54,11 +55,9 @@
     // "GIT_EDITOR=code --wait",
     // "--security-opt",
     // "label=disable",
+    // Required on Linux to reach the host; harmless on Docker Desktop
     "--add-host=host.docker.internal:host-gateway"
   ],
   "containerUser": "vscode",
-  "updateRemoteUserUID": true,
-  "containerEnv": {
-    "HOME": "/home/vscode"
-  }
+  "updateRemoteUserUID": true
 }
