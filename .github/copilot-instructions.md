@@ -7,6 +7,7 @@
 - After successful commands, refresh the coordinator before updating entity state.
 - Update `strings.json`, `translations/en.json`, and `translations/it.json` together for UI text changes.
 - Add deterministic tests for behavior changes; mock REST and MQTT traffic.
+- Before proposing a commit or push, run `python -m ruff format --check .`.
 - Run `make lint` and the relevant pytest tests before handoff.
 - Do not commit credentials, personal data, generated caches, or local prompts.
 - Treat the Elica mobile-app client credential as an application credential; never add user tokens or passwords.

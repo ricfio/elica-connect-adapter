@@ -57,9 +57,7 @@ class ElicaShutoffTimerNumber(ElicaDeviceEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Set the shut-off timer duration."""
         minutes = int(value)
-        accepted = await self._controller.set_fan_shutoff_timer(
-            self.device, minutes
-        )
+        accepted = await self._controller.set_fan_shutoff_timer(self.device, minutes)
         if accepted:
             self.device.state.shutoff_timer = minutes
             self.async_write_ha_state()

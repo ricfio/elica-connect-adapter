@@ -129,9 +129,7 @@ class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
             if self.device.state.shutoff_timer > 0
             else 15
         )
-        accepted = await self._controller.set_fan_shutoff_timer(
-            self.device, minutes
-        )
+        accepted = await self._controller.set_fan_shutoff_timer(self.device, minutes)
         if accepted:
             self.device.state.shutoff_timer = minutes
         self.async_write_ha_state()
@@ -139,9 +137,7 @@ class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs):
         """Turn off Shut-off Timer (stops / sets to 0)."""
-        accepted = await self._controller.set_fan_shutoff_timer(
-            self.device, 0
-        )
+        accepted = await self._controller.set_fan_shutoff_timer(self.device, 0)
         if accepted:
             self.device.state.shutoff_timer = 0
         self.async_write_ha_state()

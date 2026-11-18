@@ -236,14 +236,18 @@ class Controller:
         )
         return data["status"] == "accepted"
 
-    async def set_fan_speed(self, device: Device, speed: int, boost: bool = False) -> bool:
+    async def set_fan_speed(
+        self, device: Device, speed: int, boost: bool = False
+    ) -> bool:
         """Set the fan speed for the device."""
         if not (0 <= speed <= 3):
             raise ValueError("Speed must be between 0 and 3")
 
         return await self.set_fan_mode(device, device.state.airmatic, speed, boost)
 
-    async def toggle_airmatic(self, device: Device, enabled: bool | None = None) -> bool:
+    async def toggle_airmatic(
+        self, device: Device, enabled: bool | None = None
+    ) -> bool:
         """Toggle the Airmatic mode for the device."""
         return await self.set_fan_mode(
             device,
