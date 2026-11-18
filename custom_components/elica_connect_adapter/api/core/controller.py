@@ -21,9 +21,18 @@ from ..interfaces import (
     OnMqttMessageCallback,
     RestClientInterface,
 )
-from .auth import AuthProviderBase
+from .auth import AuthProviderAuthenticationError, AuthProviderBase
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ApiAuthenticationError(Exception):
+    """Authentication was rejected by the Elica API."""
+
+
+class ApiConnectionError(Exception):
+    """The Elica API could not be reached."""
+
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -96,10 +105,19 @@ class Controller:
     #  Authentication
     # --------------------------
 
-    @handle_network_errors("Login")
     async def login(self) -> str | None:
         """Authenticate and Return the access token."""
-        access_token = await self.auth_provider.ensure_authenticated()
+        try:
+            access_token = await self.auth_provider.ensure_authenticated()
+        except ClientResponseError as err:
+            if err.status in (400, 401, 403):
+                raise ApiAuthenticationError from err
+            raise ApiConnectionError from err
+        except (ClientConnectionError, TimeoutError) as err:
+            raise ApiConnectionError from err
+        except AuthProviderAuthenticationError as err:
+            raise ApiAuthenticationError from err
+
         _LOGGER.info("Login success")
         return access_token
 

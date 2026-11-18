@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
@@ -16,6 +17,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 
+from .api.core.controller import ApiAuthenticationError, ApiConnectionError
 from .api.domain import MANUFACTURER
 from .const import DOMAIN
 from .utils import create_controller
@@ -46,9 +48,11 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     # Perform login using username/password from user input
     try:
         await controller.login()
-    except Exception as exc:
+    except ApiConnectionError as exc:
         _LOGGER.debug("Error while logging in: %s", exc)
         raise CannotConnect from exc
+    except ApiAuthenticationError as exc:
+        raise InvalidAuth from exc
 
     # Raise an error if authentication fails
     if not await controller.is_logged_in():
@@ -126,6 +130,40 @@ class ElicaConnectConfigFlow(ConfigFlow, domain=DOMAIN):
         # Show the form to the user for username/password input
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
+        )
+
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
+        """Handle reauthentication for an existing entry."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Confirm reauthentication with a new password."""
+        entry = self._get_reauth_entry()
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            data = {**entry.data, **user_input}
+            try:
+                await validate_input(self.hass, data)
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
+            except Exception:
+                _LOGGER.exception("Unexpected exception during reauthentication")
+                errors["base"] = "unknown"
+            else:
+                return self.async_update_reload_and_abort(
+                    entry, data_updates=user_input
+                )
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema({vol.Required(CONF_PASSWORD): str}),
+            description_placeholders={"username": entry.data[CONF_USERNAME]},
+            errors=errors,
         )
 
     @staticmethod

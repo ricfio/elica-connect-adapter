@@ -71,6 +71,13 @@
   },
   "config": {
     "step": {
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "The password for {username} is no longer valid. Enter the new password.",
+        "data": {
+          "password": "[%key:common::config_flow::data::password%]"
+        }
+      },
       "user": {
         "data": {
           "username": "[%key:common::config_flow::data::username%]",
@@ -84,7 +91,8 @@
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
     }
   },
   "options": {

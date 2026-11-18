@@ -9,6 +9,10 @@ from .auth_provider_interface import AuthProviderInterface
 from .auth_service import AuthService
 
 
+class AuthProviderAuthenticationError(Exception):
+    """The authentication provider could not authenticate the user."""
+
+
 class AuthProviderBase(ABC, AuthProviderInterface):
     """Abstract base class for Authentication Providers."""
 
@@ -51,10 +55,12 @@ class AuthProviderBase(ABC, AuthProviderInterface):
         if self.username and self.password:
             await self.authenticate_with_password(self.username, self.password)
             if not self._access_token:
-                raise RuntimeError("Authentication failed: no token received.")
+                raise AuthProviderAuthenticationError(
+                    "Authentication failed: no token received."
+                )
             return self._access_token
 
-        raise RuntimeError("Authentication required.")
+        raise AuthProviderAuthenticationError("Authentication required.")
 
     async def is_authenticated(self) -> bool:
         """Return True if authenticated."""
