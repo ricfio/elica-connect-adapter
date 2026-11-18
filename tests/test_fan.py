@@ -49,7 +49,7 @@ async def test_fan_turn_on_default_percentage(hass):
         )
 
         mock_controller.set_fan_mode.assert_awaited_once_with(
-            DEVICE_ID,
+            device,
             False,
             1,
             False,
@@ -89,7 +89,7 @@ async def test_fan_turn_on_with_percentage(hass):
         )
 
         mock_controller.set_fan_mode.assert_awaited_once_with(
-            DEVICE_ID,
+            device,
             False,
             2,
             False,
@@ -129,7 +129,7 @@ async def test_fan_turn_on_max_percentage(hass):
         )
 
         mock_controller.set_fan_mode.assert_awaited_once_with(
-            DEVICE_ID,
+            device,
             False,
             3,
             False,
@@ -169,7 +169,7 @@ async def test_fan_turn_off(hass):
         )
 
         mock_controller.set_fan_mode.assert_awaited_once_with(
-            DEVICE_ID,
+            device,
             False,
             0,
             False,
@@ -207,7 +207,7 @@ async def test_fan_preset_modes_and_percentages(hass):
             {"entity_id": "fan.test_elica_hood_extraction", "preset_mode": "low"},
             blocking=True,
         )
-        mock_controller.set_fan_mode.assert_awaited_with(DEVICE_ID, False, 1, False)
+        mock_controller.set_fan_mode.assert_awaited_with(device, False, 1, False)
 
         await hass.services.async_call(
             FAN_DOMAIN,
@@ -215,7 +215,7 @@ async def test_fan_preset_modes_and_percentages(hass):
             {"entity_id": "fan.test_elica_hood_extraction", "preset_mode": "medium"},
             blocking=True,
         )
-        mock_controller.set_fan_mode.assert_awaited_with(DEVICE_ID, False, 2, False)
+        mock_controller.set_fan_mode.assert_awaited_with(device, False, 2, False)
 
         await hass.services.async_call(
             FAN_DOMAIN,
@@ -223,7 +223,7 @@ async def test_fan_preset_modes_and_percentages(hass):
             {"entity_id": "fan.test_elica_hood_extraction", "preset_mode": "high"},
             blocking=True,
         )
-        mock_controller.set_fan_mode.assert_awaited_with(DEVICE_ID, False, 3, False)
+        mock_controller.set_fan_mode.assert_awaited_with(device, False, 3, False)
 
         await hass.services.async_call(
             FAN_DOMAIN,
@@ -231,7 +231,7 @@ async def test_fan_preset_modes_and_percentages(hass):
             {"entity_id": "fan.test_elica_hood_extraction", "preset_mode": "boost"},
             blocking=True,
         )
-        mock_controller.set_fan_mode.assert_awaited_with(DEVICE_ID, False, 3, True)
+        mock_controller.set_fan_mode.assert_awaited_with(device, False, 3, True)
 
         await hass.config_entries.async_unload(entry.entry_id)
         await hass.async_block_till_done()

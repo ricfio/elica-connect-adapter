@@ -56,7 +56,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
         brightness = kwargs.get("brightness", self._attr_brightness) or 255
         brightness_pct = round((brightness / 255) * 100)
         accepted = await self._controller.set_light_brightness(
-            self.device.uid,
+            self.device,
             brightness_pct,
         )
         if accepted:
@@ -65,7 +65,7 @@ class ElicaLight(ElicaDeviceEntity, LightEntity):
 
     async def async_turn_off(self, **kwargs) -> None:  # noqa: D102
         accepted = await self._controller.toggle_light(
-            self.device.uid,
+            self.device,
             False,
         )
         if accepted:

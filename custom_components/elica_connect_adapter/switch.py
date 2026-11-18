@@ -55,7 +55,7 @@ class ElicaAirmaticSwitch(ElicaDeviceEntity, SwitchEntity):
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle Airmatic mode."""
         accepted = await self._controller.toggle_airmatic(
-            self.device.uid,
+            self.device,
             enable,
         )
         if accepted:
@@ -94,7 +94,7 @@ class ElicaBoostSwitch(ElicaDeviceEntity, SwitchEntity):
     async def _async_toggle(self, enable: bool):
         """Internal helper to toggle Boost mode."""
         accepted = await self._controller.toggle_boost(
-            self.device.uid,
+            self.device,
             enable,
         )
         if accepted:
@@ -130,7 +130,7 @@ class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
             else 15
         )
         accepted = await self._controller.set_fan_shutoff_timer(
-            self.device.uid, minutes
+            self.device, minutes
         )
         if accepted:
             self.device.state.shutoff_timer = minutes
@@ -139,7 +139,9 @@ class ElicaShutoffTimerSwitch(ElicaDeviceEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs):
         """Turn off Shut-off Timer (stops / sets to 0)."""
-        accepted = await self._controller.set_fan_shutoff_timer(self.device.uid, 0)
+        accepted = await self._controller.set_fan_shutoff_timer(
+            self.device, 0
+        )
         if accepted:
             self.device.state.shutoff_timer = 0
         self.async_write_ha_state()

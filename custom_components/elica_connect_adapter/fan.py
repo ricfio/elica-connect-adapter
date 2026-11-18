@@ -102,7 +102,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
     async def async_turn_off(self, **kwargs):
         """Turn the fan off."""
         accepted = await self._controller.set_fan_mode(
-            self.device.uid,
+            self.device,
             self.device.state.airmatic,
             0,
             False,
@@ -118,7 +118,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
         intensive = False  # Speed changes via percentage never trigger boost
 
         accepted = await self._controller.set_fan_mode(
-            self.device.uid,
+            self.device,
             self.device.state.airmatic,
             speed,
             intensive,
@@ -147,7 +147,7 @@ class ElicaFan(ElicaDeviceEntity, FanEntity):
             intensive = False
 
         accepted = await self._controller.set_fan_mode(
-            self.device.uid,
+            self.device,
             self.device.state.airmatic,
             speed,
             intensive,

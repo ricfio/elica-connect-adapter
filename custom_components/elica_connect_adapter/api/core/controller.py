@@ -213,7 +213,7 @@ class Controller:
 
     async def set_fan_mode(
         self,
-        device_id: str,
+        device: Device,
         airmatic: bool,
         speed: int,
         boost: bool,
@@ -224,43 +224,36 @@ class Controller:
         headers = await self.auth_provider.get_header_for_user_auth()
 
         data = await self.rest.post(
-            f"devices/{device_id}/commands",
+            f"devices/{device.uid}/commands",
             json={
                 "async": True,
                 "capabilities": capabilities,
                 "name": "capabilities",
-                "type": "Hood",
+                "type": device.device_type or "Hood",
                 "timeout": self._command_timeout,
             },
             headers=headers,
         )
         return data["status"] == "accepted"
 
-    async def set_fan_speed(
-        self, device_id: str, speed: int, boost: bool = False
-    ) -> bool:
+    async def set_fan_speed(self, device: Device, speed: int, boost: bool = False) -> bool:
         """Set the fan speed for the device."""
         if not (0 <= speed <= 3):
             raise ValueError("Speed must be between 0 and 3")
 
-        device = await self.get_device(device_id)
-        return await self.set_fan_mode(device_id, device.state.airmatic, speed, boost)
+        return await self.set_fan_mode(device, device.state.airmatic, speed, boost)
 
-    async def toggle_airmatic(
-        self, device_id: str, enabled: bool | None = None
-    ) -> bool:
+    async def toggle_airmatic(self, device: Device, enabled: bool | None = None) -> bool:
         """Toggle the Airmatic mode for the device."""
-        device = await self.get_device(device_id)
         return await self.set_fan_mode(
-            device_id,
+            device,
             enabled if enabled is not None else not device.state.airmatic,
             device.state.fan_speed,
             device.state.fan_boost,
         )
 
-    async def toggle_boost(self, device_id: str, enabled: bool | None = None) -> bool:
+    async def toggle_boost(self, device: Device, enabled: bool | None = None) -> bool:
         """Toggle the Boost mode for the device."""
-        device = await self.get_device(device_id)
         boost = enabled if enabled is not None else not device.state.fan_boost
         speed = (
             3
@@ -268,13 +261,13 @@ class Controller:
             else (device.state.fan_speed if device.state.fan_speed > 0 else 3)
         )
         return await self.set_fan_mode(
-            device_id,
+            device,
             device.state.airmatic,
             speed,
             boost,
         )
 
-    async def set_light_brightness(self, device_id: str, brightness: int) -> bool:
+    async def set_light_brightness(self, device: Device, brightness: int) -> bool:
         """Set the light brightness for the device."""
         if not (0 <= brightness <= 100):
             raise ValueError("Brightness must be between 0 and 100")
@@ -283,19 +276,19 @@ class Controller:
         headers = await self.auth_provider.get_header_for_user_auth()
 
         data = await self.rest.post(
-            f"devices/{device_id}/commands",
+            f"devices/{device.uid}/commands",
             json={
                 "async": True,
                 "capabilities": {Capability.LIGHT_BRIGHTNESS: brightness},
                 "name": "capabilities",
-                "type": "Hood",
+                "type": device.device_type or "Hood",
                 "timeout": self._command_timeout,
             },
             headers=headers,
         )
         return data["status"] == "accepted"
 
-    async def set_fan_shutoff_timer(self, device_id: str, minutes: int) -> bool:
+    async def set_fan_shutoff_timer(self, device: Device, minutes: int) -> bool:
         """Set or stop the fan shut-off timer."""
         if not (0 <= minutes <= 180):
             raise ValueError("Shut-off timer must be between 0 and 180 minutes")
@@ -304,26 +297,25 @@ class Controller:
         headers = await self.auth_provider.get_header_for_user_auth()
 
         data = await self.rest.post(
-            f"devices/{device_id}/commands",
+            f"devices/{device.uid}/commands",
             json={
                 "async": True,
                 "capabilities": {Capability.FAN_SHUTOFF_TIMER: minutes},
                 "name": "capabilities",
-                "type": "Hood",
+                "type": device.device_type or "Hood",
                 "timeout": self._command_timeout,
             },
             headers=headers,
         )
         return data["status"] == "accepted"
 
-    async def toggle_light(self, device_id: str, value: bool | None = None) -> bool:
+    async def toggle_light(self, device: Device, value: bool | None = None) -> bool:
         """Toggle the light for the device."""
-        device = await self.get_device(device_id)
         if value is None:
             value = not device.state.light_on
 
         brightness = 0 if not value else (device.state.light_brightness or 100)
-        return await self.set_light_brightness(device_id, brightness)
+        return await self.set_light_brightness(device, brightness)
 
     # async def listen(self, callback: Callable[[str, Any], None]):
     async def listen(
