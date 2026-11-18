@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from aiohttp import ClientTimeout
@@ -9,6 +10,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from ...interfaces import RestClientInterface  # noqa: TID252
+
+_LOGGER = logging.getLogger(__name__)
+_MAX_ERROR_BODY_LENGTH = 500
 
 
 class AioHttpRestClient(RestClientInterface):
@@ -37,6 +41,14 @@ class AioHttpRestClient(RestClientInterface):
         """Perform an async GET request and return parsed JSON response."""
         url = self._generate_url(path)
         async with self.session.get(url, headers=headers, timeout=self.timeout) as resp:
+            if not resp.ok:
+                text = await resp.text()
+                _LOGGER.error(
+                    "HTTP %d error on GET %s: %s",
+                    resp.status,
+                    url,
+                    text[:_MAX_ERROR_BODY_LENGTH],
+                )
             resp.raise_for_status()
             return await resp.json()
 
@@ -56,6 +68,14 @@ class AioHttpRestClient(RestClientInterface):
             headers=headers,
             timeout=self.timeout,
         ) as resp:
+            if not resp.ok:
+                text = await resp.text()
+                _LOGGER.error(
+                    "HTTP %d error on POST %s: %s",
+                    resp.status,
+                    url,
+                    text[:_MAX_ERROR_BODY_LENGTH],
+                )
             resp.raise_for_status()
             return await resp.json()
 
