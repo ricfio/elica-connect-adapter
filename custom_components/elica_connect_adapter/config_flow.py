@@ -53,6 +53,9 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         raise CannotConnect from exc
     except ApiAuthenticationError as exc:
         raise InvalidAuth from exc
+    except Exception as exc:
+        _LOGGER.debug("Unexpected error while logging in: %s", exc)
+        raise CannotConnect from exc
 
     # Raise an error if authentication fails
     if not await controller.is_logged_in():
