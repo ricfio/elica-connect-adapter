@@ -142,7 +142,9 @@ class ElicaConnectConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Confirm reauthentication with a new password."""
-        entry = self._get_reauth_entry()
+        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+        if entry is None:
+            raise RuntimeError("Reauthentication entry not found")
         errors: dict[str, str] = {}
 
         if user_input is not None:
