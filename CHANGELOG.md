@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2026-11-18
+
+### Fixed
+
+- Retry integration setup after temporary Elica Cloud connection failures.
+- Added reauthentication for rejected credentials and reload the entry after
+  successful password updates.
+
 ## [0.2.6] - 2026-11-14
 
 ### Fixed
