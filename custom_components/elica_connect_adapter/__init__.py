@@ -7,8 +7,10 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
 
+from .api.core.controller import ApiAuthenticationError, ApiConnectionError
 from .const import DOMAIN
 from .coordinator import ElicaConnectCoordinator
 from .utils import create_controller
@@ -43,13 +45,19 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     try:
         await controller.login()
+    except ApiConnectionError as err:
+        _LOGGER.warning("Unable to connect to Elica: %s", err)
+        raise ConfigEntryNotReady from err
+    except ApiAuthenticationError as err:
+        _LOGGER.error("Authentication failed")
+        raise ConfigEntryAuthFailed from err
     except Exception as err:
         _LOGGER.exception("Failed to initialize Elica controller: %s", err)
-        return False
+        raise ConfigEntryNotReady from err
 
     if not await controller.is_logged_in():
         _LOGGER.error("Authentication failed")
-        return False
+        raise ConfigEntryAuthFailed
 
     coordinator = ElicaConnectCoordinator(hass, controller, config_entry)
     await coordinator.async_config_entry_first_refresh()

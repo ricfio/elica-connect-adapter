@@ -86,7 +86,8 @@
     },
     "config": {
         "abort": {
-            "already_configured": "Il dispositivo è già configurato"
+            "already_configured": "Il dispositivo è già configurato",
+            "reauth_successful": "Nuova autenticazione completata"
         },
         "error": {
             "cannot_connect": "Impossibile connettersi",
@@ -94,6 +95,13 @@
             "unknown": "Errore imprevisto"
         },
         "step": {
+            "reauth_confirm": {
+                "title": "Nuova autenticazione",
+                "description": "La password per {username} non è più valida. Inserisci la nuova password.",
+                "data": {
+                    "password": "Password"
+                }
+            },
             "user": {
                 "data": {
                     "password": "Password",
